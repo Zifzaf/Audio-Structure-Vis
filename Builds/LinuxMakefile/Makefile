@@ -79,6 +79,7 @@ OBJECTS_APP := \
   $(JUCE_OBJDIR)/fft-impl-f64_79b1a980.o \
   $(JUCE_OBJDIR)/dsp-impl_64ab2d0b.o \
   $(JUCE_OBJDIR)/audiofile-impl_bafff70d.o \
+  $(JUCE_OBJDIR)/NoteShower_2d713285.o \
   $(JUCE_OBJDIR)/FileHandler_f480e98f.o \
   $(JUCE_OBJDIR)/Histogram_7a8844c5.o \
   $(JUCE_OBJDIR)/Main_90ebc5c2.o \
@@ -145,6 +146,11 @@ $(JUCE_OBJDIR)/dsp-impl_64ab2d0b.o: ../../../../kfr/include/kfr/dsp/impl/dsp-imp
 $(JUCE_OBJDIR)/audiofile-impl_bafff70d.o: ../../../../kfr/include/kfr/io/impl/audiofile-impl.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
 	@echo "Compiling audiofile-impl.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
+
+$(JUCE_OBJDIR)/NoteShower_2d713285.o: ../../Source/NoteShower.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling NoteShower.cpp"
 	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/FileHandler_f480e98f.o: ../../Source/FileHandler.cpp

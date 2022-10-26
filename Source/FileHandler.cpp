@@ -42,6 +42,15 @@ FileHandler::~FileHandler()
 {
 }
 
+bool FileHandler::isAudioPlaying()
+{
+  if (fileLoaded.get())
+  {
+    return transportSource.isPlaying();
+  }
+  return false;
+}
+
 void FileHandler::openButtonClicked()
 {
   chooser = std::make_unique<juce::FileChooser>("Select Audio File ...",
@@ -63,7 +72,9 @@ void FileHandler::openButtonClicked()
                     transportSource.setSource (newSource.get(), 0, nullptr, reader->sampleRate);       
                     playButton.setEnabled (true);
                     fileName.setText(file.getFileName(), juce::dontSendNotification);                                                    
-                    readerSource.reset (newSource.release());                                          
+                    readerSource.reset (newSource.release());
+                    fileLoaded.set(true);
+                    sendChangeMessage();                                         
                 }
             } });
 }
@@ -151,7 +162,8 @@ void FileHandler::getAudioBlock(juce::AudioBuffer<float> *bufferToFill, int star
   if (readerSource != nullptr)
   {
     auto fileReader = readerSource->getAudioFormatReader();
-    fileReader->read(bufferToFill, channelNum, startSample, numSamples, true, true);
+    fileReader->read(bufferToFill, 0, numSamples, startSample, true, true);
+    auto read = bufferToFill->getReadPointer(channelNum);
   }
 }
 

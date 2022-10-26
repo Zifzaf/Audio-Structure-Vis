@@ -1,7 +1,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : spectro(numLevles), dft(fftSize)
+MainComponent::MainComponent() : spectro(numLevles), dft(fftSize), notes()
 
 {
     std::cout << kfr::library_version() << std::endl;
@@ -10,8 +10,10 @@ MainComponent::MainComponent() : spectro(numLevles), dft(fftSize)
 
     addAndMakeVisible(&openFile);
 
-    addAndMakeVisible(&spectro);
-    spectro.setFramesPerSecond(30);
+    addAndMakeVisible(&notes);
+    
+    notes.addFileHandler(&openFile);
+    openFile.addChangeListener(&notes);
 
     setSize(1600, 900);
 
@@ -42,11 +44,16 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 
 void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill)
 {
-    openFile.getNextAudioBlock(bufferToFill);
-
-    if (bufferToFill.buffer->getNumChannels() > 0)
+    if (openFile.isAudioPlaying())
     {
-        visualize(bufferToFill.buffer->getArrayOfReadPointers()[0], bufferToFill.startSample, bufferToFill.numSamples);
+        openFile.getNextAudioBlock(bufferToFill);
+
+        if (bufferToFill.buffer->getNumChannels() > 0)
+        {
+            visualize(bufferToFill.buffer->getArrayOfReadPointers()[0], bufferToFill.startSample, bufferToFill.numSamples);
+        }
+    }else{
+        bufferToFill.clearActiveBufferRegion();
     }
 }
 
@@ -121,5 +128,5 @@ void MainComponent::paint(juce::Graphics &g)
 void MainComponent::resized()
 {
     openFile.setBounds(0, 0, getWidth(), 100);
-    spectro.setBounds(0, 100, getWidth(), getHeight() - 100);
+    notes.setBounds(0, 100, getWidth(), getHeight() - 100);
 }

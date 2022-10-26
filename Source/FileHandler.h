@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-class FileHandler : public juce::PositionableAudioSource, public juce::Component
+class FileHandler : public juce::PositionableAudioSource, public juce::Component, public juce::ChangeBroadcaster
 {
 public:
   FileHandler();
@@ -33,6 +33,7 @@ public:
   void getAudioBlock(juce::AudioBuffer<float> *bufferToFill, int startSample, int numSamples, int channelNum = 0);
   double getSampleRate();
   juce::AudioBuffer<float> *getAudio(double from, double to);
+  bool isAudioPlaying();
 
 private:
   juce::AudioFormatManager formatManager;
@@ -43,6 +44,7 @@ private:
   juce::TextButton playButton;
   juce::TextButton stopButton;
   juce::Label fileName;
+  juce::Atomic<bool> fileLoaded = false;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FileHandler)
 };

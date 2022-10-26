@@ -226,6 +226,8 @@
         <FILE id="nLVUg2" name="simd.hpp" compile="0" resource="0" file="../../kfr/include/kfr/simd.hpp"/>
         <FILE id="jJ3SpP" name="version.hpp" compile="0" resource="0" file="../../kfr/include/kfr/version.hpp"/>
       </GROUP>
+      <FILE id="G5DhG0" name="NoteShower.h" compile="0" resource="0" file="Source/NoteShower.h"/>
+      <FILE id="padWyy" name="NoteShower.cpp" compile="1" resource="0" file="Source/NoteShower.cpp"/>
       <FILE id="T0jCuT" name="FileHandler.h" compile="0" resource="0" file="Source/FileHandler.h"/>
       <FILE id="TRBYAQ" name="FileHandler.cpp" compile="1" resource="0" file="Source/FileHandler.cpp"/>
       <FILE id="e2FZ4M" name="Histogram.cpp" compile="1" resource="0" file="Source/Histogram.cpp"/>

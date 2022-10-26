@@ -3,6 +3,7 @@
 #include <JuceHeader.h>
 #include "Histogram.h"
 #include "FileHandler.h"
+#include "NoteShower.h"
 #include <kfr/all.hpp>
 #include <chrono>
 
@@ -40,6 +41,7 @@ public:
     kfr::dft_plan_real<kfr::fbase> dft;
     kfr::univector<kfr::u8> *temp;
     int inBufferIndex = 0; 
+    NoteShower notes;
     
 
     //==============================================================================

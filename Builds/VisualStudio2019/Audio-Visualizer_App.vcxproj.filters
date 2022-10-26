@@ -667,6 +667,9 @@
     <ClCompile Include="..\..\..\..\kfr\include\kfr\io\impl\audiofile-impl.cpp">
       <Filter>Audio-Visualizer\Source\kfr\io\impl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\NoteShower.cpp">
+      <Filter>Audio-Visualizer\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\FileHandler.cpp">
       <Filter>Audio-Visualizer\Source</Filter>
     </ClCompile>
@@ -3521,6 +3524,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\kfr\include\kfr\version.hpp">
       <Filter>Audio-Visualizer\Source\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\NoteShower.h">
+      <Filter>Audio-Visualizer\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\FileHandler.h">
       <Filter>Audio-Visualizer\Source</Filter>

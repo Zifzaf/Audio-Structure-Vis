@@ -148,6 +148,7 @@
     <ClCompile Include="..\..\..\..\kfr\include\kfr\dft\impl\fft-impl-f64.cpp"/>
     <ClCompile Include="..\..\..\..\kfr\include\kfr\dsp\impl\dsp-impl.cpp"/>
     <ClCompile Include="..\..\..\..\kfr\include\kfr\io\impl\audiofile-impl.cpp"/>
+    <ClCompile Include="..\..\Source\NoteShower.cpp"/>
     <ClCompile Include="..\..\Source\FileHandler.cpp"/>
     <ClCompile Include="..\..\Source\Histogram.cpp"/>
     <ClCompile Include="..\..\Source\Main.cpp"/>
@@ -2547,6 +2548,7 @@
     <ClInclude Include="..\..\..\..\kfr\include\kfr\runtime.hpp"/>
     <ClInclude Include="..\..\..\..\kfr\include\kfr\simd.hpp"/>
     <ClInclude Include="..\..\..\..\kfr\include\kfr\version.hpp"/>
+    <ClInclude Include="..\..\Source\NoteShower.h"/>
     <ClInclude Include="..\..\Source\FileHandler.h"/>
     <ClInclude Include="..\..\Source\Histogram.h"/>
     <ClInclude Include="..\..\Source\MainComponent.h"/>
