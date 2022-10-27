@@ -202,10 +202,10 @@ void FileHandler::paint(juce::Graphics &g)
 
 void FileHandler::resized()
 {
-  int width = getWidth() - 30;
-  int heigth = getHeight() - 30;
-  openButton.setBounds(10, 10, width / 2, heigth / 2);
-  playButton.setBounds(10, 20 + heigth / 2, width / 2, heigth / 2);
-  stopButton.setBounds(20 + width / 2, 20 + heigth / 2, width / 2, heigth / 2);
-  fileName.setBounds(20 + width / 2, 10, width / 2, heigth / 2);
+  int width = getWidth() - 6;
+  int heigth = getHeight() - 6;
+  openButton.setBounds(2, 2, width / 2, heigth / 2);
+  playButton.setBounds(2, 4 + heigth / 2, width / 2, heigth / 2);
+  stopButton.setBounds(4 + width / 2, 4 + heigth / 2, width / 2, heigth / 2);
+  fileName.setBounds(4 + width / 2, 2, width / 2, heigth / 2);
 }

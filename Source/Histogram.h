@@ -27,6 +27,7 @@ public:
     void resized() override;
     void update() override;
     void addDataLine(float dataLine[], bool normalized);
+    juce::Colour levelToColour(float level);
 
 private:                  
     juce::Image histogramImage;

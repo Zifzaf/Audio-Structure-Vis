@@ -15,7 +15,7 @@ MainComponent::MainComponent() : spectro(numLevles), dft(fftSize), notes()
     notes.addFileHandler(&openFile);
     openFile.addChangeListener(&notes);
 
-    setSize(1600, 900);
+    setSize(1600, 1000);
 
     if (juce::RuntimePermissions::isRequired(juce::RuntimePermissions::recordAudio) && !juce::RuntimePermissions::isGranted(juce::RuntimePermissions::recordAudio))
     {
@@ -127,6 +127,6 @@ void MainComponent::paint(juce::Graphics &g)
 
 void MainComponent::resized()
 {
-    openFile.setBounds(0, 0, getWidth(), 100);
-    notes.setBounds(0, 100, getWidth(), getHeight() - 100);
+    openFile.setBounds(0, 0, getWidth(), 50);
+    notes.setBounds(0, 50, getWidth(), getHeight() - 50);
 }

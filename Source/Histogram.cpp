@@ -31,7 +31,12 @@ void Histogram::update()
   repaint();
 }
 
-void Histogram ::addDataLine(float dataLine[], bool nomalized)
+juce::Colour Histogram::levelToColour(float level)
+{
+  return juce::Colour::fromHSV((1.0 - level) / 9.0 + 0.66, 0.9, level, 1.0);
+}
+
+void Histogram::addDataLine(float dataLine[], bool nomalized)
 {
   if (!nomalized)
   {
@@ -42,9 +47,9 @@ void Histogram ::addDataLine(float dataLine[], bool nomalized)
   histogramImage.moveImageSection(levelWidth, 0, 0, 0, widthAvailable - levelWidth, heightAvailable);
   for (auto j = 0; j < levelWidth; ++j)
   {
-    for (auto k = heightAvailable - 1; k >= 0; --k)
+    for (auto k = 0; k < heightAvailable; ++k)
     {
-      histogramImage.setPixelAt(j, k, juce::Colour::fromHSV(0.0f, 1.0f, dataLine[heightDataMap[k]], 1.0f));
+      histogramImage.setPixelAt(j, k, levelToColour(dataLine[heightDataMap[k]]));
     }
   }
   for (auto i = dataLength - 1; i > 0; --i)
@@ -83,7 +88,7 @@ void Histogram::resized()
   }
   int level = 0;
   int pixelsLeft = pixelPerLevel;
-  for (auto i = 0; i < heightAvailable; i++)
+  for (auto i = heightAvailable - 1; i >= 0; i--)
   {
     if (pixelsLeft == 0)
     {
@@ -118,22 +123,22 @@ void Histogram::resized()
   {
     for (auto j = 0; j < levelWidth; ++j)
     {
-      for (auto k = heightAvailable - 1; k >= 0; --k)
+      for (auto k = 0; k < heightAvailable; ++k)
       {
         int yCord = (i * levelWidth + j);
-        histogramImage.setPixelAt(yCord, k, juce::Colour::fromHSV(0.0f, 1.0f, data[i * dataLevels + heightDataMap[k]], 1.0f));
+        histogramImage.setPixelAt(yCord, k, levelToColour(data[i * dataLevels + heightDataMap[k]]));
       }
     }
   }
   int i = dataLengthCP - 1;
   for (auto j = 0; j < levelWidth; ++j)
   {
-    for (auto k = heightAvailable - 1; k >= 0; --k)
+    for (auto k = 0; k < heightAvailable; ++k)
     {
       int yCord = (i * levelWidth + j);
       if (yCord < widthAvailable)
       {
-        histogramImage.setPixelAt(yCord, k, juce::Colour::fromHSV(0.0f, 1.0f, data[i * dataLevels + heightDataMap[k]], 1.0f));
+        histogramImage.setPixelAt(yCord, k, levelToColour(data[i * dataLevels + heightDataMap[k]]));
       }
     }
   }
