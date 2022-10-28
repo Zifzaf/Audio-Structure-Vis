@@ -26,7 +26,8 @@ public:
     void paint (juce::Graphics& g) override;
     void resized() override;
     void update() override;
-    void addDataLine(float dataLine[], bool normalized);
+    void addDataLine(const float dataLine[], bool normalized);
+    void replaceData(const float *inData, size_t inDataLength, bool normalized);
     juce::Colour levelToColour(float level);
 
 private:                  
@@ -39,6 +40,8 @@ private:
     int dataLength = 1;
     float* data;
     bool fixedLengthData;
+    juce::SpinLock dataEdit;
+    juce::Atomic<bool> dataReady = false;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Histogram)
 };

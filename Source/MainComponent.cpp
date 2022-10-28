@@ -1,19 +1,27 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : spectro(numLevles), dft(fftSize), notes()
+MainComponent::MainComponent() : notes(), energy()
 
 {
     std::cout << kfr::library_version() << std::endl;
 
-    temp = new kfr::univector<kfr::u8>(dft.temp_size);
 
     addAndMakeVisible(&openFile);
 
     addAndMakeVisible(&notes);
-    
+
     notes.addFileHandler(&openFile);
     openFile.addChangeListener(&notes);
+
+    for (auto i = 0; i < numVis; i++)
+    {
+        addAndMakeVisible(&visSelect[i]);
+        visSelect[i].setButtonText(visNames[i]);
+        visSelect[i].setColour(juce::TextButton::buttonColourId, juce::Colours::darkgrey);
+        visSelect[i].onClick = [this, i]
+        { loadVis(visNames[i]); };
+    }
 
     setSize(1600, 1000);
 
@@ -50,65 +58,30 @@ void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo &buffer
 
         if (bufferToFill.buffer->getNumChannels() > 0)
         {
-            visualize(bufferToFill.buffer->getArrayOfReadPointers()[0], bufferToFill.startSample, bufferToFill.numSamples);
-        }
-    }else{
-        bufferToFill.clearActiveBufferRegion();
-    }
-}
-
-void MainComponent::visualize(const float *buffer, int startSample, int numSamples)
-{
-    if (inBufferIndex + numSamples < fftSize)
-    {
-        for (auto i = startSample; i < numSamples + startSample; ++i)
-        {
-            inBuffer[inBufferIndex++] = buffer[i];
+            // visualize(bufferToFill.buffer->getArrayOfReadPointers()[0], bufferToFill.startSample, bufferToFill.numSamples);
         }
     }
     else
     {
-        auto samplesMissing = fftSize - inBufferIndex;
-        for (auto i = 0; i < samplesMissing; ++i)
-        {
-            inBuffer[inBufferIndex + i] = buffer[startSample + i];
-        }
-
-        dft.execute(outBuffer, inBuffer, *(temp));
-
-        auto levelBuffer = new float[numLevles];
-        int level = 0;
-        int next = 2;
-        float div = fftSize;
-        for (auto i = 0; i < fftSize / 2; ++i)
-        {
-            if (i == next)
-            {
-                level++;
-                next *= 2;
-                levelBuffer[level] = 0.0;
-                levelBuffer[level] += cabs(outBuffer[i] / div);
-            }
-            else
-            {
-                levelBuffer[level] += cabs(outBuffer[i] / div);
-            }
-        }
-        // std::cout << numLevles << "  " << level << std::endl;
-        for (auto i = 0; i < numLevles; ++i)
-        {
-            levelBuffer[i] = 20 * std::log10(levelBuffer[i] + 1.0);
-        }
-        spectro.addDataLine(levelBuffer, false);
-
-        delete levelBuffer;
-
-        inBufferIndex = 0;
-        for (auto i = 0; i < numSamples - samplesMissing; ++i)
-        {
-            inBuffer[inBufferIndex++] = buffer[startSample + samplesMissing + i];
-        }
+        bufferToFill.clearActiveBufferRegion();
     }
+}
+
+void MainComponent::loadVis(std::string visName)
+{
+    if (visName == "Note Shower")
+    {
+        activeVis = VisNoteShower;
+    }
+    else if (visName == "Energy Bands")
+    {
+        activeVis = VisEnergyBand;
+    }
+    else
+    {
+        activeVis = None;
+    }
+    resized();
 }
 
 void MainComponent::releaseResources()
@@ -128,5 +101,40 @@ void MainComponent::paint(juce::Graphics &g)
 void MainComponent::resized()
 {
     openFile.setBounds(0, 0, getWidth(), 50);
-    notes.setBounds(0, 50, getWidth(), getHeight() - 50);
+    int visWidth = getWidth();
+    int visHeight = getHeight() - 50;
+    int visStartWidth = 0;
+    int visStartHeight = 50;
+    switch (activeVis)
+    {
+    case None:
+    {
+        int buttonHeight = (visHeight - (numVis + 1) * 2) / numVis;
+        for (auto i = 0; i < numVis; i++)
+        {
+            visSelect[i].setBounds(visStartWidth + 2, visStartHeight + i * buttonHeight + (i + 1) * 2, visWidth - 4, buttonHeight);
+        }
+        break;
+    }
+
+    case VisNoteShower:
+    {
+        for (auto i = 0; i < numVis; i++)
+        {
+            visSelect[i].setBounds(0, 0, 0, 0);
+        }
+        notes.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
+        break;
+    }
+
+    case VisEnergyBand:
+    {
+        for (auto i = 0; i < numVis; i++)
+        {
+            visSelect[i].setBounds(0, 0, 0, 0);
+        }
+        energy.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
+        break;
+    }
+    }
 }

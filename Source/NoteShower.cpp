@@ -177,6 +177,9 @@ void NoteShower::calcButtonClicked()
     float *noteLevel = new float[numberOfNotes];
     float *prevNoteLevel = new float[numberOfNotes];
     juce::FloatVectorOperations::fill(prevNoteLevel, 0, numberOfNotes);
+    int chunks = (endSample - blockSize - startSample) / (blockSize / 2) + 1;
+    ;
+    auto outputData = new float[chunks*numberOfNotes];
     for (auto i = startSample; i < endSample - blockSize; i = i + blockSize / 2)
     {
       juce::FloatVectorOperations::copy(inDataChunck, &inData[i], blockSize);
@@ -247,11 +250,16 @@ void NoteShower::calcButtonClicked()
         index++;
       }
       juce::FloatVectorOperations::addWithMultiply(noteLevel, prevNoteLevel, smoothFactor, numberOfNotes);
-      noteTable.addDataLine(noteLevel, false);
+      int chunkIndex = (i - startSample) / (blockSize / 2);
+      // noteTable.addDataLine(noteLevel, false);
+      juce::FloatVectorOperations::copy(&outputData[chunkIndex*numberOfNotes], noteLevel, numberOfNotes);
       float *temp = prevNoteLevel;
       prevNoteLevel = noteLevel;
       noteLevel = temp;
     }
+    //juce::FloatVectorOperations::fill(outputData, 1.0, chunks * numberOfNotes);
+    noteTable.replaceData(outputData, chunks, false);
+    delete outputData;
     delete noteLevel;
     delete inDataChunck;
     delete freqList;
