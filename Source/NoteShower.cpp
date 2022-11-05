@@ -23,17 +23,6 @@ NoteShower::NoteShower() : noteTable(numberOfNotes), audioData(*new juce::AudioB
     addAndMakeVisible(&freqLables[i]);
     freqLables[i].setText(floatToString(noteFreqencies[i]), juce::NotificationType::dontSendNotification);
   }
-  addAndMakeVisible(&time);
-  time.setText("Time:", juce::NotificationType::dontSendNotification);
-
-  addAndMakeVisible(&seconds1);
-  seconds1.setText("s", juce::NotificationType::dontSendNotification);
-
-  addAndMakeVisible(&seconds2);
-  seconds2.setText("s", juce::NotificationType::dontSendNotification);
-
-  addAndMakeVisible(&to);
-  to.setText("to", juce::NotificationType::dontSendNotification);
 
   addAndMakeVisible(&overTonesName);
   overTonesName.setText("Number of Overtones to remove:", juce::NotificationType::dontSendNotification);
@@ -46,16 +35,6 @@ NoteShower::NoteShower() : noteTable(numberOfNotes), audioData(*new juce::AudioB
 
   addAndMakeVisible(&smoothFactorName);
   smoothFactorName.setText("Smoothing Factor:", juce::NotificationType::dontSendNotification);
-
-  addAndMakeVisible(&startTime);
-  startTime.setText("0.0");
-  startTime.setInputRestrictions(6, "0123456789.");
-  startTime.setMultiLine(false);
-
-  addAndMakeVisible(&endTime);
-  endTime.setText("0.0");
-  endTime.setInputRestrictions(6, "0123456789.");
-  endTime.setMultiLine(false);
 
   addAndMakeVisible(&extractedFreqs);
   extractedFreqs.setText("30");
@@ -99,16 +78,6 @@ inline std::string NoteShower::floatToString(float a)
   return num_text.substr(0, num_text.find(".") + 3);
 }
 
-inline float NoteShower::getStartTime()
-{
-  return startTime.getText().getFloatValue();
-}
-
-inline float NoteShower::getEndTime()
-{
-  return endTime.getText().getFloatValue();
-}
-
 inline int NoteShower::getExtractedFreqs()
 {
   return extractedFreqs.getText().getIntValue();
@@ -129,13 +98,14 @@ void NoteShower::changeListenerCallback(juce::ChangeBroadcaster *source)
   if (source == fileInput)
   {
     audioAvailable.set(false);
-    auto len = fileInput->getTotalLength();
-    delete &audioData;
-    audioData = *new juce::AudioBuffer<float>(1, len);
-    fileInput->getAudioBlock(&audioData, 0, len);
     sampleRate = fileInput->getSampleRate();
+    auto len = fileInput->getSegmentLength();
+    if (len > audioData.getNumSamples())
+    {
+      delete &audioData;
+      audioData = *new juce::AudioBuffer<float>(1, len);
+    }
     audioAvailable.set(true);
-    endTime.setText(juce::String(((float)len) / sampleRate));
   }
 }
 
@@ -154,12 +124,13 @@ void NoteShower::calcButtonClicked()
   if (audioAvailable.get() && calculating.compareAndSetBool(true, false))
   {
     calcButton.setEnabled(false);
+    fileInput->getAudioBlock(&audioData);
     int extractedFreqs = getExtractedFreqs();
     int overTones = getOverTones();
     float smoothFactor = getSmoothFactor();
     const size_t blockSize = getBlockSize();
-    int startSample = getStartTime() * sampleRate;
-    int endSample = getEndTime() * sampleRate;
+    int startSample = 0;
+    int endSample = fileInput->getSegmentLength();
     auto fftBins = blockSize / 2 - 2;
     auto freqList = new float[fftBins];
     auto ampSpectrum = new float[fftBins];
@@ -179,7 +150,7 @@ void NoteShower::calcButtonClicked()
     juce::FloatVectorOperations::fill(prevNoteLevel, 0, numberOfNotes);
     int chunks = (endSample - blockSize - startSample) / (blockSize / 2) + 1;
     ;
-    auto outputData = new float[chunks*numberOfNotes];
+    auto outputData = new float[chunks * numberOfNotes];
     for (auto i = startSample; i < endSample - blockSize; i = i + blockSize / 2)
     {
       juce::FloatVectorOperations::copy(inDataChunck, &inData[i], blockSize);
@@ -252,13 +223,12 @@ void NoteShower::calcButtonClicked()
       juce::FloatVectorOperations::addWithMultiply(noteLevel, prevNoteLevel, smoothFactor, numberOfNotes);
       int chunkIndex = (i - startSample) / (blockSize / 2);
       // noteTable.addDataLine(noteLevel, false);
-      juce::FloatVectorOperations::copy(&outputData[chunkIndex*numberOfNotes], noteLevel, numberOfNotes);
+      juce::FloatVectorOperations::copy(&outputData[chunkIndex * numberOfNotes], noteLevel, numberOfNotes);
       float *temp = prevNoteLevel;
       prevNoteLevel = noteLevel;
       noteLevel = temp;
     }
-    //juce::FloatVectorOperations::fill(outputData, 1.0, chunks * numberOfNotes);
-    noteTable.replaceData(outputData, chunks, false);
+    noteTable.replaceData(outputData, chunks, false, false);
     delete outputData;
     delete noteLevel;
     delete inDataChunck;
@@ -281,7 +251,6 @@ void NoteShower::setAudio(const juce::AudioBuffer<float> in, float sampleRate, i
   audioData = *new juce::AudioBuffer<float>(1, len);
   audioData.copyFrom(0, 0, in.getReadPointer(channelNum), len);
   audioAvailable.set(true);
-  endTime.setText(juce::String(((float)len) / sampleRate));
 }
 
 void NoteShower::calcNoteFrequencies()
@@ -319,7 +288,7 @@ void NoteShower::paintOverChildren(juce::Graphics &g)
   g.setColour(juce::Colours::grey);
   int width = getWidth();
   int height = getHeight();
-  int noteTableHeight = height - 68;
+  int noteTableHeight = height - 46;
   int noteLabelHeight = noteTableHeight / numberOfNotes;
   int rest = noteTableHeight % numberOfNotes;
   auto h = height - noteLabelHeight;
@@ -338,6 +307,11 @@ void NoteShower::paintOverChildren(juce::Graphics &g)
       h--;
     }
   }
+  float fraction = (fileInput->getCurrentTime() - fileInput->getStartTime()) / (fileInput->getEndTime() - fileInput->getStartTime());
+  fraction = std::max(0.0f, fraction);
+  g.setColour(juce::Colours::white);
+  int pos = fraction * (width - 120) + 40;
+  g.fillRect(pos - 1, 46, 2, noteTableHeight);
 }
 
 void NoteShower::resized()
@@ -345,23 +319,17 @@ void NoteShower::resized()
   int width = getWidth();
   int height = getHeight();
   int size = width / 8;
-  time.setBounds(2, 2, size, 20);
-  startTime.setBounds(2 + 1 * size, 2, size, 20);
-  seconds1.setBounds(2 + 2 * size, 2, 0.5 * size, 20);
-  to.setBounds(2 + 2.5 * size, 2, 0.5 * size, 20);
-  endTime.setBounds(2 + 3 * size, 2, size, 20);
-  seconds2.setBounds(2 + 4 * size, 2, 0.5 * size, 20);
-  blockSizeName.setBounds(2, 24, size, 20);
-  blockSize.setBounds(2 + 1 * size, 24, size, 20);
-  extractedFreqsName.setBounds(2 + 2 * size, 24, size, 20);
-  extractedFreqs.setBounds(2 + 3 * size, 24, size, 20);
-  overTonesName.setBounds(2 + 4 * size, 24, size, 20);
-  overTones.setBounds(2 + 5 * size, 24, size, 20);
-  smoothFactorName.setBounds(2 + 6 * size, 24, size, 20);
-  smoothFactor.setBounds(2 + 7 * size, 24, size, 20);
-  calcButton.setBounds(0, 46, width, 20);
-  noteTable.setBounds(40, 68, width - 120, height - 68);
-  int noteTableHeight = height - 68;
+  blockSizeName.setBounds(2, 2, size, 20);
+  blockSize.setBounds(2 + 1 * size, 2, size, 20);
+  extractedFreqsName.setBounds(2 + 2 * size, 2, size, 20);
+  extractedFreqs.setBounds(2 + 3 * size, 2, size, 20);
+  overTonesName.setBounds(2 + 4 * size, 2, size, 20);
+  overTones.setBounds(2 + 5 * size, 2, size, 20);
+  smoothFactorName.setBounds(2 + 6 * size, 2, size, 20);
+  smoothFactor.setBounds(2 + 7 * size, 2, size, 20);
+  calcButton.setBounds(0, 24, width, 20);
+  noteTable.setBounds(40, 46, width - 120, height - 46);
+  int noteTableHeight = height - 46;
   int noteLabelHeight = noteTableHeight / numberOfNotes;
   int rest = noteTableHeight % numberOfNotes;
   auto h = height - noteLabelHeight;

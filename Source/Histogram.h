@@ -27,7 +27,7 @@ public:
     void resized() override;
     void update() override;
     void addDataLine(const float dataLine[], bool normalized);
-    void replaceData(const float *inData, size_t inDataLength, bool normalized);
+    void replaceData(const float *inData, size_t inDataLength, bool normalized, bool logScale);
     juce::Colour levelToColour(float level);
 
 private:                  

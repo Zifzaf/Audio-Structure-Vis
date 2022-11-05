@@ -28,8 +28,6 @@ public:
   void calcButtonClicked();
   void setAudio(const juce::AudioBuffer<float> in, float sampleRate, int channelNum = 0);
   void changeListenerCallback(juce::ChangeBroadcaster *source);
-  inline float getStartTime();
-  inline float getEndTime();
   void addFileHandler(FileHandler *in);
   inline size_t getBlockSize();
   int getExtractedFreqs();
@@ -47,19 +45,13 @@ public:
 private:
   Histogram noteTable;
   FileHandler *fileInput = nullptr;
-  juce::Label time;
-  juce::Label seconds1;
-  juce::Label seconds2;
-  juce::Label to;
   juce::Label overTonesName;
   juce::Label extractedFreqsName;
   juce::Label smoothFactorName;
   juce::Label blockSizeName;
-  juce::TextEditor startTime;
   juce::TextEditor extractedFreqs;
   juce::TextEditor overTones;
   juce::TextEditor smoothFactor;
-  juce::TextEditor endTime;
   juce::ComboBox blockSize;
   juce::AudioBuffer<float> &audioData;
   juce::Atomic<bool> audioAvailable = false;

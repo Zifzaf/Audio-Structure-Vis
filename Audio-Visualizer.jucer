@@ -226,6 +226,10 @@
         <FILE id="nLVUg2" name="simd.hpp" compile="0" resource="0" file="../../kfr/include/kfr/simd.hpp"/>
         <FILE id="jJ3SpP" name="version.hpp" compile="0" resource="0" file="../../kfr/include/kfr/version.hpp"/>
       </GROUP>
+      <FILE id="yep61C" name="Loudness.cpp" compile="1" resource="0" file="Source/Loudness.cpp"/>
+      <FILE id="aBEEkW" name="Loudness.h" compile="0" resource="0" file="Source/Loudness.h"/>
+      <FILE id="EHAQNi" name="EnergyBands.h" compile="0" resource="0" file="Source/EnergyBands.h"/>
+      <FILE id="cyVeZh" name="EnergyBands.cpp" compile="1" resource="0" file="Source/EnergyBands.cpp"/>
       <FILE id="G5DhG0" name="NoteShower.h" compile="0" resource="0" file="Source/NoteShower.h"/>
       <FILE id="padWyy" name="NoteShower.cpp" compile="1" resource="0" file="Source/NoteShower.cpp"/>
       <FILE id="T0jCuT" name="FileHandler.h" compile="0" resource="0" file="Source/FileHandler.h"/>

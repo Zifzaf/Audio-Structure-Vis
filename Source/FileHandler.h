@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-class FileHandler : public juce::PositionableAudioSource, public juce::Component, public juce::ChangeBroadcaster
+class FileHandler : public juce::PositionableAudioSource, public juce::Component, public juce::ChangeBroadcaster, public juce::TextEditor::Listener
 {
 public:
   FileHandler();
@@ -30,12 +30,23 @@ public:
   void openButtonClicked();
   void stopButtonClicked();
   void playButtonClicked();
-  void getAudioBlock(juce::AudioBuffer<float> *bufferToFill, int startSample, int numSamples, int channelNum = 0);
+  void getAudioBlock(juce::AudioBuffer<float> *bufferToFill);
   double getSampleRate();
   juce::AudioBuffer<float> *getAudio(double from, double to);
   bool isAudioPlaying();
+  inline float getStartTime();
+  inline float getEndTime();
+  void textEditorTextChanged(juce::TextEditor &source);
+  juce::int64 getSegmentLength();
+  double getCurrentTime();
 
 private:
+  juce::Label time;
+  juce::Label seconds1;
+  juce::Label seconds2;
+  juce::Label to;
+  juce::TextEditor startTime;
+  juce::TextEditor endTime;
   juce::AudioFormatManager formatManager;
   std::unique_ptr<juce::AudioFormatReaderSource> readerSource;
   juce::AudioTransportSource transportSource;
@@ -45,6 +56,8 @@ private:
   juce::TextButton stopButton;
   juce::Label fileName;
   juce::Atomic<bool> fileLoaded = false;
+  float startTimeVal = 0.0;
+  float endTimeVal = 0.0;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FileHandler)
 };

@@ -78,19 +78,26 @@ void Histogram ::paint(juce::Graphics &g)
   g.drawImage(histogramImage, 0, 0, widthAvailable, heightAvailable, 0, 0, widthAvailable, heightAvailable);
 }
 
-void Histogram::replaceData(const float *inData, size_t inDataLength, bool normalized)
+void Histogram::replaceData(const float *inData, size_t inDataLength, bool normalized, bool logScale)
 {
   auto newData = new float[inDataLength * dataLevels];
 std:
   memcpy(newData, inData, sizeof(float) * inDataLength * dataLevels);
   if (!normalized)
   {
-    for (auto i = 0; i < inDataLength; i++)
+    auto minMax = juce::FloatVectorOperations::findMinAndMax(newData, dataLevels * inDataLength);
+    juce::FloatVectorOperations::add(newData, -minMax.getStart(), dataLevels * inDataLength);
+    juce::FloatVectorOperations::multiply(newData, 1.0 / (minMax.getEnd() - minMax.getStart()), dataLevels * inDataLength);
+  }
+  if (logScale)
+  {
+    juce::FloatVectorOperations::add(newData, 1.0, dataLevels * inDataLength);
+    for (auto i = 0; i < dataLevels * inDataLength; i++)
     {
-      auto minMax = juce::FloatVectorOperations::findMinAndMax(&newData[i*dataLevels], dataLevels);
-      juce::FloatVectorOperations::add(&newData[i*dataLevels], -minMax.getStart(), dataLevels);
-      juce::FloatVectorOperations::multiply(&newData[i*dataLevels], 1.0 / (minMax.getEnd() - minMax.getStart()), dataLevels);
+      newData[i] = std::log10(newData[i]);
     }
+    auto minMax = juce::FloatVectorOperations::findMinAndMax(newData, dataLevels * inDataLength);
+    juce::FloatVectorOperations::multiply(newData, 1.0 / minMax.getEnd(), dataLevels * inDataLength);
   }
   float *temp = data;
   dataEdit.enter();

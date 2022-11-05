@@ -148,6 +148,8 @@
     <ClCompile Include="..\..\..\..\kfr\include\kfr\dft\impl\fft-impl-f64.cpp"/>
     <ClCompile Include="..\..\..\..\kfr\include\kfr\dsp\impl\dsp-impl.cpp"/>
     <ClCompile Include="..\..\..\..\kfr\include\kfr\io\impl\audiofile-impl.cpp"/>
+    <ClCompile Include="..\..\Source\Loudness.cpp"/>
+    <ClCompile Include="..\..\Source\EnergyBands.cpp"/>
     <ClCompile Include="..\..\Source\NoteShower.cpp"/>
     <ClCompile Include="..\..\Source\FileHandler.cpp"/>
     <ClCompile Include="..\..\Source\Histogram.cpp"/>
@@ -2548,6 +2550,8 @@
     <ClInclude Include="..\..\..\..\kfr\include\kfr\runtime.hpp"/>
     <ClInclude Include="..\..\..\..\kfr\include\kfr\simd.hpp"/>
     <ClInclude Include="..\..\..\..\kfr\include\kfr\version.hpp"/>
+    <ClInclude Include="..\..\Source\Loudness.h"/>
+    <ClInclude Include="..\..\Source\EnergyBands.h"/>
     <ClInclude Include="..\..\Source\NoteShower.h"/>
     <ClInclude Include="..\..\Source\FileHandler.h"/>
     <ClInclude Include="..\..\Source\Histogram.h"/>

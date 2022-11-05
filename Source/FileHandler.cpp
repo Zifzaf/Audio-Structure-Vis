@@ -35,11 +35,48 @@ FileHandler::FileHandler()
   fileName.setText("no file opened", juce::dontSendNotification);
   fileName.setColour(juce::Label::textColourId, juce::Colours::white);
 
+  addAndMakeVisible(&time);
+  time.setText("Time:", juce::NotificationType::dontSendNotification);
+
+  addAndMakeVisible(&seconds1);
+  seconds1.setText("s", juce::NotificationType::dontSendNotification);
+
+  addAndMakeVisible(&seconds2);
+  seconds2.setText("s", juce::NotificationType::dontSendNotification);
+
+  addAndMakeVisible(&to);
+  to.setText("to", juce::NotificationType::dontSendNotification);
+
+  addAndMakeVisible(&startTime);
+  startTime.setText("0.0");
+  startTime.setInputRestrictions(6, "0123456789.");
+  startTime.setMultiLine(false);
+  startTime.addListener(this);
+
+  addAndMakeVisible(&endTime);
+  endTime.setText("0.0");
+  endTime.setInputRestrictions(6, "0123456789.");
+  endTime.setMultiLine(false);
+  endTime.addListener(this);
+
   formatManager.registerBasicFormats();
 }
 
 FileHandler::~FileHandler()
 {
+}
+
+void FileHandler::textEditorTextChanged(juce::TextEditor &source)
+{
+  float newStartTime = getStartTime();
+  float newEndTime = getEndTime();
+  if (newEndTime != endTimeVal || newStartTime != startTimeVal)
+  {
+    endTimeVal = newEndTime;
+    startTimeVal = newEndTime;
+    transportSource.setPosition(newStartTime);
+    sendChangeMessage();
+  }
 }
 
 bool FileHandler::isAudioPlaying()
@@ -74,7 +111,8 @@ void FileHandler::openButtonClicked()
                     fileName.setText(file.getFileName(), juce::dontSendNotification);                                                    
                     readerSource.reset (newSource.release());
                     fileLoaded.set(true);
-                    sendChangeMessage();                                         
+                    sendChangeMessage();
+                    endTime.setText(juce::String(((float)transportSource.getTotalLength() / reader->sampleRate)));                                        
                 }
             } });
 }
@@ -84,7 +122,7 @@ void FileHandler::stopButtonClicked()
   stopButton.setEnabled(false);
   transportSource.stop();
   playButton.setEnabled(true);
-  transportSource.setPosition(0.0);
+  transportSource.setPosition(getStartTime());
 }
 
 void FileHandler::playButtonClicked()
@@ -112,6 +150,10 @@ void FileHandler::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferTo
     return;
   }
   transportSource.getNextAudioBlock(bufferToFill);
+  if (transportSource.getCurrentPosition() > getEndTime())
+  {
+    transportSource.setPosition(getStartTime());
+  }
 }
 
 void FileHandler::setNextReadPosition(juce::int64 newPosition)
@@ -157,14 +199,34 @@ void FileHandler::setLooping(bool shouldLoop)
   }
 }
 
-void FileHandler::getAudioBlock(juce::AudioBuffer<float> *bufferToFill, int startSample, int numSamples, int channelNum)
+void FileHandler::getAudioBlock(juce::AudioBuffer<float> *bufferToFill)
 {
   if (readerSource != nullptr)
   {
+    float startTime = getStartTime();
+    juce::int64 startSample = startTime * getSampleRate();
+    juce::int64 numSamples = getSegmentLength();
     auto fileReader = readerSource->getAudioFormatReader();
-    fileReader->read(bufferToFill, 0, numSamples, startSample, true, true);
-    auto read = bufferToFill->getReadPointer(channelNum);
+    fileReader->read(bufferToFill, 0, std::min(numSamples, (juce::int64)bufferToFill->getNumSamples()), startSample, true, true);
   }
+}
+
+juce::int64 FileHandler::getSegmentLength()
+{
+  float startTime = getStartTime();
+  juce::int64 startSample = startTime * getSampleRate();
+  float endTime = getEndTime();
+  juce::int64 endSample = endTime * getSampleRate();
+  if (endSample > getTotalLength())
+  {
+    endSample = getTotalLength() - 1;
+  }
+  return std::max(0ll, endSample - startSample);
+}
+
+double FileHandler::getCurrentTime()
+{
+  return transportSource.getCurrentPosition();
 }
 
 double FileHandler::getSampleRate()
@@ -188,11 +250,21 @@ juce::AudioBuffer<float> *FileHandler::getAudio(double from, double to)
     if (numSamples > 0)
     {
       auto out = new juce::AudioBuffer<float>(1, numSamples);
-      getAudioBlock(out, start, numSamples);
+      fileReader->read(out, 0, numSamples, start, true, true);
       return out;
     }
   }
   return nullptr;
+}
+
+float FileHandler::getStartTime()
+{
+  return startTime.getText().getFloatValue();
+}
+
+float FileHandler::getEndTime()
+{
+  return endTime.getText().getFloatValue();
 }
 
 void FileHandler::paint(juce::Graphics &g)
@@ -204,8 +276,15 @@ void FileHandler::resized()
 {
   int width = getWidth() - 6;
   int heigth = getHeight() - 6;
-  openButton.setBounds(2, 2, width / 2, heigth / 2);
-  playButton.setBounds(2, 4 + heigth / 2, width / 2, heigth / 2);
-  stopButton.setBounds(4 + width / 2, 4 + heigth / 2, width / 2, heigth / 2);
-  fileName.setBounds(4 + width / 2, 2, width / 2, heigth / 2);
+  openButton.setBounds(2, heigth / 2 + 4, width * 0.75 - 2, heigth / 2);
+  playButton.setBounds(width * 0.75 + 2, 2, width * 0.125 - 2, heigth + 2);
+  stopButton.setBounds(width * 0.875 + 1, 2, width * 0.125 - 1, heigth + 2);
+  fileName.setBounds(width / 2 + 2, 2, width / 4, heigth / 2);
+  int size = (width / 2) / 3.25;
+  time.setBounds(2, 2, 0.5 * size, heigth / 2);
+  startTime.setBounds(2 + 0.5 * size, 2, size, heigth / 2);
+  seconds1.setBounds(2 + 1.5 * size, 2, 0.25 * size, heigth / 2);
+  to.setBounds(2 + 1.75 * size, 2, 0.25 * size, heigth / 2);
+  endTime.setBounds(2 + 2.0 * size, 2, size, heigth / 2);
+  seconds2.setBounds(2 + 3.0 * size, 2, 0.25 * size, heigth / 2);
 }

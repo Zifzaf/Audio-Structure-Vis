@@ -10,9 +10,14 @@ MainComponent::MainComponent() : notes(), energy()
     addAndMakeVisible(&openFile);
 
     addAndMakeVisible(&notes);
-
     notes.addFileHandler(&openFile);
     openFile.addChangeListener(&notes);
+    
+    
+    addAndMakeVisible(&energy);
+    energy.addFileHandler(&openFile);
+    openFile.addChangeListener(&energy);
+
 
     for (auto i = 0; i < numVis; i++)
     {
