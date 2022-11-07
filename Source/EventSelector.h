@@ -1,0 +1,48 @@
+/*
+  ==============================================================================
+
+    EventSelector.h
+    Created: 7 Nov 2022 8:17:50am
+    Author:  andreas
+
+  ==============================================================================
+*/
+#include <JuceHeader.h>
+#include <kfr/all.hpp>
+#include "Histogram.h"
+#include "FileHandler.h"
+#include "Loudness.h"
+
+#pragma once
+class EventSelector : public juce::Component, public juce::ChangeListener
+{
+public:
+  //==============================================================================
+  EventSelector();
+  ~EventSelector() override;
+  void changeListenerCallback(juce::ChangeBroadcaster *source);
+  void calcButtonClicked();
+  void addFileHandler(FileHandler *in);
+  inline size_t getBlockSize();
+  double getPhon();
+  bool getLoudnessCorrection();
+
+  //==============================================================================
+  void paint(juce::Graphics &g) override;
+  void paintOverChildren(juce::Graphics &g);
+  void resized() override;
+  static const size_t numberOfBands = 32;
+  std::array<float, numberOfBands - 1> bandCuts;
+
+private:
+  Histogram thirdOctaveSpectrogarm;
+  FileHandler *fileInput = nullptr;
+  juce::TextButton calcButton;
+  juce::ComboBox blockSize;
+  juce::TextEditor phon;
+  juce::ToggleButton corrected;
+  juce::AudioBuffer<float> &audioData;
+  juce::Atomic<bool> audioAvailable = false;
+  juce::Atomic<bool> calculating = false;
+  JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EventSelector)
+};

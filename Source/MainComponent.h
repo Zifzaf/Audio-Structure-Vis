@@ -5,6 +5,7 @@
 #include "FileHandler.h"
 #include "NoteShower.h"
 #include "EnergyBands.h"
+#include "EventSelector.h"
 #include <kfr/all.hpp>
 #include <chrono>
 
@@ -13,6 +14,7 @@ enum VisType
     None,
     VisNoteShower,
     VisEnergyBand,
+    VisEventSelector,
 };
 
 //==============================================================================
@@ -34,10 +36,11 @@ public:
     void visualize(const float *buffer, int startSample, int numSamples);
     NoteShower notes;
     EnergyBands energy;
+    EventSelector spectro;
     VisType activeVis = None;
-    static const size_t numVis = 2;
+    static const size_t numVis = 3;
     std::array<juce::TextButton, numVis> visSelect;
-    std::array<std::string, numVis> visNames = {"Note Shower", "Energy Bands"};
+    std::array<std::string, numVis> visNames = {"Note Shower", "Energy Bands", "Event Selector"};
     void loadVis(std::string visName);
 
     //==============================================================================

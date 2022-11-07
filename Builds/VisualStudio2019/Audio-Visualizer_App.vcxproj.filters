@@ -688,6 +688,9 @@
     <ClCompile Include="..\..\Source\MainComponent.cpp">
       <Filter>Audio-Visualizer\Source</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\Source\EventSelector.cpp">
+      <Filter>Audio-Visualizer\Source</Filter>
+    </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.cpp">
       <Filter>JUCE Modules\juce_audio_basics\buffers</Filter>
     </ClCompile>
@@ -3547,6 +3550,9 @@
       <Filter>Audio-Visualizer\Source</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Source\MainComponent.h">
+      <Filter>Audio-Visualizer\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\EventSelector.h">
       <Filter>Audio-Visualizer\Source</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h">

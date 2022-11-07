@@ -147,6 +147,7 @@ void NoteShower::calcButtonClicked()
     float *inDataChunck = new float[blockSize];
     float *noteLevel = new float[numberOfNotes];
     float *prevNoteLevel = new float[numberOfNotes];
+    auto complexBins = new kfr::complex<double>[numberOfNotes];
     juce::FloatVectorOperations::fill(prevNoteLevel, 0, numberOfNotes);
     int chunks = (endSample - blockSize - startSample) / (blockSize / 2) + 1;
     ;
@@ -237,6 +238,7 @@ void NoteShower::calcButtonClicked()
     delete ampSpectrumTwo;
     delete &dftOutData;
     delete &temp;
+    delete complexBins;
     calcButton.setEnabled(true);
     calculating.set(false);
   }

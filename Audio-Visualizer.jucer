@@ -240,6 +240,9 @@
       <FILE id="Ui4oeu" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="FtE4mk" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
+      <FILE id="uO5J9E" name="EventSelector.cpp" compile="1" resource="0"
+            file="Source/EventSelector.cpp"/>
+      <FILE id="tVFHOR" name="EventSelector.h" compile="0" resource="0" file="Source/EventSelector.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>

@@ -1,28 +1,35 @@
 /*
   ==============================================================================
 
-    EnergyBands.cpp
-    Created: 28 Oct 2022 11:17:58am
+    EventSelector.cpp
+    Created: 7 Nov 2022 8:17:50am
     Author:  andreas
 
   ==============================================================================
 */
 
-#include "EnergyBands.h"
+#include "EventSelector.h"
 
-EnergyBands::EnergyBands() : energyTable(numberOfBands), audioData(*new juce::AudioBuffer<float>(0, 0))
+EventSelector::EventSelector() : thirdOctaveSpectrogarm(numberOfBands), audioData(*new juce::AudioBuffer<float>(0, 0))
 {
+  double factor = std::pow(2.0, 1.0 / 3.0);
+  double factorInv = 1.0 / factor;
+  for (auto i = 16; i >= 0; i--)
+  {
+    bandCuts[i] = std::pow(factorInv, 17 - i) * 1000.0;
+  }
+  bandCuts[17] = 1000.0;
+  for (auto i = 18; i < numberOfBands - 1; i++)
+  {
+    bandCuts[i] = std::pow(factor, i - 17) * 1000.0;
+  }
 
   addAndMakeVisible(&blockSize);
-  blockSize.addItem("128", 7);
-  blockSize.addItem("256", 8);
-  blockSize.addItem("512", 9);
-  blockSize.addItem("1024", 10);
-  blockSize.addItem("2048", 11);
   blockSize.addItem("4096", 12);
   blockSize.addItem("8192", 13);
   blockSize.addItem("16384", 14);
-  blockSize.setSelectedId(12, juce::NotificationType::dontSendNotification);
+  blockSize.addItem("32768", 15);
+  blockSize.setSelectedId(13, juce::NotificationType::dontSendNotification);
 
   addAndMakeVisible(&calcButton);
   calcButton.setButtonText("Calculate");
@@ -30,8 +37,8 @@ EnergyBands::EnergyBands() : energyTable(numberOfBands), audioData(*new juce::Au
   { calcButtonClicked(); };
   calcButton.setColour(juce::TextButton::buttonColourId, juce::Colours::grey);
 
-  addAndMakeVisible(&energyTable);
-  energyTable.setFramesPerSecond(30);
+  addAndMakeVisible(&thirdOctaveSpectrogarm);
+  thirdOctaveSpectrogarm.setFramesPerSecond(30);
 
   addAndMakeVisible(&phon);
   phon.setText("80");
@@ -43,16 +50,16 @@ EnergyBands::EnergyBands() : energyTable(numberOfBands), audioData(*new juce::Au
   corrected.setButtonText("Loudness Correction");
   corrected.triggerClick();
 }
-EnergyBands::~EnergyBands()
+EventSelector::~EventSelector()
 {
 }
 
-inline size_t EnergyBands::getBlockSize()
+inline size_t EventSelector::getBlockSize()
 {
   return blockSize.getText().getIntValue();
 }
 
-void EnergyBands::calcButtonClicked()
+void EventSelector::calcButtonClicked()
 {
   if (audioAvailable.get() && calculating.compareAndSetBool(true, false))
   {
@@ -64,7 +71,6 @@ void EnergyBands::calcButtonClicked()
     auto fftBins = blockSize / 2 - 2;
     auto bandIndex = new int[fftBins];
     auto freqScale = new double[fftBins];
-    auto complexBins = new kfr::complex<double>[numberOfBands];
     auto freqStep = (fileInput->getSampleRate() / 2.0) / (blockSize / 2);
     int k = 0;
     bool loudnessCorrection = getLoudnessCorrection();
@@ -72,7 +78,7 @@ void EnergyBands::calcButtonClicked()
     // std::cout << loudnessCorrection << std::endl;
     for (auto i = 0; i < fftBins; i++)
     {
-      if (k < numberOfBands - 1 && (i + 1) * freqStep > criticalBandCuts[k])
+      if (k < numberOfBands - 1 && (i + 1) * freqStep > bandCuts[k])
       {
         k++;
       }
@@ -92,6 +98,7 @@ void EnergyBands::calcButtonClicked()
     const float *inData = audioData.getReadPointer(0);
     auto numBlocks = segmentLength / (blockSize / 2) + 1;
     float *inDataBlock = new float[blockSize];
+    auto complexBins = new kfr::complex<double>[numberOfBands];
     auto outputData = new float[numBlocks * numberOfBands];
     juce::FloatVectorOperations::fill(outputData, 0.0f, (size_t)numBlocks * numberOfBands);
     for (auto i = 0; i < segmentLength - blockSize; i = i + blockSize / 2)
@@ -112,10 +119,11 @@ void EnergyBands::calcButtonClicked()
         outputData[blockIndex * numberOfBands + j] = kfr::cabs(complexBins[j]);
       }
     }
-    energyTable.replaceData(outputData, numBlocks, false, true);
+
+    thirdOctaveSpectrogarm.replaceData(outputData, numBlocks, false, false);
     delete bandIndex;
-    delete complexBins;
     delete &dftOutData;
+    delete complexBins;
     delete &temp;
     delete inDataBlock;
     delete outputData;
@@ -124,7 +132,7 @@ void EnergyBands::calcButtonClicked()
   }
 }
 
-void EnergyBands::changeListenerCallback(juce::ChangeBroadcaster *source)
+void EventSelector::changeListenerCallback(juce::ChangeBroadcaster *source)
 {
   if (source == fileInput)
   {
@@ -139,7 +147,7 @@ void EnergyBands::changeListenerCallback(juce::ChangeBroadcaster *source)
   }
 }
 
-void EnergyBands::paintOverChildren(juce::Graphics &g)
+void EventSelector::paintOverChildren(juce::Graphics &g)
 {
   int width = getWidth() - 4;
   int height = getHeight();
@@ -155,7 +163,7 @@ void EnergyBands::paintOverChildren(juce::Graphics &g)
   }
   for (auto i = 0; i < numberOfBands; ++i)
   {
-    g.drawText(std::to_string((int)criticalBandCuts[i]) + " Hz", 22, h - 10, 100, 10, juce::Justification::bottom, true);
+    g.drawText(std::to_string((int)bandCuts[i]) + " Hz", 22, h - 10, 100, 10, juce::Justification::bottom, true);
     g.fillRect(2, h, width, 1);
     h = h - bandLabelHeight;
     if (rest > 0)
@@ -206,27 +214,27 @@ void EnergyBands::paintOverChildren(juce::Graphics &g)
   g.fillRect(pos - 1, 46, 2, height - 46);
 }
 
-void EnergyBands::paint(juce::Graphics &g)
+void EventSelector::paint(juce::Graphics &g)
 {
   g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 }
 
-void EnergyBands::addFileHandler(FileHandler *in)
+void EventSelector::addFileHandler(FileHandler *in)
 {
   fileInput = in;
 }
 
-double EnergyBands::getPhon()
+double EventSelector::getPhon()
 {
   return phon.getText().getDoubleValue();
 }
 
-bool EnergyBands::getLoudnessCorrection()
+bool EventSelector::getLoudnessCorrection()
 {
   return corrected.getToggleState();
 }
 
-void EnergyBands::resized()
+void EventSelector::resized()
 {
   int width = getWidth() - 4;
   int height = getHeight();
@@ -234,5 +242,5 @@ void EnergyBands::resized()
   phon.setBounds(width / 3, 2, width / 3, 20);
   corrected.setBounds(2 * width / 3, 2, width / 3, 20);
   calcButton.setBounds(2, 24, width, 20);
-  energyTable.setBounds(2, 46, width, height - 46);
+  thirdOctaveSpectrogarm.setBounds(2, 46, width, height - 46);
 }

@@ -18,6 +18,10 @@ MainComponent::MainComponent() : notes(), energy()
     energy.addFileHandler(&openFile);
     openFile.addChangeListener(&energy);
 
+    addAndMakeVisible(&spectro);
+    spectro.addFileHandler(&openFile);
+    openFile.addChangeListener(&spectro);
+
 
     for (auto i = 0; i < numVis; i++)
     {
@@ -82,6 +86,10 @@ void MainComponent::loadVis(std::string visName)
     {
         activeVis = VisEnergyBand;
     }
+    else if (visName == "Event Selector")
+    {
+        activeVis = VisEventSelector;
+    }
     else
     {
         activeVis = None;
@@ -139,6 +147,16 @@ void MainComponent::resized()
             visSelect[i].setBounds(0, 0, 0, 0);
         }
         energy.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
+        break;
+    }
+
+    case VisEventSelector:
+    {
+        for (auto i = 0; i < numVis; i++)
+        {
+            visSelect[i].setBounds(0, 0, 0, 0);
+        }
+        spectro.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
         break;
     }
     }
