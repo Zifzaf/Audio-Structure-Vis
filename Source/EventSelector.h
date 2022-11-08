@@ -26,6 +26,7 @@ public:
   inline size_t getBlockSize();
   double getPhon();
   bool getLoudnessCorrection();
+  
 
   //==============================================================================
   void paint(juce::Graphics &g) override;
@@ -44,5 +45,6 @@ private:
   juce::AudioBuffer<float> &audioData;
   juce::Atomic<bool> audioAvailable = false;
   juce::Atomic<bool> calculating = false;
+  
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EventSelector)
 };

@@ -136,6 +136,7 @@ void NoteShower::calcButtonClicked()
     auto ampSpectrum = new float[fftBins];
     auto ampSpectrumTwo = new float[fftBins];
     auto freqStep = (sampleRate / 2.0) / (blockSize / 2);
+    juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::hamming);
     for (auto i = 0; i < fftBins; i++)
     {
       freqList[i] = (i + 1) * freqStep;
@@ -155,6 +156,7 @@ void NoteShower::calcButtonClicked()
     for (auto i = startSample; i < endSample - blockSize; i = i + blockSize / 2)
     {
       juce::FloatVectorOperations::copy(inDataChunck, &inData[i], blockSize);
+      window.multiplyWithWindowingTable(inDataChunck, blockSize);
       dft.execute(dftOutData, kfr::make_univector(inDataChunck, blockSize), temp);
       for (auto j = 0; j < fftBins; j++)
       {

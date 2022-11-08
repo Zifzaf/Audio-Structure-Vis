@@ -14,6 +14,8 @@ Histogram ::Histogram(int dataLevels) : dataLevels(dataLevels), fixedLengthData(
 {
   dataEdit.enter();
   data = new float[dataLength * dataLevels];
+  juce::FloatVectorOperations::fill(data, 0.0, dataLength * dataLevels);
+  heightBinBorders = new int[dataLevels + 1];
   dataReady.set(true);
   dataEdit.exit();
 }
@@ -37,8 +39,27 @@ void Histogram::update()
   repaint();
 }
 
-juce::Colour Histogram::levelToColour(float level)
+inline bool Histogram::overlap(int startA, int endA, int startB, int endB)
 {
+  return (startA <= startB && endA >= startB) || (startB <= startA && endB >= startA);
+}
+
+void Histogram::mouseUp(const juce::MouseEvent &event)
+{
+  auto relEvent = event.getEventRelativeTo(this);
+  selction[0] = relEvent.getMouseDownX();
+  selction[2] = relEvent.getMouseDownY();
+  selction[1] = relEvent.x;
+  selction[3] = relEvent.y;
+  resized();
+}
+
+juce::Colour Histogram::levelToColour(float level, bool selection)
+{
+  if (selection)
+  {
+    return juce::Colour::fromHSV((1.0 - level) / 9.0 + 0.33, 0.9, level, 1.0);
+  }
   return juce::Colour::fromHSV((1.0 - level) / 9.0 + 0.66, 0.9, level, 1.0);
 }
 
@@ -159,68 +180,77 @@ void Histogram::resized()
 {
   if (dataReady.get())
   {
-    widthAvailable = getWidth();
-    heightAvailable = getHeight();
-    histogramImage = juce::Image(juce::Image::RGB, widthAvailable, heightAvailable, true);
-    delete heightDataMap;
-    heightDataMap = new int[heightAvailable];
-    int pixelPerLevel = heightAvailable / dataLevels;
-    int pixelLeftOver = heightAvailable % dataLevels;
-    int oldDataLength = dataLength;
-    if (!fixedLengthData)
+    bool realResize = false;
+    if (heightAvailable != getHeight())
     {
-      levelWidth = std::min(pixelPerLevel + 1, 20);
-      dataLength = widthAvailable / levelWidth + 1;
+      realResize = true;
+      heightAvailable = getHeight();
+      int pixelPerLevel = heightAvailable / dataLevels;
+      int pixelLeftOver = heightAvailable % dataLevels;
+      heightBinBorders[0] = 0;
+      for (auto i = 1; i < dataLevels - pixelLeftOver; i++)
+      {
+        heightBinBorders[i] = i * pixelPerLevel;
+      }
+      for (auto i = dataLevels - pixelLeftOver; i < dataLevels; i++)
+      {
+        heightBinBorders[i] = (dataLevels - pixelLeftOver) * pixelPerLevel + (i - (dataLevels - pixelLeftOver)) * (pixelPerLevel + 1);
+      }
+      heightBinBorders[dataLevels] = heightAvailable;
+    }
+    int pixelPerLevel = heightAvailable / dataLevels;
+    if (widthAvailable != getWidth())
+    {
+      realResize = true;
+      widthAvailable = getWidth();
+    }
+    delete widthBinBorders;
+    if (fixedLengthData)
+    {
+      levelWidth = widthAvailable / dataLength + 1;
+      widthBins = dataLength;
     }
     else
     {
-      levelWidth = widthAvailable / dataLength + 1;
+      levelWidth = pixelPerLevel;
+      widthBins = widthAvailable / levelWidth + 1;
     }
-    int level = 0;
-    int pixelsLeft = pixelPerLevel;
-    for (auto i = heightAvailable - 1; i >= 0; i--)
+    // delete widthBinBorders;
+    widthBinBorders = new int[widthBins + 1];
+    for (auto i = 0; i < widthBins + 1; i++)
     {
-      if (pixelsLeft == 0)
+      widthBinBorders[i] = i * levelWidth;
+    }
+    if (realResize)
+    {
+      histogramImage = juce::Image(juce::Image::RGB, widthAvailable, heightAvailable, true);
+    }
+    int spaceAvailable = std::min(dataLength, widthBins);
+    juce::Graphics g(histogramImage);
+    for (auto i = 0; i < spaceAvailable; ++i)
+    {
+      int lowerBorderW = widthBinBorders[i];
+      int upperBorderW = widthBinBorders[i + 1];
+      for (auto j = 0; j < dataLevels; j++)
       {
-        if (pixelLeftOver > 0)
+        int lowerBorderH = heightBinBorders[j];
+        int upperBorderH = heightBinBorders[j + 1];
+        float level = data[i * dataLevels + (dataLevels - (j + 1))];
+        if (overlap(selction[0], selction[1], lowerBorderW, upperBorderW) && overlap(selction[2], selction[3], lowerBorderH, upperBorderH))
         {
-          heightDataMap[i] = level;
-          level++;
-          pixelLeftOver--;
-          pixelsLeft = pixelPerLevel;
+          g.setColour(levelToColour(level, true));
         }
         else
         {
-          level++;
-          pixelsLeft = pixelPerLevel;
-          heightDataMap[i] = level;
-          pixelsLeft--;
+          g.setColour(levelToColour(level));
         }
-      }
-      else
-      {
-        heightDataMap[i] = level;
-        pixelsLeft--;
+        g.fillRect(lowerBorderW, lowerBorderH, upperBorderW - lowerBorderW, upperBorderH - lowerBorderH);
       }
     }
-    if (oldDataLength < dataLength)
+    if (widthBins > dataLength)
     {
-      float *newData = new float[dataLevels * dataLength];
-      std::memcpy(newData, data, sizeof(float) * oldDataLength * dataLevels);
-      float *temp = data;
-      data = newData;
-      delete temp;
-    }
-    for (auto i = 0; i < dataLength; ++i)
-    {
-      for (auto j = 0; j < levelWidth; ++j)
-      {
-        for (auto k = 0; k < heightAvailable; ++k)
-        {
-          int yCord = (i * levelWidth + j);
-          histogramImage.setPixelAt(yCord, k, levelToColour(data[i * dataLevels + heightDataMap[k]]));
-        }
-      }
+      g.setColour(juce::Colours::black);
+      g.drawRect(widthBinBorders[dataLength], 0, widthAvailable - widthBinBorders[dataLength], heightAvailable);
     }
   }
 }

@@ -6,22 +6,7 @@ MainComponent::MainComponent() : notes(), energy()
 {
     std::cout << kfr::library_version() << std::endl;
 
-
     addAndMakeVisible(&openFile);
-
-    addAndMakeVisible(&notes);
-    notes.addFileHandler(&openFile);
-    openFile.addChangeListener(&notes);
-    
-    
-    addAndMakeVisible(&energy);
-    energy.addFileHandler(&openFile);
-    openFile.addChangeListener(&energy);
-
-    addAndMakeVisible(&spectro);
-    spectro.addFileHandler(&openFile);
-    openFile.addChangeListener(&spectro);
-
 
     for (auto i = 0; i < numVis; i++)
     {
@@ -61,19 +46,7 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
 
 void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill)
 {
-    if (openFile.isAudioPlaying())
-    {
-        openFile.getNextAudioBlock(bufferToFill);
-
-        if (bufferToFill.buffer->getNumChannels() > 0)
-        {
-            // visualize(bufferToFill.buffer->getArrayOfReadPointers()[0], bufferToFill.startSample, bufferToFill.numSamples);
-        }
-    }
-    else
-    {
-        bufferToFill.clearActiveBufferRegion();
-    }
+    openFile.getNextAudioBlock(bufferToFill);
 }
 
 void MainComponent::loadVis(std::string visName)
@@ -81,14 +54,23 @@ void MainComponent::loadVis(std::string visName)
     if (visName == "Note Shower")
     {
         activeVis = VisNoteShower;
+        addAndMakeVisible(&notes);
+        notes.addFileHandler(&openFile);
+        openFile.addChangeListener(&notes);
     }
     else if (visName == "Energy Bands")
     {
         activeVis = VisEnergyBand;
+        addAndMakeVisible(&energy);
+        energy.addFileHandler(&openFile);
+        openFile.addChangeListener(&energy);
     }
     else if (visName == "Event Selector")
     {
         activeVis = VisEventSelector;
+        addAndMakeVisible(&spectro);
+        spectro.addFileHandler(&openFile);
+        openFile.addChangeListener(&spectro);
     }
     else
     {

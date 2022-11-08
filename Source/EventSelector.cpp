@@ -101,9 +101,11 @@ void EventSelector::calcButtonClicked()
     auto complexBins = new kfr::complex<double>[numberOfBands];
     auto outputData = new float[numBlocks * numberOfBands];
     juce::FloatVectorOperations::fill(outputData, 0.0f, (size_t)numBlocks * numberOfBands);
+    juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::kaiser, true, 3.0);
     for (auto i = 0; i < segmentLength - blockSize; i = i + blockSize / 2)
     {
       juce::FloatVectorOperations::copy(inDataBlock, &inData[i], blockSize);
+      window.multiplyWithWindowingTable(inDataBlock, blockSize);
       for (auto j = 0; j < numberOfBands; j++)
       {
         complexBins[j] = 0.0;

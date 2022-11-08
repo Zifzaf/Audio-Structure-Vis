@@ -11,8 +11,18 @@
 #pragma once
 
 #include <JuceHeader.h>
-
-class FileHandler : public juce::PositionableAudioSource, public juce::Component, public juce::ChangeBroadcaster, public juce::TextEditor::Listener
+enum TransportState
+{
+  Stopped,
+  Starting,
+  Playing,
+  Stopping
+};
+class FileHandler : public juce::PositionableAudioSource,
+                    public juce::Component,
+                    public juce::ChangeBroadcaster,
+                    public juce::TextEditor::Listener,
+                    public juce::ChangeListener
 {
 public:
   FileHandler();
@@ -39,8 +49,11 @@ public:
   void textEditorTextChanged(juce::TextEditor &source);
   juce::int64 getSegmentLength();
   double getCurrentTime();
+  void changeState(TransportState newState);
+  void changeListenerCallback(juce::ChangeBroadcaster *source);
 
 private:
+  TransportState state;
   juce::Label time;
   juce::Label seconds1;
   juce::Label seconds2;

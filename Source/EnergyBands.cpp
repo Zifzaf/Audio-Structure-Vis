@@ -69,7 +69,7 @@ void EnergyBands::calcButtonClicked()
     int k = 0;
     bool loudnessCorrection = getLoudnessCorrection();
     double phon = getPhon();
-    // std::cout << loudnessCorrection << std::endl;
+    juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::blackmanHarris);
     for (auto i = 0; i < fftBins; i++)
     {
       if (k < numberOfBands - 1 && (i + 1) * freqStep > criticalBandCuts[k])
@@ -97,6 +97,7 @@ void EnergyBands::calcButtonClicked()
     for (auto i = 0; i < segmentLength - blockSize; i = i + blockSize / 2)
     {
       juce::FloatVectorOperations::copy(inDataBlock, &inData[i], blockSize);
+      window.multiplyWithWindowingTable(inDataBlock, blockSize);
       for (auto j = 0; j < numberOfBands; j++)
       {
         complexBins[j] = 0.0;

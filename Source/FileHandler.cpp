@@ -59,11 +59,53 @@ FileHandler::FileHandler()
   endTime.setMultiLine(false);
   endTime.addListener(this);
 
+  transportSource.addChangeListener(this);
   formatManager.registerBasicFormats();
 }
 
 FileHandler::~FileHandler()
 {
+}
+
+void FileHandler::changeListenerCallback(juce::ChangeBroadcaster *source)
+{
+  if (source == &transportSource)
+  {
+    if (transportSource.isPlaying())
+      changeState(Playing);
+    else
+      changeState(Stopped);
+  }
+}
+
+void FileHandler::changeState(TransportState newState)
+{
+  if (state != newState)
+  {
+    state = newState;
+
+    switch (state)
+    {
+    case Stopped: // [3]
+      stopButton.setEnabled(false);
+      playButton.setEnabled(true);
+      transportSource.setPosition(getStartTime());
+      break;
+
+    case Starting: // [4]
+      playButton.setEnabled(false);
+      transportSource.start();
+      break;
+
+    case Playing: // [5]
+      stopButton.setEnabled(true);
+      break;
+
+    case Stopping: // [6]
+      transportSource.stop();
+      break;
+    }
+  }
 }
 
 void FileHandler::textEditorTextChanged(juce::TextEditor &source)
@@ -119,17 +161,12 @@ void FileHandler::openButtonClicked()
 
 void FileHandler::stopButtonClicked()
 {
-  stopButton.setEnabled(false);
-  transportSource.stop();
-  playButton.setEnabled(true);
-  transportSource.setPosition(getStartTime());
+  changeState(Stopping);
 }
 
 void FileHandler::playButtonClicked()
 {
-  playButton.setEnabled(false);
-  transportSource.start();
-  stopButton.setEnabled(true);
+  changeState(Starting);
 }
 
 void FileHandler::prepareToPlay(int samplesPerBlockExpected, double sampleRate)
