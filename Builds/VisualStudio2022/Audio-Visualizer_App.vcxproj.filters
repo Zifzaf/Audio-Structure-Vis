@@ -2,62 +2,62 @@
 
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Audio-Visualizer\Source\kfr\base">
-      <UniqueIdentifier>{F0427928-79B7-C9D9-82EB-EEA48C93AA1E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\cometa">
-      <UniqueIdentifier>{9EAFF751-2709-BBDE-C2B9-978FB27FF2A1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\dft\data">
-      <UniqueIdentifier>{6F0890DE-318A-1370-7793-9F3AEB6E8FA3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\dft\impl">
-      <UniqueIdentifier>{8631F2AF-359F-6229-ED60-971398D615BF}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\dft">
-      <UniqueIdentifier>{9032AC8D-2F6E-E96F-A7D0-DF5F2040E242}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\dsp\impl">
-      <UniqueIdentifier>{56A82482-0C57-08A9-955D-DB5202CF8CE8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\dsp">
-      <UniqueIdentifier>{A95D38E9-48B8-1A84-2FE0-9ECC71E81AE3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\graphics">
-      <UniqueIdentifier>{ABCF2F88-2F7D-A95D-20DC-D76BB033418D}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\io\dr">
-      <UniqueIdentifier>{3FDD1F03-0EA1-82A4-F300-4CB9AE048B0E}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\io\impl">
-      <UniqueIdentifier>{6B8DF764-90D2-5B7D-CB20-E0601CD8BB99}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\io">
-      <UniqueIdentifier>{32E1DC43-9C01-C23F-FF8C-3ACA2F2DF2EF}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\math\impl">
-      <UniqueIdentifier>{409CDCB7-1FA9-F4E4-97AF-9447ECA7BB21}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\math">
-      <UniqueIdentifier>{1A7EF376-29AA-22B6-FDA1-B18753927048}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\runtime">
-      <UniqueIdentifier>{904A74BA-D4A1-99C7-2CD0-F64A232AC9BE}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\simd\impl">
-      <UniqueIdentifier>{C10159F5-4B08-287F-509D-AFDD5987EA91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\simd">
-      <UniqueIdentifier>{88E5C7C6-D79B-0B30-03B9-5273B8C7897F}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr\testo">
-      <UniqueIdentifier>{70EAD5C7-E3C4-4144-56E0-719AB7CED350}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio-Visualizer\Source\kfr">
-      <UniqueIdentifier>{52785E2E-0DB1-6A62-B2EE-6A15EB3B1591}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Audio-Visualizer\Source">
       <UniqueIdentifier>{18A47AD8-0475-18CD-A854-6C6BE1092672}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\base">
+      <UniqueIdentifier>{D979CF05-9B48-8B5A-CA97-D81B9E47F8C3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\cometa">
+      <UniqueIdentifier>{15901323-001C-B952-7AD9-BA615A0F79F5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\dft\data">
+      <UniqueIdentifier>{7AB14D77-327C-DEFA-A735-4EB339C9E32A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\dft\impl">
+      <UniqueIdentifier>{09761BDB-34E7-A4C6-1241-F13E339BBDED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\dft">
+      <UniqueIdentifier>{B6210B4A-2917-4C5C-82F5-D4E7A57EEC92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\dsp\impl">
+      <UniqueIdentifier>{EAF01870-4F2D-23CA-698C-A68F583762F7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\dsp">
+      <UniqueIdentifier>{1AE1E4A9-CFC7-735E-9D52-A458E1A1AFE5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\graphics">
+      <UniqueIdentifier>{7110B916-03CF-1008-4699-136658F1A3FD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\io\dr">
+      <UniqueIdentifier>{E137E250-A466-2030-400B-C87E611273A5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\io\impl">
+      <UniqueIdentifier>{3C409B47-2B83-2CEF-CCF8-5A3109338146}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\io">
+      <UniqueIdentifier>{7A7EFC3B-5941-CC31-C96D-048613989CED}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\math\impl">
+      <UniqueIdentifier>{655E0A37-91BF-A40F-3753-F59B7F7C1AA7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\math">
+      <UniqueIdentifier>{A77D3B05-DF28-CCC3-46D1-435C33ED4AF6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\runtime">
+      <UniqueIdentifier>{ADD2AA55-B180-92B7-3A3D-C5BE4C77CF66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\simd\impl">
+      <UniqueIdentifier>{C32355FE-2399-766A-AD3E-D815EED0DFE4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\simd">
+      <UniqueIdentifier>{26F40363-623E-20BD-3DC4-35008425883A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr\testo">
+      <UniqueIdentifier>{489F4305-AD23-9AEA-7667-68779CD5BE17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio-Visualizer\kfr">
+      <UniqueIdentifier>{F9CCB11A-FB5C-4540-3A7C-085FC5B599CB}</UniqueIdentifier>
     </Filter>
     <Filter Include="Audio-Visualizer">
       <UniqueIdentifier>{1982EBFC-78BD-634E-086B-010C30198B31}</UniqueIdentifier>
@@ -646,27 +646,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\kfr\include\kfr\dft\impl\convolution-impl.cpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\kfr\include\kfr\dft\impl\dft-impl-f32.cpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\kfr\include\kfr\dft\impl\dft-impl-f64.cpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\kfr\include\kfr\dft\impl\fft-impl-f32.cpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\kfr\include\kfr\dft\impl\fft-impl-f64.cpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\kfr\include\kfr\dsp\impl\dsp-impl.cpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp\impl</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\kfr\include\kfr\io\impl\audiofile-impl.cpp">
-      <Filter>Audio-Visualizer\Source\kfr\io\impl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Loudness.cpp">
       <Filter>Audio-Visualizer\Source</Filter>
     </ClCompile>
@@ -696,6 +675,27 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\WaveformDisplay.cpp">
       <Filter>Audio-Visualizer\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kfr\include\kfr\dft\impl\convolution-impl.cpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kfr\include\kfr\dft\impl\dft-impl-f32.cpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kfr\include\kfr\dft\impl\dft-impl-f64.cpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kfr\include\kfr\dft\impl\fft-impl-f32.cpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kfr\include\kfr\dft\impl\fft-impl-f64.cpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kfr\include\kfr\dsp\impl\dsp-impl.cpp">
+      <Filter>Audio-Visualizer\kfr\dsp\impl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\kfr\include\kfr\io\impl\audiofile-impl.cpp">
+      <Filter>Audio-Visualizer\kfr\io\impl</Filter>
     </ClCompile>
     <ClCompile Include="C:\JUCE\modules\juce_audio_basics\buffers\juce_AudioChannelSet.cpp">
       <Filter>JUCE Modules\juce_audio_basics\buffers</Filter>
@@ -3096,450 +3096,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\basic_expressions.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\conversion.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\expression.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\filter.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\fraction.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\function_expressions.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\generators.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\memory.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\pointer.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\random.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\reduce.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\small_buffer.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\sort.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base\univector.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\array.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\cstring.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\ctti.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\function.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\memory.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\named_arg.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\numeric.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\range.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\result.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\string.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa\tuple.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\cometa</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\data\bitrev.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\data\sincos.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\data</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\impl\bitrev.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\impl\dft-fft.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\impl\dft-impl.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\impl\dft-templates.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\impl\fft-impl.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\impl\fft-templates.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\impl\ft.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\cache.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\convolution.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\fft.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft\reference_dft.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dft</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\biquad.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\biquad_design.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\dcremove.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\delay.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\ebu.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\fir.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\fir_design.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\fracdelay.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\goertzel.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\iir_design.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\mixdown.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\oscillators.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\sample_rate_conversion.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\speaker.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\special.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\state_holder.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\units.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\waveshaper.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\weighting.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp\window.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\dsp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\graphics\color.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\graphics\geometry.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\graphics\scaled.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\io\dr\dr_flac.h">
-      <Filter>Audio-Visualizer\Source\kfr\io\dr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\io\dr\dr_mp3.h">
-      <Filter>Audio-Visualizer\Source\kfr\io\dr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\io\dr\dr_wav.h">
-      <Filter>Audio-Visualizer\Source\kfr\io\dr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\io\audiofile.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\io\file.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\io\python_plot.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\io\tostring.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\io</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\abs.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\asin_acos.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\atan.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\clamp.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\gamma.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\hyperbolic.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\log_exp.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\logical.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\min_max.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\modzerobessel.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\round.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\saturation.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\select.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\sin_cos.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\sqrt.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\impl\tan.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\abs.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\asin_acos.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\atan.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\clamp.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\compiletime.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\complex_math.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\gamma.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\hyperbolic.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\interpolation.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\log_exp.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\logical.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\min_max.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\modzerobessel.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\round.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\saturation.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\select.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\sin_cos.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\sqrt.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math\tan.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\math</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\runtime\cpuid.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\runtime\cpuid_auto.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\runtime</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\backend.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\backend_clang.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\backend_generic.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\basicoperators_clang.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\basicoperators_generic.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\function.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\intrinsics.h">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\operators.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\read_write.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\simd.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\impl\specialconstants.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\comparison.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\complex.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\constants.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\digitreverse.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\horizontal.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\mask.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\operators.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\platform.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\read_write.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\shuffle.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\types.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd\vec.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\simd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\testo\assert.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\testo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\testo\comparison.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\testo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\testo\console_colors.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\testo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\testo\double_double.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\testo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\testo\testo.hpp">
-      <Filter>Audio-Visualizer\Source\kfr\testo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\all.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\base.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\capi.h">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cident.h">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\cometa.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\config.h">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dft.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\dsp.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\graphics.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\io.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\kfr.h">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\math.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\runtime.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\simd.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\kfr\include\kfr\version.hpp">
-      <Filter>Audio-Visualizer\Source\kfr</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Source\Loudness.h">
       <Filter>Audio-Visualizer\Source</Filter>
     </ClInclude>
@@ -3566,6 +3122,450 @@
     </ClInclude>
     <ClInclude Include="..\..\Source\WaveformDisplay.h">
       <Filter>Audio-Visualizer\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\basic_expressions.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\conversion.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\expression.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\filter.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\fraction.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\function_expressions.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\generators.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\memory.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\pointer.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\random.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\reduce.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\small_buffer.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\sort.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base\univector.hpp">
+      <Filter>Audio-Visualizer\kfr\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\array.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\cstring.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\ctti.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\function.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\memory.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\named_arg.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\numeric.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\range.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\result.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\string.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa\tuple.hpp">
+      <Filter>Audio-Visualizer\kfr\cometa</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\data\bitrev.hpp">
+      <Filter>Audio-Visualizer\kfr\dft\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\data\sincos.hpp">
+      <Filter>Audio-Visualizer\kfr\dft\data</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\impl\bitrev.hpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\impl\dft-fft.hpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\impl\dft-impl.hpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\impl\dft-templates.hpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\impl\fft-impl.hpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\impl\fft-templates.hpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\impl\ft.hpp">
+      <Filter>Audio-Visualizer\kfr\dft\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\cache.hpp">
+      <Filter>Audio-Visualizer\kfr\dft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\convolution.hpp">
+      <Filter>Audio-Visualizer\kfr\dft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\fft.hpp">
+      <Filter>Audio-Visualizer\kfr\dft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft\reference_dft.hpp">
+      <Filter>Audio-Visualizer\kfr\dft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\biquad.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\biquad_design.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\dcremove.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\delay.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\ebu.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\fir.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\fir_design.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\fracdelay.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\goertzel.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\iir_design.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\mixdown.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\oscillators.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\sample_rate_conversion.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\speaker.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\special.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\state_holder.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\units.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\waveshaper.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\weighting.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp\window.hpp">
+      <Filter>Audio-Visualizer\kfr\dsp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\graphics\color.hpp">
+      <Filter>Audio-Visualizer\kfr\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\graphics\geometry.hpp">
+      <Filter>Audio-Visualizer\kfr\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\graphics\scaled.hpp">
+      <Filter>Audio-Visualizer\kfr\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\io\dr\dr_flac.h">
+      <Filter>Audio-Visualizer\kfr\io\dr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\io\dr\dr_mp3.h">
+      <Filter>Audio-Visualizer\kfr\io\dr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\io\dr\dr_wav.h">
+      <Filter>Audio-Visualizer\kfr\io\dr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\io\audiofile.hpp">
+      <Filter>Audio-Visualizer\kfr\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\io\file.hpp">
+      <Filter>Audio-Visualizer\kfr\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\io\python_plot.hpp">
+      <Filter>Audio-Visualizer\kfr\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\io\tostring.hpp">
+      <Filter>Audio-Visualizer\kfr\io</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\abs.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\asin_acos.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\atan.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\clamp.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\gamma.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\hyperbolic.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\log_exp.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\logical.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\min_max.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\modzerobessel.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\round.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\saturation.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\select.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\sin_cos.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\sqrt.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\impl\tan.hpp">
+      <Filter>Audio-Visualizer\kfr\math\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\abs.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\asin_acos.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\atan.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\clamp.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\compiletime.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\complex_math.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\gamma.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\hyperbolic.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\interpolation.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\log_exp.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\logical.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\min_max.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\modzerobessel.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\round.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\saturation.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\select.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\sin_cos.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\sqrt.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math\tan.hpp">
+      <Filter>Audio-Visualizer\kfr\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\runtime\cpuid.hpp">
+      <Filter>Audio-Visualizer\kfr\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\runtime\cpuid_auto.hpp">
+      <Filter>Audio-Visualizer\kfr\runtime</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\backend.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\backend_clang.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\backend_generic.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\basicoperators_clang.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\basicoperators_generic.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\function.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\intrinsics.h">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\operators.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\read_write.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\simd.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\impl\specialconstants.hpp">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\comparison.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\complex.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\constants.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\digitreverse.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\horizontal.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\mask.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\operators.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\platform.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\read_write.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\shuffle.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\types.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd\vec.hpp">
+      <Filter>Audio-Visualizer\kfr\simd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\testo\assert.hpp">
+      <Filter>Audio-Visualizer\kfr\testo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\testo\comparison.hpp">
+      <Filter>Audio-Visualizer\kfr\testo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\testo\console_colors.hpp">
+      <Filter>Audio-Visualizer\kfr\testo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\testo\double_double.hpp">
+      <Filter>Audio-Visualizer\kfr\testo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\testo\testo.hpp">
+      <Filter>Audio-Visualizer\kfr\testo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\all.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\base.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\capi.h">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cident.h">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\cometa.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\config.h">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dft.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\dsp.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\graphics.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\io.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\kfr.h">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\math.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\runtime.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\simd.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\kfr\include\kfr\version.hpp">
+      <Filter>Audio-Visualizer\kfr</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\audio_play_head\juce_AudioPlayHead.h">
       <Filter>JUCE Modules\juce_audio_basics\audio_play_head</Filter>
@@ -3738,7 +3738,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_audio_basics\utilities\juce_SmoothedValue.h">
       <Filter>JUCE Modules\juce_audio_basics\utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_audio_basics\juce_audio_basics.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_audio_basics\juce_audio_basics.h">
       <Filter>JUCE Modules\juce_audio_basics</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\audio_io\juce_AudioDeviceManager.h">
@@ -3978,7 +3978,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_audio_devices\sources\juce_AudioTransportSource.h">
       <Filter>JUCE Modules\juce_audio_devices\sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_audio_devices\juce_audio_devices.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_audio_devices\juce_audio_devices.h">
       <Filter>JUCE Modules\juce_audio_devices</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_audio_formats\codecs\flac\libFLAC\include\private\all.h">
@@ -4278,7 +4278,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_audio_formats\sampler\juce_Sampler.h">
       <Filter>JUCE Modules\juce_audio_formats\sampler</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_audio_formats\juce_audio_formats.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_audio_formats\juce_audio_formats.h">
       <Filter>JUCE Modules\juce_audio_formats</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_audio_processors\format\juce_AudioPluginFormat.h">
@@ -4836,7 +4836,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_audio_processors\utilities\juce_VSTCallbackHandler.h">
       <Filter>JUCE Modules\juce_audio_processors\utilities</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_audio_processors\juce_audio_processors.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_audio_processors\juce_audio_processors.h">
       <Filter>JUCE Modules\juce_audio_processors</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_audio_utils\audio_cd\juce_AudioCDBurner.h">
@@ -4881,7 +4881,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_audio_utils\players\juce_SoundPlayer.h">
       <Filter>JUCE Modules\juce_audio_utils\players</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_audio_utils\juce_audio_utils.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_audio_utils\juce_audio_utils.h">
       <Filter>JUCE Modules\juce_audio_utils</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_core\containers\juce_AbstractFifo.h">
@@ -5322,7 +5322,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_core\zip\juce_ZipFile.h">
       <Filter>JUCE Modules\juce_core\zip</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_core\juce_core.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_core\juce_core.h">
       <Filter>JUCE Modules\juce_core</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_data_structures\app_properties\juce_ApplicationProperties.h">
@@ -5352,7 +5352,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_data_structures\values\juce_ValueTreeSynchroniser.h">
       <Filter>JUCE Modules\juce_data_structures\values</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_data_structures\juce_data_structures.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_data_structures\juce_data_structures.h">
       <Filter>JUCE Modules\juce_data_structures</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_dsp\containers\juce_AudioBlock.h">
@@ -5493,7 +5493,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_dsp\widgets\juce_WaveShaper.h">
       <Filter>JUCE Modules\juce_dsp\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_dsp\juce_dsp.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_dsp\juce_dsp.h">
       <Filter>JUCE Modules\juce_dsp</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_events\broadcasters\juce_ActionBroadcaster.h">
@@ -5574,7 +5574,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_events\timers\juce_Timer.h">
       <Filter>JUCE Modules\juce_events\timers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_events\juce_events.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_events\juce_events.h">
       <Filter>JUCE Modules\juce_events</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_graphics\colour\juce_Colour.h">
@@ -5754,7 +5754,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_graphics\placement\juce_RectanglePlacement.h">
       <Filter>JUCE Modules\juce_graphics\placement</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_graphics\juce_graphics.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_graphics\juce_graphics.h">
       <Filter>JUCE Modules\juce_graphics</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_gui_basics\accessibility\enums\juce_AccessibilityActions.h">
@@ -6282,7 +6282,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_gui_basics\windows\juce_TopLevelWindow.h">
       <Filter>JUCE Modules\juce_gui_basics\windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_gui_basics\juce_gui_basics.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_gui_basics\juce_gui_basics.h">
       <Filter>JUCE Modules\juce_gui_basics</Filter>
     </ClInclude>
     <ClInclude Include="C:\JUCE\modules\juce_gui_extra\code_editor\juce_CodeDocument.h">
@@ -6366,7 +6366,7 @@
     <ClInclude Include="C:\JUCE\modules\juce_gui_extra\native\juce_mac_NSViewFrameWatcher.h">
       <Filter>JUCE Modules\juce_gui_extra\native</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\JUCE\modules\juce_gui_extra\juce_gui_extra.h">
+    <ClInclude Include="..\..\JUCE\modules\juce_gui_extra\juce_gui_extra.h">
       <Filter>JUCE Modules\juce_gui_extra</Filter>
     </ClInclude>
     <ClInclude Include="..\..\JuceLibraryCode\BinaryData.h">
@@ -6377,11 +6377,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\kfr\include\kfr\io\dr\README.txt">
-      <Filter>Audio-Visualizer\Source\kfr\io\dr</Filter>
+    <None Include="..\..\kfr\include\kfr\io\dr\README.txt">
+      <Filter>Audio-Visualizer\kfr\io\dr</Filter>
     </None>
-    <None Include="..\..\..\..\kfr\include\kfr\simd\impl\specializations.i">
-      <Filter>Audio-Visualizer\Source\kfr\simd\impl</Filter>
+    <None Include="..\..\kfr\include\kfr\simd\impl\specializations.i">
+      <Filter>Audio-Visualizer\kfr\simd\impl</Filter>
     </None>
     <None Include="C:\JUCE\modules\juce_audio_devices\native\oboe\CMakeLists.txt">
       <Filter>JUCE Modules\juce_audio_devices\native\oboe</Filter>

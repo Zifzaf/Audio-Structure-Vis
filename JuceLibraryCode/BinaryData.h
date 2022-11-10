@@ -12,7 +12,7 @@ namespace BinaryData
     const int            README_txtSize = 223;
 
     extern const char*   specializations_i;
-    const int            specializations_iSize = 4141;
+    const int            specializations_iSize = 4153;
 
     // Number of elements in the namedResourceList and originalFileNames arrays.
     const int namedResourceListSize = 2;

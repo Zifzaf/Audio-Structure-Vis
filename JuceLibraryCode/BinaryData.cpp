@@ -27,7 +27,7 @@ const char* README_txt = (const char*) temp_binary_data_0;
 //================== specializations.i ==================
 static const unsigned char temp_binary_data_1[] =
 "/**\n"
-" * Copyright (C) 2016 D Levin (http://www.kfrlib.com)\n"
+" * Copyright (C) 2016-2022 Fractalium Ltd (http://www.kfrlib.com)\n"
 " * This file is part of KFR\n"
 " *\n"
 " * KFR is free software: you can redistribute it and/or modify\n"
@@ -158,7 +158,7 @@ const char* getNamedResource (const char* resourceNameUTF8, int& numBytes)
     switch (hash)
     {
         case 0x2aaab85f:  numBytes = 223; return README_txt;
-        case 0x2fdc5a32:  numBytes = 4141; return specializations_i;
+        case 0x2fdc5a32:  numBytes = 4153; return specializations_i;
         default: break;
     }
 

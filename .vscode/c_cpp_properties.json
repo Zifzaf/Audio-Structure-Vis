@@ -4,9 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/home/share/JUCE/",
-                "/home/share/JUCE/modules/",
-                "/home/share/kfr/include/"
+                "${workspaceFolder}/JUCE/",
+                "${workspaceFolder}/JUCE/modules/",
+                "${workspaceFolder}/kfr/include/"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
