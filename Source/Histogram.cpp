@@ -1,0 +1,256 @@
+/*
+  ==============================================================================
+
+    Histogram.cpp
+    Created: 20 Oct 2022 9:08:59am
+    Author:  andreas
+
+  ==============================================================================
+*/
+
+#include "Histogram.h"
+
+Histogram ::Histogram(int dataLevels) : dataLevels(dataLevels), fixedLengthData(false)
+{
+  dataEdit.enter();
+  data = new float[dataLength * dataLevels];
+  juce::FloatVectorOperations::fill(data, 0.0, dataLength * dataLevels);
+  heightBinBorders = new int[dataLevels + 1];
+  dataReady.set(true);
+  dataEdit.exit();
+}
+
+Histogram ::Histogram(float *inData, int dataLevels, int dataLength) : dataLevels(dataLevels), dataLength(dataLength), fixedLengthData(true)
+{
+  dataEdit.enter();
+  data = new float[dataLength * dataLevels];
+std:
+  memcpy(data, inData, sizeof(float) * dataLength * dataLevels);
+  dataReady.set(true);
+  dataEdit.exit();
+}
+
+Histogram ::~Histogram()
+{
+}
+
+void Histogram::update()
+{
+  repaint();
+}
+
+inline bool Histogram::overlap(int startA, int endA, int startB, int endB)
+{
+  return (startA <= startB && endA >= startB) || (startB <= startA && endB >= startA);
+}
+
+void Histogram::mouseUp(const juce::MouseEvent &event)
+{
+  auto relEvent = event.getEventRelativeTo(this);
+  selction[0] = relEvent.getMouseDownX();
+  selction[2] = relEvent.getMouseDownY();
+  selction[1] = relEvent.x;
+  selction[3] = relEvent.y;
+  resized();
+}
+
+juce::Colour Histogram::levelToColour(float level, bool selection)
+{
+  if (selection)
+  {
+    return juce::Colour::fromHSV((1.0 - level) / 9.0 + 0.33, 0.9, level, 1.0);
+  }
+  return juce::Colour::fromHSV((1.0 - level) / 9.0 + 0.66, 0.9, level, 1.0);
+}
+
+void Histogram::addDataLine(const float dataLineIN[], bool nomalized)
+{
+  float dataLine[dataLevels];
+  juce::FloatVectorOperations::copy(dataLine, dataLineIN, dataLevels);
+  if (!nomalized)
+  {
+    auto minMax = juce::FloatVectorOperations::findMinAndMax(dataLine, dataLevels);
+    juce::FloatVectorOperations::add(dataLine, -minMax.getStart(), dataLevels);
+    juce::FloatVectorOperations::multiply(dataLine, 1.0 / (minMax.getEnd() - minMax.getStart()), dataLevels);
+  }
+  histogramImage.moveImageSection(0, 0, levelWidth, 0, widthAvailable - levelWidth, heightAvailable);
+  for (auto j = widthAvailable - levelWidth; j < widthAvailable; ++j)
+  {
+    for (auto k = 0; k < heightAvailable; ++k)
+    {
+      histogramImage.setPixelAt(j, k, levelToColour(dataLine[heightDataMap[k]]));
+    }
+  }
+  dataEdit.enter();
+  dataReady.set(false);
+  for (auto i = dataLength - 1; i > 0; --i)
+  {
+    std::memcpy(&data[i * dataLevels], &data[(i - 1) * dataLevels], sizeof(float) * dataLevels);
+  }
+  std::memcpy(data, dataLine, sizeof(float) * dataLevels);
+  dataReady.set(true);
+  dataEdit.exit();
+}
+
+void Histogram ::paint(juce::Graphics &g)
+{
+  // (Our component is opaque, so we must completely fill the background with a solid colour)
+  g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+  g.drawImage(histogramImage, 0, 0, widthAvailable, heightAvailable, 0, 0, widthAvailable, heightAvailable);
+}
+
+void Histogram::processDataArray(float *data, size_t len, double clipSTDBottom, double clipSTDTop)
+{
+  if (clipSTDBottom == 0.0 && clipSTDTop == 0.0)
+  {
+    auto minMax = juce::FloatVectorOperations::findMinAndMax(data, len);
+    juce::FloatVectorOperations::add(data, -minMax.getStart(), len);
+    juce::FloatVectorOperations::multiply(data, 1.0 / (minMax.getEnd() - minMax.getStart()), len);
+    return;
+  }
+  double part = 1.0 / (double)len;
+  double mean = 0.0;
+  for (auto i = 0; i < len; i++)
+  {
+    mean += part * data[i];
+  }
+  juce::FloatVectorOperations::add(data, -mean, len);
+  double var = 0.0;
+  for (auto i = 0; i < len; i++)
+  {
+    var += part * data[i] * data[i];
+  }
+  double sd = std::sqrt(var);
+  juce::FloatVectorOperations::multiply(data, 1.0 / sd, len);
+  if (clipSTDBottom == 0.0)
+  {
+    juce::FloatVectorOperations::clip(data, data, std::numeric_limits<float>::min(), clipSTDTop, len);
+    auto minMax = juce::FloatVectorOperations::findMinAndMax(data, len);
+    juce::FloatVectorOperations::add(data, -minMax.getStart(), len);
+    juce::FloatVectorOperations::multiply(data, 1.0 / (minMax.getEnd() - minMax.getStart()), len);
+    return;
+  }
+  if (clipSTDTop == 0.0)
+  {
+    juce::FloatVectorOperations::clip(data, data, -clipSTDBottom, std::numeric_limits<float>::max(), len);
+    auto minMax = juce::FloatVectorOperations::findMinAndMax(data, len);
+    juce::FloatVectorOperations::add(data, -minMax.getStart(), len);
+    juce::FloatVectorOperations::multiply(data, 1.0 / (minMax.getEnd() - minMax.getStart()), len);
+    return;
+  }
+  juce::FloatVectorOperations::clip(data, data, -clipSTDBottom, clipSTDTop, len);
+  auto minMax = juce::FloatVectorOperations::findMinAndMax(data, len);
+  juce::FloatVectorOperations::add(data, -minMax.getStart(), len);
+  juce::FloatVectorOperations::multiply(data, 1.0 / (minMax.getEnd() - minMax.getStart()), len);
+  return;
+}
+
+void Histogram::replaceData(const float *inData, size_t inDataLength, bool normalized, bool logScale)
+{
+  auto newData = new float[inDataLength * dataLevels];
+std:
+  memcpy(newData, inData, sizeof(float) * inDataLength * dataLevels);
+  if (!normalized)
+  {
+    processDataArray(newData, dataLevels * inDataLength, 3.0, 3.0);
+  }
+  if (logScale)
+  {
+    juce::FloatVectorOperations::add(newData, 1.0, dataLevels * inDataLength);
+    for (auto i = 0; i < dataLevels * inDataLength; i++)
+    {
+      newData[i] = std::log10(newData[i]);
+    }
+    auto minMax = juce::FloatVectorOperations::findMinAndMax(newData, dataLevels * inDataLength);
+    juce::FloatVectorOperations::multiply(newData, 1.0 / minMax.getEnd(), dataLevels * inDataLength);
+  }
+  float *temp = data;
+  dataEdit.enter();
+  dataReady.set(false);
+  data = newData;
+  fixedLengthData = true;
+  dataLength = inDataLength;
+  dataReady.set(true);
+  dataEdit.exit();
+  delete temp;
+  resized();
+}
+
+void Histogram::resized()
+{
+  if (dataReady.get())
+  {
+    bool realResize = false;
+    if (heightAvailable != getHeight())
+    {
+      realResize = true;
+      heightAvailable = getHeight();
+      int pixelPerLevel = heightAvailable / dataLevels;
+      int pixelLeftOver = heightAvailable % dataLevels;
+      heightBinBorders[0] = 0;
+      for (auto i = 1; i < dataLevels - pixelLeftOver; i++)
+      {
+        heightBinBorders[i] = i * pixelPerLevel;
+      }
+      for (auto i = dataLevels - pixelLeftOver; i < dataLevels; i++)
+      {
+        heightBinBorders[i] = (dataLevels - pixelLeftOver) * pixelPerLevel + (i - (dataLevels - pixelLeftOver)) * (pixelPerLevel + 1);
+      }
+      heightBinBorders[dataLevels] = heightAvailable;
+    }
+    int pixelPerLevel = heightAvailable / dataLevels;
+    if (widthAvailable != getWidth())
+    {
+      realResize = true;
+      widthAvailable = getWidth();
+    }
+    delete widthBinBorders;
+    if (fixedLengthData)
+    {
+      levelWidth = widthAvailable / dataLength + 1;
+      widthBins = dataLength;
+    }
+    else
+    {
+      levelWidth = pixelPerLevel;
+      widthBins = widthAvailable / levelWidth + 1;
+    }
+    // delete widthBinBorders;
+    widthBinBorders = new int[widthBins + 1];
+    for (auto i = 0; i < widthBins + 1; i++)
+    {
+      widthBinBorders[i] = i * levelWidth;
+    }
+    if (realResize)
+    {
+      histogramImage = juce::Image(juce::Image::RGB, widthAvailable, heightAvailable, true);
+    }
+    int spaceAvailable = std::min(dataLength, widthBins);
+    juce::Graphics g(histogramImage);
+    for (auto i = 0; i < spaceAvailable; ++i)
+    {
+      int lowerBorderW = widthBinBorders[i];
+      int upperBorderW = widthBinBorders[i + 1];
+      for (auto j = 0; j < dataLevels; j++)
+      {
+        int lowerBorderH = heightBinBorders[j];
+        int upperBorderH = heightBinBorders[j + 1];
+        float level = data[i * dataLevels + (dataLevels - (j + 1))];
+        if (overlap(selction[0], selction[1], lowerBorderW, upperBorderW) && overlap(selction[2], selction[3], lowerBorderH, upperBorderH))
+        {
+          g.setColour(levelToColour(level, true));
+        }
+        else
+        {
+          g.setColour(levelToColour(level));
+        }
+        g.fillRect(lowerBorderW, lowerBorderH, upperBorderW - lowerBorderW, upperBorderH - lowerBorderH);
+      }
+    }
+    if (widthBins > dataLength)
+    {
+      g.setColour(juce::Colours::black);
+      g.drawRect(widthBinBorders[dataLength], 0, widthAvailable - widthBinBorders[dataLength], heightAvailable);
+    }
+  }
+}
