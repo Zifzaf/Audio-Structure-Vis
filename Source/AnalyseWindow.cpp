@@ -45,7 +45,7 @@ void AnalyseWindow::paint(juce::Graphics &g)
   int marks = width / 200;
   double interval = time / marks;
   double orderFull = std::floor(std::log10(interval));
-  double order = orderFull - ((int)orderFull % 3);
+  double order = (orderFull + 300.0) - ((int)(orderFull + 300.0) % 3) - 300.0;
   std::string unit = "";
   if (order >= 0.0)
   {
@@ -66,11 +66,11 @@ void AnalyseWindow::paint(juce::Graphics &g)
   }
   interval = std::floor(interval / std::pow(10.0, orderFull));
   interval *= std::pow(10.0, orderFull - order);
-  int step = sampleRate * interval;
-  for (int i = 2; i < width - 2; i = i + step)
+  double step = sampleRate * (interval * std::pow(10.0, order)) / (dataLength / (width - 4) + 1);
+  for (double i = 2; i < width - 2; i = i + step)
   {
     g.fillRect(i, bottomWave, 1, 4);
-    g.drawText(std::to_string(i * (int)interval) + unit, i - 50, bottomWave + 4, 100, 10, juce::Justification::top, true);
+    g.drawText(std::to_string((int)(((i - 2) / step) * interval)) + unit, i - 50, bottomWave + 4, 100, 10, juce::Justification::centredTop, true);
   }
 }
 
