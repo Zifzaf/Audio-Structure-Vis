@@ -12,6 +12,7 @@
 #include "Histogram.h"
 #include "FileHandler.h"
 #include "Loudness.h"
+#include "AnalyseWindow.h"
 
 #pragma once
 class EventSelector : public juce::Component, public juce::ChangeListener
@@ -22,11 +23,11 @@ public:
   ~EventSelector() override;
   void changeListenerCallback(juce::ChangeBroadcaster *source);
   void calcButtonClicked();
+  void analyseButtonClicked();
   void addFileHandler(FileHandler *in);
   inline size_t getBlockSize();
   double getPhon();
   bool getLoudnessCorrection();
-  
 
   //==============================================================================
   void paint(juce::Graphics &g) override;
@@ -39,12 +40,14 @@ private:
   Histogram thirdOctaveSpectrogarm;
   FileHandler *fileInput = nullptr;
   juce::TextButton calcButton;
+  juce::TextButton analyseButton;
   juce::ComboBox blockSize;
   juce::TextEditor phon;
   juce::ToggleButton corrected;
   juce::AudioBuffer<float> &audioData;
   juce::Atomic<bool> audioAvailable = false;
   juce::Atomic<bool> calculating = false;
-  
+  AnalyseWindow *popUp;
+
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EventSelector)
 };

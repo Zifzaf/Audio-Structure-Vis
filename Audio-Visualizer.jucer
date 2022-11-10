@@ -243,6 +243,13 @@
       <FILE id="uO5J9E" name="EventSelector.cpp" compile="1" resource="0"
             file="Source/EventSelector.cpp"/>
       <FILE id="tVFHOR" name="EventSelector.h" compile="0" resource="0" file="Source/EventSelector.h"/>
+      <FILE id="WscSPR" name="AnalyseWindow.cpp" compile="1" resource="0"
+            file="Source/AnalyseWindow.cpp"/>
+      <FILE id="XZfv2w" name="AnalyseWindow.h" compile="0" resource="0" file="Source/AnalyseWindow.h"/>
+      <FILE id="TqyZPb" name="WaveformDisplay.cpp" compile="1" resource="0"
+            file="Source/WaveformDisplay.cpp"/>
+      <FILE id="ZZ0Bg4" name="WaveformDisplay.h" compile="0" resource="0"
+            file="Source/WaveformDisplay.h"/>
     </GROUP>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1"/>

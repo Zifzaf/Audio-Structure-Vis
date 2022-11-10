@@ -37,6 +37,12 @@ EventSelector::EventSelector() : thirdOctaveSpectrogarm(numberOfBands), audioDat
   { calcButtonClicked(); };
   calcButton.setColour(juce::TextButton::buttonColourId, juce::Colours::grey);
 
+  addAndMakeVisible(&analyseButton);
+  analyseButton.setButtonText("Analyse");
+  analyseButton.onClick = [this]
+  { analyseButtonClicked(); };
+  analyseButton.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+
   addAndMakeVisible(&thirdOctaveSpectrogarm);
   thirdOctaveSpectrogarm.setFramesPerSecond(30);
 
@@ -57,6 +63,18 @@ EventSelector::~EventSelector()
 inline size_t EventSelector::getBlockSize()
 {
   return blockSize.getText().getIntValue();
+}
+
+void EventSelector::analyseButtonClicked()
+{
+  delete popUp;
+  const float *inData = audioData.getReadPointer(0);
+  auto segmentLength = fileInput->getSegmentLength();
+  popUp = new AnalyseWindow(inData, segmentLength, fileInput->getSampleRate());
+  popUp->setSize(1200, 800);
+  popUp->setUsingNativeTitleBar(true);
+  popUp->addToDesktop();
+  popUp->setVisible(true);
 }
 
 void EventSelector::calcButtonClicked()
@@ -174,41 +192,6 @@ void EventSelector::paintOverChildren(juce::Graphics &g)
       h--;
     }
   }
-  /*  // 100 Hz line
-  if (rest >= 2)
-  {
-    g.drawText("100 Hz", 22, height - (2 * bandLabelHeight + 2 + 2 + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (2 * bandLabelHeight + 2 + 2), width, 1);
-  }
-  else
-  {
-    g.drawText("100 Hz", 22, height - (2 * bandLabelHeight + rest + 2 + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (2 * bandLabelHeight + rest + 2), width, 1);
-  }
-  // 1000 Hz line
-  int shift = (1000.0 - 920.0) / (1080.0 - 920.0) * bandLabelHeight;
-  if (rest >= 9)
-  {
-    g.drawText("1000 Hz", 22, height - (9 * bandLabelHeight + 9 + 2 + shift + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (9 * bandLabelHeight + 9 + 2 + shift), width, 1);
-  }
-  else
-  {
-    g.drawText("1000 Hz", 22, height - (9 * bandLabelHeight + rest + 2 + shift + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (9 * bandLabelHeight + rest + 2 + shift), width, 1);
-  }
-  // 10000 Hz line
-  shift = (10000.0 - 9500.0) / (12000.0 - 9500.0) * bandLabelHeight;
-  if (rest >= 23)
-  {
-    g.drawText("10000 Hz", 22, height - (23 * bandLabelHeight + 23 + 2 + shift + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (23 * bandLabelHeight + 23 + 2 + shift), width, 1);
-  }
-  else
-  {
-    g.drawText("10000 Hz", 22, height - (23 * bandLabelHeight + rest + 2 + shift + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (23 * bandLabelHeight + rest + 2 + shift), width, 1);
-  }*/
   float fraction = (fileInput->getCurrentTime() - fileInput->getStartTime()) / (fileInput->getEndTime() - fileInput->getStartTime());
   fraction = std::max(0.0f, fraction);
   g.setColour(juce::Colours::white);
@@ -240,9 +223,10 @@ void EventSelector::resized()
 {
   int width = getWidth() - 4;
   int height = getHeight();
-  blockSize.setBounds(0, 2, width / 3, 20);
-  phon.setBounds(width / 3, 2, width / 3, 20);
-  corrected.setBounds(2 * width / 3, 2, width / 3, 20);
+  blockSize.setBounds(0, 2, width / 4, 20);
+  phon.setBounds(width / 4, 2, width / 4, 20);
+  corrected.setBounds(2 * width / 4, 2, width / 4, 20);
+  analyseButton.setBounds(3 * width / 4, 2, width / 4, 20);
   calcButton.setBounds(2, 24, width, 20);
   thirdOctaveSpectrogarm.setBounds(2, 46, width, height - 46);
 }

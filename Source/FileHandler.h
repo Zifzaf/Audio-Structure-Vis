@@ -44,8 +44,8 @@ public:
   double getSampleRate();
   juce::AudioBuffer<float> *getAudio(double from, double to);
   bool isAudioPlaying();
-  inline float getStartTime();
-  inline float getEndTime();
+  float getStartTime();
+  float getEndTime();
   void textEditorTextChanged(juce::TextEditor &source);
   juce::int64 getSegmentLength();
   double getCurrentTime();
