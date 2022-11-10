@@ -44,7 +44,6 @@ EventSelector::EventSelector() : thirdOctaveSpectrogarm(numberOfBands), audioDat
   analyseButton.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
 
   addAndMakeVisible(&thirdOctaveSpectrogarm);
-  thirdOctaveSpectrogarm.setFramesPerSecond(30);
 
   addAndMakeVisible(&phon);
   phon.setText("80");

@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-class Histogram : public juce::AnimatedAppComponent
+class Histogram : public juce::Component
 {
 public:
   //==============================================================================
@@ -23,16 +23,20 @@ public:
   //==============================================================================
   void paint(juce::Graphics &g) override;
   void resized() override;
-  void update() override;
   void addDataLine(const float dataLine[], bool normalized);
   void replaceData(const float *inData, size_t inDataLength, bool normalized, bool logScale);
   juce::Colour levelToColour(float level, bool selection = false);
   void processDataArray(float *data, size_t len, double clipSTDBottom, double clipSTDTop);
   void mouseUp(const juce::MouseEvent &event);
   inline bool overlap(int startA, int endA, int startB, int endB);
+  void recalculateImage();
+  void updateImage();
+  void redrawImage();
 
 private:
   juce::Image histogramImage;
+  juce::Viewport viewer;
+  juce::Component container;
   int dataLevels = 1;
   int *heightDataMap;
   int widthAvailable = 0;
@@ -40,11 +44,9 @@ private:
   int levelWidth = 50;
   int dataLength = 1;
   float *data;
-  bool fixedLengthData;
   int *heightBinBorders = NULL;
   int *widthBinBorders = NULL;
   int widthBins = 1;
-  juce::SpinLock dataEdit;
   juce::Atomic<bool> dataReady = false;
   std::array<int, 4> selction = {0, 0, 0, 0};
 

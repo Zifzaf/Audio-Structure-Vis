@@ -31,7 +31,6 @@ EnergyBands::EnergyBands() : energyTable(numberOfBands), audioData(*new juce::Au
   calcButton.setColour(juce::TextButton::buttonColourId, juce::Colours::grey);
 
   addAndMakeVisible(&energyTable);
-  energyTable.setFramesPerSecond(30);
 
   addAndMakeVisible(&phon);
   phon.setText("80");

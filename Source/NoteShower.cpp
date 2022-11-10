@@ -69,7 +69,6 @@ NoteShower::NoteShower() : noteTable(numberOfNotes), audioData(*new juce::AudioB
   calcButton.setColour(juce::TextButton::buttonColourId, juce::Colours::grey);
 
   addAndMakeVisible(&noteTable);
-  noteTable.setFramesPerSecond(30);
 }
 
 inline std::string NoteShower::floatToString(float a)
