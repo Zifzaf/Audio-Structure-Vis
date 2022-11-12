@@ -17,18 +17,25 @@ Histogram ::Histogram(int dataLevels) : dataLevels(dataLevels)
   heightBinBorders = new int[dataLevels + 1];
   dataReady.set(true);
   addAndMakeVisible(viewer);
-}
 
-Histogram ::Histogram(float *inData, int dataLevels, int dataLength) : dataLevels(dataLevels), dataLength(dataLength)
-{
-  data = new float[dataLength * dataLevels];
-std:
-  memcpy(data, inData, sizeof(float) * dataLength * dataLevels);
-  dataReady.set(true);
+  addAndMakeVisible(&zoomIn);
+  zoomIn.setButtonText("+");
+  zoomIn.onClick = [this]
+  { zoomInClicked(); };
+  zoomIn.setColour(juce::TextButton::buttonColourId, juce::Colours::grey);
+
+  addAndMakeVisible(&zoomOut);
+  zoomOut.setButtonText("-");
+  zoomOut.onClick = [this]
+  { zoomOutClicked(); };
+  zoomOut.setColour(juce::TextButton::buttonColourId, juce::Colours::grey);
+
+  heightBorderValues = new float[dataLevels + 1];
 }
 
 Histogram ::~Histogram()
 {
+  delete heightBorderValues;
 }
 
 inline bool Histogram::overlap(int startA, int endA, int startB, int endB)
@@ -48,13 +55,59 @@ void Histogram::mouseUp(const juce::MouseEvent &event)
   updateImage();
 }
 
+void Histogram::setZoom(double newZoom)
+{
+  zoom = newZoom;
+  recalculateImage();
+  updateImage();
+}
+
+double Histogram::getZoom()
+{
+  return zoom;
+}
+
+void Histogram::zoomInClicked()
+{
+  zoom = zoom + 0.1;
+  recalculateImage();
+  updateImage();
+}
+
+void Histogram::zoomOutClicked()
+{
+  zoom = std::max(zoom - 0.1, 0.1);
+  recalculateImage();
+  updateImage();
+}
+
+void Histogram::setVerticalLines(bool in)
+{
+  verticalLines = in;
+}
+
+void Histogram::setHorizontalLines(bool in)
+{
+  horizontalLines = in;
+}
+
+void Histogram::setVerticalLables(bool in)
+{
+  verticalLables = in;
+}
+
+void Histogram::setHorizontalLables(bool in)
+{
+  horizontalLables = in;
+}
+
 void Histogram::getSelection(float *selectionOut, bool borderValuesSet)
 {
   int indexStartX = 0;
   int indexStartY = 0;
   int indexEndX = 0;
   int indexEndY = 0;
-  for( auto i = 0; i < dataLevels; i++)
+  for (auto i = 0; i < dataLevels; i++)
   {
     if (heightBinBorders[i] <= selction[2] && selction[2] < heightBinBorders[i + 1])
     {
@@ -65,7 +118,7 @@ void Histogram::getSelection(float *selectionOut, bool borderValuesSet)
       indexEndY = i + 1;
     }
   }
-  for( auto i = 0; i < widthBins; i++)
+  for (auto i = 0; i < widthBins; i++)
   {
     if (widthBinBorders[i] <= selction[0] && selction[0] < widthBinBorders[i + 1])
     {
@@ -139,6 +192,18 @@ void Histogram ::paint(juce::Graphics &g)
   g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 }
 
+void Histogram ::paintOverChildren(juce::Graphics &g)
+{
+  if (horizontalLables && heightBorderValues != NULL)
+  {
+    g.setColour(juce::Colours::grey);
+    for (auto i = 1; i < dataLevels; i++)
+    {
+      g.drawText(std::to_string((int)heightBorderValues[i]), 12, heightBinBorders[i] - 10, 100, 10, juce::Justification::bottom, false);
+    }
+  }
+}
+
 void Histogram::processDataArray(float *data, size_t len, double clipSTDBottom, double clipSTDTop)
 {
   if (clipSTDBottom == 0.0 && clipSTDTop == 0.0)
@@ -208,8 +273,13 @@ std:
   dataReady.set(false);
   data = newData;
   dataLength = inDataLength;
-  this->widthBorderValues = widthBorderValues;
-  this->heightBorderValues = heightBorderValues;
+  delete this->widthBorderValues;
+  this->widthBorderValues = new float[dataLength + 1];
+  juce::FloatVectorOperations::copy(this->widthBorderValues, widthBorderValues, dataLength + 1);
+  for (auto i = 0; i < dataLevels + 1; i++)
+  {
+    this->heightBorderValues[i] = heightBorderValues[dataLevels - i];
+  }
   dataReady.set(true);
   delete temp;
   recalculateImage();
@@ -220,8 +290,8 @@ void Histogram::recalculateImage()
 {
   if (dataReady.get())
   {
-    int pixelPerLevel = heightAvailable / dataLevels;
-    int pixelLeftOver = heightAvailable % dataLevels;
+    int pixelPerLevel = (heightAvailable - 40) / dataLevels;
+    int pixelLeftOver = (heightAvailable - 40) % dataLevels;
     heightBinBorders[0] = 0;
     for (auto i = 1; i < dataLevels - pixelLeftOver; i++)
     {
@@ -231,8 +301,8 @@ void Histogram::recalculateImage()
     {
       heightBinBorders[i] = (dataLevels - pixelLeftOver) * pixelPerLevel + (i - (dataLevels - pixelLeftOver)) * (pixelPerLevel + 1);
     }
-    heightBinBorders[dataLevels] = heightAvailable;
-    levelWidth = pixelPerLevel;
+    heightBinBorders[dataLevels] = (heightAvailable - 40);
+    levelWidth = zoom * pixelPerLevel;
     widthBins = std::max(widthAvailable / levelWidth + 1, dataLength);
     delete widthBinBorders;
     widthBinBorders = new int[widthBins + 1];
@@ -249,6 +319,8 @@ void Histogram::redrawImage()
 {
   int spaceAvailable = std::min(dataLength, widthBins);
   juce::Graphics g(histogramImage);
+  g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+  g.fillRect(widthBinBorders[0], heightAvailable - 40, widthBinBorders[widthBins] - widthBinBorders[0], 40);
   for (auto i = 0; i < spaceAvailable; ++i)
   {
     int lowerBorderW = widthBinBorders[i];
@@ -273,6 +345,62 @@ void Histogram::redrawImage()
   {
     g.setColour(juce::Colours::black);
     g.drawRect(widthBinBorders[dataLength], 0, widthBins * levelWidth - widthBinBorders[dataLength], heightAvailable);
+  }
+  if (horizontalLines)
+  {
+    g.setColour(juce::Colours::grey);
+    for (auto i = 1; i < dataLevels; i++)
+    {
+      g.fillRect(widthBinBorders[0], heightBinBorders[i], widthBinBorders[dataLength] - widthBinBorders[0], 1);
+    }
+  }
+  if ((verticalLables || verticalLines) && widthBorderValues != NULL)
+  {
+    float range = widthBorderValues[dataLength] - widthBorderValues[0];
+    double step = 0.000000001;
+    float maxMarkers = (widthBinBorders[dataLength] - widthBinBorders[0]) / 80;
+    while (range / step > maxMarkers)
+    {
+      step *= 10;
+    }
+    std::string unit = "";
+    int stepInUnit = 0;
+    if (step < 0.000001)
+    {
+      unit = "ns";
+      stepInUnit = step * 1000000000;
+    }
+    else if (step < 0.001)
+    {
+      unit = "us";
+      stepInUnit = step * 1000000;
+    }
+    else if (step < 1.0)
+    {
+      unit = "ms";
+      stepInUnit = step * 1000;
+    }
+    else
+    {
+      unit = "s";
+      stepInUnit = step;
+    }
+    float numMarkers = range / step;
+    float pixelBetweenMarkers = (widthBinBorders[dataLength] - widthBinBorders[0]) / numMarkers;
+    for (float i = widthBinBorders[0]; i < widthBinBorders[dataLength]; i = i + pixelBetweenMarkers)
+    {
+      if (verticalLines)
+      {
+        g.setColour(juce::Colours::whitesmoke);
+        g.fillRect((int)i, 0, 1, heightAvailable - 35);
+      }
+      if (verticalLables)
+      {
+        int k = (i - (float)widthBinBorders[0]) / pixelBetweenMarkers;
+        g.setColour(juce::Colours::white);
+        g.drawText(std::to_string(stepInUnit * k) + " " + unit, (int)i - 40, heightAvailable - 35, 80, 35, juce::Justification::centredTop, false);
+      }
+    }
   }
 }
 
@@ -302,5 +430,7 @@ void Histogram::resized()
   viewer.setBounds(0, 0, widthAvailable, heightAvailable);
   viewer.setScrollBarsShown(false, true, false, true);
   viewer.setScrollOnDragMode(juce::Viewport::ScrollOnDragMode::never);
+  zoomIn.setBounds(widthAvailable - 44, 2, 20, 20);
+  zoomOut.setBounds(widthAvailable - 22, 2, 20, 20);
   updateImage();
 }

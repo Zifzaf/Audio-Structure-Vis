@@ -17,7 +17,6 @@ class Histogram : public juce::Component
 public:
   //==============================================================================
   Histogram(int dataLevels);
-  Histogram(float *data, int dataLevels, int dataWidth);
   ~Histogram() override;
 
   //==============================================================================
@@ -33,11 +32,22 @@ public:
   void updateImage();
   void redrawImage();
   void getSelection(float *selectionOut, bool borderValuesSet);
+  void setZoom(double newZoom);
+  double getZoom();
+  void zoomInClicked();
+  void zoomOutClicked();
+  void setVerticalLines(bool in);
+  void setHorizontalLines(bool in);
+  void setVerticalLables(bool in);
+  void setHorizontalLables(bool in);
+  void paintOverChildren(juce::Graphics &g);
 
 private:
   juce::Image histogramImage;
   juce::Viewport viewer;
   juce::Component container;
+  juce::TextButton zoomIn;
+  juce::TextButton zoomOut;
   int dataLevels = 1;
   int *heightDataMap;
   int widthAvailable = 0;
@@ -52,6 +62,11 @@ private:
   int widthBins = 1;
   juce::Atomic<bool> dataReady = false;
   std::array<int, 4> selction = {0, 0, 0, 0};
+  double zoom = 1.0;
+  bool verticalLines = true;
+  bool horizontalLines = true;
+  bool verticalLables = true;
+  bool horizontalLables = true;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Histogram)
 };

@@ -52,6 +52,18 @@ EventSelector::EventSelector() : thirdOctaveSpectrogarm(numberOfBands), audioDat
   phon.setInputRestrictions(2, "0123456789");
   phon.setMultiLine(false);
 
+  addAndMakeVisible(&zoomIn);
+  zoomIn.setButtonText("+");
+  zoomIn.onClick = [this]
+  { zoomInClicked(); };
+  zoomIn.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+
+  addAndMakeVisible(&zoomOut);
+  zoomOut.setButtonText("-");
+  zoomOut.onClick = [this]
+  { zoomOutClicked(); };
+  zoomOut.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+
   addAndMakeVisible(&corrected);
   corrected.setState(juce::Button::buttonNormal);
   corrected.setButtonText("Loudness Correction");
@@ -100,6 +112,18 @@ EventSelector::EventSelector(FileHandler *in) : thirdOctaveSpectrogarm(numberOfB
   phon.setInputRestrictions(2, "0123456789");
   phon.setMultiLine(false);
 
+  addAndMakeVisible(&zoomIn);
+  zoomIn.setButtonText("+");
+  zoomIn.onClick = [this]
+  { zoomInClicked(); };
+  zoomIn.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+
+  addAndMakeVisible(&zoomOut);
+  zoomOut.setButtonText("-");
+  zoomOut.onClick = [this]
+  { zoomOutClicked(); };
+  zoomOut.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+
   addAndMakeVisible(&corrected);
   corrected.setState(juce::Button::buttonNormal);
   corrected.setButtonText("Loudness Correction");
@@ -108,6 +132,18 @@ EventSelector::EventSelector(FileHandler *in) : thirdOctaveSpectrogarm(numberOfB
 
 EventSelector::~EventSelector()
 {
+}
+
+void EventSelector::zoomInClicked()
+{
+  double z = thirdOctaveSpectrogarm.getZoom();
+  thirdOctaveSpectrogarm.setZoom(z + 0.2);
+}
+
+void EventSelector::zoomOutClicked()
+{
+  double z = thirdOctaveSpectrogarm.getZoom();
+  thirdOctaveSpectrogarm.setZoom(std::max(z - 0.2, 0.2));
 }
 
 inline size_t EventSelector::getBlockSize()
@@ -145,7 +181,6 @@ void EventSelector::calcButtonClicked()
     calcButton.setEnabled(false);
     fileInput->getAudioBlock(&audioData);
     size_t blockSize = getBlockSize();
-    auto segmentLength = fileInput->getSegmentLength();
     auto fftBins = blockSize / 2 - 2;
     auto bandIndex = new int[fftBins];
     auto freqScale = new double[fftBins];
@@ -169,11 +204,16 @@ void EventSelector::calcButtonClicked()
         freqScale[i] = 1.0;
       }
     }
+    auto segmentLength = fileInput->getSegmentLength();
+    if (segmentLength % blockSize != 0)
+    {
+      segmentLength -= segmentLength % blockSize;
+    }
     kfr::univector<kfr::complex<float>> &dftOutData = *new kfr::univector<kfr::complex<float>>(blockSize);
     kfr::dft_plan_real<float> dft(blockSize);
     kfr::univector<kfr::u8> &temp = *new kfr::univector<kfr::u8>(dft.temp_size);
     const float *inData = audioData.getReadPointer(0);
-    auto numBlocks = segmentLength / (blockSize / 2) + 1;
+    auto numBlocks = 2 * (segmentLength / blockSize) - 1;
     float *inDataBlock = new float[blockSize];
     auto complexBins = new kfr::complex<double>[numberOfBands];
     auto outputData = new float[numBlocks * numberOfBands];
@@ -181,7 +221,7 @@ void EventSelector::calcButtonClicked()
     timeBorders = new float[numBlocks + 1];
     juce::FloatVectorOperations::fill(outputData, 0.0f, (size_t)numBlocks * numberOfBands);
     juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::kaiser, true, 3.0);
-    for (auto i = 0; i < segmentLength - blockSize; i = i + blockSize / 2)
+    for (auto i = 0; i < segmentLength - blockSize + 1; i = i + blockSize / 2)
     {
       juce::FloatVectorOperations::copy(inDataBlock, &inData[i], blockSize);
       window.multiplyWithWindowingTable(inDataBlock, blockSize);
@@ -231,6 +271,7 @@ void EventSelector::changeListenerCallback(juce::ChangeBroadcaster *source)
 
 void EventSelector::paintOverChildren(juce::Graphics &g)
 {
+  /*
   int width = getWidth() - 4;
   int height = getHeight();
   g.setColour(juce::Colours::grey);
@@ -258,7 +299,7 @@ void EventSelector::paintOverChildren(juce::Graphics &g)
   fraction = std::max(0.0f, fraction);
   g.setColour(juce::Colours::white);
   int pos = fraction * (width);
-  g.fillRect(pos - 1, 46, 2, height - 46);
+  g.fillRect(pos - 1, 46, 2, height - 46);*/
 }
 
 void EventSelector::paint(juce::Graphics &g)
@@ -286,7 +327,9 @@ void EventSelector::resized()
   int width = getWidth() - 4;
   int height = getHeight();
   blockSize.setBounds(0, 2, width / 4, 20);
-  phon.setBounds(width / 4, 2, width / 4, 20);
+  phon.setBounds(width / 4, 2, width / 8, 20);
+  zoomIn.setBounds(3 * width / 8, 2, width / 16, 20);
+  zoomOut.setBounds(7 * width / 16, 2, width / 16, 20);
   corrected.setBounds(2 * width / 4, 2, width / 4, 20);
   analyseButton.setBounds(3 * width / 4, 2, width / 4, 20);
   calcButton.setBounds(2, 24, width, 20);

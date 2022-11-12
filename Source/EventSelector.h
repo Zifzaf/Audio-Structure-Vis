@@ -29,6 +29,8 @@ public:
   inline size_t getBlockSize();
   double getPhon();
   bool getLoudnessCorrection();
+  void zoomInClicked();
+  void zoomOutClicked();
 
   //==============================================================================
   void paint(juce::Graphics &g) override;
@@ -36,13 +38,15 @@ public:
   void resized() override;
   static const size_t numberOfBands = 32;
   std::array<float, numberOfBands + 1> bandCuts;
-  float * timeBorders = NULL;
+  float *timeBorders = NULL;
 
 private:
   Histogram thirdOctaveSpectrogarm;
   FileHandler *fileInput = nullptr;
   juce::TextButton calcButton;
   juce::TextButton analyseButton;
+  juce::TextButton zoomIn;
+  juce::TextButton zoomOut;
   juce::ComboBox blockSize;
   juce::TextEditor phon;
   juce::ToggleButton corrected;
