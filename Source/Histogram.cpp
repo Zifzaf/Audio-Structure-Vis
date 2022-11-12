@@ -48,6 +48,50 @@ void Histogram::mouseUp(const juce::MouseEvent &event)
   updateImage();
 }
 
+void Histogram::getSelection(float *selectionOut, bool borderValuesSet)
+{
+  int indexStartX = 0;
+  int indexStartY = 0;
+  int indexEndX = 0;
+  int indexEndY = 0;
+  for( auto i = 0; i < dataLevels; i++)
+  {
+    if (heightBinBorders[i] <= selction[2] && selction[2] < heightBinBorders[i + 1])
+    {
+      indexStartY = i;
+    }
+    if (heightBinBorders[i] < selction[3] && selction[3] <= heightBinBorders[i + 1])
+    {
+      indexEndY = i + 1;
+    }
+  }
+  for( auto i = 0; i < widthBins; i++)
+  {
+    if (widthBinBorders[i] <= selction[0] && selction[0] < widthBinBorders[i + 1])
+    {
+      indexStartX = i;
+    }
+    if (widthBinBorders[i] < selction[1] && selction[1] <= widthBinBorders[i + 1])
+    {
+      indexEndX = i + 1;
+    }
+  }
+  if (borderValuesSet && widthBorderValues != NULL && heightBorderValues != NULL)
+  {
+    selectionOut[0] = widthBorderValues[indexStartX];
+    selectionOut[1] = widthBorderValues[indexEndX];
+    selectionOut[2] = heightBorderValues[indexStartY];
+    selectionOut[3] = heightBorderValues[indexEndY];
+  }
+  else
+  {
+    selectionOut[0] = indexStartX;
+    selectionOut[1] = indexEndX;
+    selectionOut[2] = indexStartY;
+    selectionOut[3] = indexEndY;
+  }
+}
+
 juce::Colour Histogram::levelToColour(float level, bool selection)
 {
   if (selection)
@@ -141,7 +185,7 @@ void Histogram::processDataArray(float *data, size_t len, double clipSTDBottom, 
   return;
 }
 
-void Histogram::replaceData(const float *inData, size_t inDataLength, bool normalized, bool logScale)
+void Histogram::replaceData(const float *inData, size_t inDataLength, bool normalized, bool logScale, float *widthBorderValues, float *heightBorderValues)
 {
   auto newData = new float[inDataLength * dataLevels];
 std:
@@ -164,6 +208,8 @@ std:
   dataReady.set(false);
   data = newData;
   dataLength = inDataLength;
+  this->widthBorderValues = widthBorderValues;
+  this->heightBorderValues = heightBorderValues;
   dataReady.set(true);
   delete temp;
   recalculateImage();

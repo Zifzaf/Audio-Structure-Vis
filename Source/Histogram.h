@@ -24,7 +24,7 @@ public:
   void paint(juce::Graphics &g) override;
   void resized() override;
   void addDataLine(const float dataLine[], bool normalized);
-  void replaceData(const float *inData, size_t inDataLength, bool normalized, bool logScale);
+  void replaceData(const float *inData, size_t inDataLength, bool normalized, bool logScale, float *widthBorderValues = NULL, float *heightBorderValues = NULL);
   juce::Colour levelToColour(float level, bool selection = false);
   void processDataArray(float *data, size_t len, double clipSTDBottom, double clipSTDTop);
   void mouseUp(const juce::MouseEvent &event);
@@ -32,6 +32,7 @@ public:
   void recalculateImage();
   void updateImage();
   void redrawImage();
+  void getSelection(float *selectionOut, bool borderValuesSet);
 
 private:
   juce::Image histogramImage;
@@ -46,6 +47,8 @@ private:
   float *data;
   int *heightBinBorders = NULL;
   int *widthBinBorders = NULL;
+  float *widthBorderValues = NULL;
+  float *heightBorderValues = NULL;
   int widthBins = 1;
   juce::Atomic<bool> dataReady = false;
   std::array<int, 4> selction = {0, 0, 0, 0};

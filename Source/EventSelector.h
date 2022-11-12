@@ -20,6 +20,7 @@ class EventSelector : public juce::Component, public juce::ChangeListener
 public:
   //==============================================================================
   EventSelector();
+  EventSelector(FileHandler *in);
   ~EventSelector() override;
   void changeListenerCallback(juce::ChangeBroadcaster *source);
   void calcButtonClicked();
@@ -34,7 +35,8 @@ public:
   void paintOverChildren(juce::Graphics &g);
   void resized() override;
   static const size_t numberOfBands = 32;
-  std::array<float, numberOfBands - 1> bandCuts;
+  std::array<float, numberOfBands + 1> bandCuts;
+  float * timeBorders = NULL;
 
 private:
   Histogram thirdOctaveSpectrogarm;

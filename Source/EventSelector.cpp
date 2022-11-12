@@ -14,15 +14,17 @@ EventSelector::EventSelector() : thirdOctaveSpectrogarm(numberOfBands), audioDat
 {
   double factor = std::pow(2.0, 1.0 / 3.0);
   double factorInv = 1.0 / factor;
+  bandCuts[0] = 0;
   for (auto i = 16; i >= 0; i--)
   {
-    bandCuts[i] = std::pow(factorInv, 17 - i) * 1000.0;
+    bandCuts[i + 1] = std::pow(factorInv, 17 - i) * 1000.0;
   }
-  bandCuts[17] = 1000.0;
+  bandCuts[18] = 1000.0;
   for (auto i = 18; i < numberOfBands - 1; i++)
   {
-    bandCuts[i] = std::pow(factor, i - 17) * 1000.0;
+    bandCuts[i + 1] = std::pow(factor, i - 17) * 1000.0;
   }
+  bandCuts[numberOfBands] = 24000.0;
 
   addAndMakeVisible(&blockSize);
   blockSize.addItem("4096", 12);
@@ -55,6 +57,55 @@ EventSelector::EventSelector() : thirdOctaveSpectrogarm(numberOfBands), audioDat
   corrected.setButtonText("Loudness Correction");
   corrected.triggerClick();
 }
+
+EventSelector::EventSelector(FileHandler *in) : thirdOctaveSpectrogarm(numberOfBands), audioData(*new juce::AudioBuffer<float>(0, 0)), fileInput(in)
+{
+  double factor = std::pow(2.0, 1.0 / 3.0);
+  double factorInv = 1.0 / factor;
+  bandCuts[0] = 0;
+  for (auto i = 16; i >= 0; i--)
+  {
+    bandCuts[i + 1] = std::pow(factorInv, 17 - i) * 1000.0;
+  }
+  bandCuts[18] = 1000.0;
+  for (auto i = 18; i < numberOfBands - 1; i++)
+  {
+    bandCuts[i + 1] = std::pow(factor, i - 17) * 1000.0;
+  }
+  bandCuts[numberOfBands] = fileInput->getSampleRate() / 2.0;
+
+  addAndMakeVisible(&blockSize);
+  blockSize.addItem("4096", 12);
+  blockSize.addItem("8192", 13);
+  blockSize.addItem("16384", 14);
+  blockSize.addItem("32768", 15);
+  blockSize.setSelectedId(13, juce::NotificationType::dontSendNotification);
+
+  addAndMakeVisible(&calcButton);
+  calcButton.setButtonText("Calculate");
+  calcButton.onClick = [this]
+  { calcButtonClicked(); };
+  calcButton.setColour(juce::TextButton::buttonColourId, juce::Colours::grey);
+
+  addAndMakeVisible(&analyseButton);
+  analyseButton.setButtonText("Analyse");
+  analyseButton.onClick = [this]
+  { analyseButtonClicked(); };
+  analyseButton.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
+
+  addAndMakeVisible(&thirdOctaveSpectrogarm);
+
+  addAndMakeVisible(&phon);
+  phon.setText("80");
+  phon.setInputRestrictions(2, "0123456789");
+  phon.setMultiLine(false);
+
+  addAndMakeVisible(&corrected);
+  corrected.setState(juce::Button::buttonNormal);
+  corrected.setButtonText("Loudness Correction");
+  corrected.triggerClick();
+}
+
 EventSelector::~EventSelector()
 {
 }
@@ -66,14 +117,24 @@ inline size_t EventSelector::getBlockSize()
 
 void EventSelector::analyseButtonClicked()
 {
-  delete popUp;
   const float *inData = audioData.getReadPointer(0);
-  auto segmentLength = fileInput->getSegmentLength();
-  popUp = new AnalyseWindow(inData, segmentLength, fileInput->getSampleRate());
+  float sampleRate = fileInput->getSampleRate();
+  float selection[4];
+  thirdOctaveSpectrogarm.getSelection(&selection[0], true);
+  int segmentLength = (selection[1] - selection[0]) * sampleRate;
+  int startIndex = selection[0] * sampleRate;
+  float *analysisSection = new float[segmentLength];
+  juce::FloatVectorOperations::copy(analysisSection, &inData[startIndex], segmentLength);
+  auto highPassFilter = kfr::to_filter(kfr::biquad<kfr::f32>(kfr::biquad_highpass<kfr::f32>(selection[2] / sampleRate, 1.0), kfr::placeholder<kfr::f32>()));
+  auto lowPassFilter = kfr::to_filter(kfr::biquad<kfr::f32>(kfr::biquad_lowpass<kfr::f32>(selection[3] / sampleRate, 1.0), kfr::placeholder<kfr::f32>()));
+  highPassFilter.apply(analysisSection, segmentLength);
+  lowPassFilter.apply(analysisSection, segmentLength);
+  popUp = new AnalyseWindow(analysisSection, segmentLength, sampleRate);
   popUp->setSize(1200, 800);
   popUp->setUsingNativeTitleBar(true);
   popUp->addToDesktop();
   popUp->setVisible(true);
+  delete analysisSection;
 }
 
 void EventSelector::calcButtonClicked()
@@ -92,10 +153,9 @@ void EventSelector::calcButtonClicked()
     int k = 0;
     bool loudnessCorrection = getLoudnessCorrection();
     double phon = getPhon();
-    // std::cout << loudnessCorrection << std::endl;
     for (auto i = 0; i < fftBins; i++)
     {
-      if (k < numberOfBands - 1 && (i + 1) * freqStep > bandCuts[k])
+      if (k < numberOfBands - 1 && (i + 1) * freqStep > bandCuts[k + 1])
       {
         k++;
       }
@@ -117,6 +177,8 @@ void EventSelector::calcButtonClicked()
     float *inDataBlock = new float[blockSize];
     auto complexBins = new kfr::complex<double>[numberOfBands];
     auto outputData = new float[numBlocks * numberOfBands];
+    delete timeBorders;
+    timeBorders = new float[numBlocks + 1];
     juce::FloatVectorOperations::fill(outputData, 0.0f, (size_t)numBlocks * numberOfBands);
     juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::kaiser, true, 3.0);
     for (auto i = 0; i < segmentLength - blockSize; i = i + blockSize / 2)
@@ -137,9 +199,10 @@ void EventSelector::calcButtonClicked()
       {
         outputData[blockIndex * numberOfBands + j] = kfr::cabs(complexBins[j]);
       }
+      timeBorders[blockIndex] = (double)i / fileInput->getSampleRate();
     }
-
-    thirdOctaveSpectrogarm.replaceData(outputData, numBlocks, false, false);
+    timeBorders[numBlocks] = (double)segmentLength / fileInput->getSampleRate();
+    thirdOctaveSpectrogarm.replaceData(outputData, numBlocks, false, false, timeBorders, bandCuts.data());
     delete bandIndex;
     delete &dftOutData;
     delete complexBins;
@@ -182,7 +245,7 @@ void EventSelector::paintOverChildren(juce::Graphics &g)
   }
   for (auto i = 0; i < numberOfBands; ++i)
   {
-    g.drawText(std::to_string((int)bandCuts[i]) + " Hz", 22, h - 10, 100, 10, juce::Justification::bottom, true);
+    g.drawText(std::to_string((int)bandCuts[i + 1]) + " Hz", 22, h - 10, 100, 10, juce::Justification::bottom, true);
     g.fillRect(2, h, width, 1);
     h = h - bandLabelHeight;
     if (rest > 0)

@@ -151,12 +151,27 @@ void WaveformDisplay::resized()
             }
             rms = std::sqrt(rms);
           }
+          else
+          {
+            mean = 0.5;
+            rms = 0.5;
+          }
         }
         meanArray[i] = mean;
         rmsArray[i] = rms;
       }
-      processDataArray(meanArray, widthAvailable, 2.0, 0.0);
-      processDataArray(rmsArray, widthAvailable, 2.0, 0.0);
+      /*
+      for(auto i = 0; i < widthAvailable; i++){
+        meanArray[i] = std::log10(1.0 + meanArray[i]);
+        rmsArray[i] = std::log10(1.0 + rmsArray[i]);
+      }
+      processDataArray(meanArray, widthAvailable, 0.0, 0.0);
+      processDataArray(rmsArray, widthAvailable, 0.0, 0.0);
+      */
+      juce::FloatVectorOperations::add(meanArray, -0.33, widthAvailable);
+      juce::FloatVectorOperations::clip(meanArray, meanArray, 0.0, 1.0, widthAvailable);
+      juce::FloatVectorOperations::add(rmsArray, -0.33, widthAvailable);
+      juce::FloatVectorOperations::clip(rmsArray, rmsArray, 0.0, 1.0, widthAvailable);
       for (auto i = 0; i < widthAvailable; i++)
       {
 
