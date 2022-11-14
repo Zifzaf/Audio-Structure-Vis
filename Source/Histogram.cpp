@@ -396,7 +396,6 @@ void Histogram::redrawImage()
     float numMarkers = range / step;
     float pixelBetweenMarkers = (widthBinBorders[dataLength] - widthBinBorders[0]) / numMarkers;
     double rangePerPixel = range / (double)(widthBinBorders[dataLength] - widthBinBorders[0]);
-    std::cout << -widthBorderValues[0] / rangePerPixel << std::endl;
     for (float i = -widthBorderValues[0] / rangePerPixel; i < widthBinBorders[dataLength]; i = i + pixelBetweenMarkers)
     {
       if (verticalLines)

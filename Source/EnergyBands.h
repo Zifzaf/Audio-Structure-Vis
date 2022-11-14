@@ -29,10 +29,9 @@ public:
 
   //==============================================================================
   void paint(juce::Graphics &g) override;
-  void paintOverChildren(juce::Graphics &g);
   void resized() override;
   static const size_t numberOfBands = 26;
-  std::array<float, numberOfBands - 1> criticalBandCuts = {20, 100, 200, 300, 400, 510, 630, 770, 920, 1080, 1270, 1480, 1720, 2000, 2320, 2700, 3150, 3700, 4400, 5300, 6400, 7700, 9500, 12000, 15500};
+  std::array<float, numberOfBands + 1> criticalBandCuts = {0, 20, 100, 200, 300, 400, 510, 630, 770, 920, 1080, 1270, 1480, 1720, 2000, 2320, 2700, 3150, 3700, 4400, 5300, 6400, 7700, 9500, 12000, 15500, 24000};
 
 private:
   Histogram energyTable;

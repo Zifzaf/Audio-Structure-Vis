@@ -55,23 +55,30 @@ void EnergyBands::calcButtonClicked()
 {
   if (audioAvailable.get() && calculating.compareAndSetBool(true, false))
   {
-
+    // Start Calcualtion
     calcButton.setEnabled(false);
+
+    // Get audio data to process
     fileInput->getAudioBlock(&audioData);
+
+    // Calculate FFT frequencies
     size_t blockSize = getBlockSize();
-    auto segmentLength = fileInput->getSegmentLength();
     auto fftBins = blockSize / 2 - 2;
+
+    // Calcuate Binning Index for Frequencies
     auto bandIndex = new int[fftBins];
-    auto freqScale = new double[fftBins];
-    auto complexBins = new kfr::complex<double>[numberOfBands];
-    auto freqStep = (fileInput->getSampleRate() / 2.0) / (blockSize / 2);
-    int k = 0;
+
+    // Calculate loudness correction for frequencies
     bool loudnessCorrection = getLoudnessCorrection();
     double phon = getPhon();
-    juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::blackmanHarris);
+    auto freqScale = new double[fftBins];
+    auto freqStep = (fileInput->getSampleRate() / 2.0) / (blockSize / 2);
+
+    // Calculation Loop for loudness and binning
+    int k = 0;
     for (auto i = 0; i < fftBins; i++)
     {
-      if (k < numberOfBands - 1 && (i + 1) * freqStep > criticalBandCuts[k])
+      if (k < numberOfBands - 1 && (i + 1) * freqStep > criticalBandCuts[k + 1])
       {
         k++;
       }
@@ -85,24 +92,53 @@ void EnergyBands::calcButtonClicked()
         freqScale[i] = 1.0;
       }
     }
+    // Prepare FFT
     kfr::univector<kfr::complex<float>> &dftOutData = *new kfr::univector<kfr::complex<float>>(blockSize);
     kfr::dft_plan_real<float> dft(blockSize);
     kfr::univector<kfr::u8> &temp = *new kfr::univector<kfr::u8>(dft.temp_size);
+    juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::blackmanHarris);
+
+    // Calculate blocking for input segment
+    auto segmentLength = fileInput->getSegmentLength();
+    int numBlocks = std::ceil((double)segmentLength / (double)(blockSize / 2)) + 1;
+
+    // Get Pointer to data
     const float *inData = audioData.getReadPointer(0);
-    auto numBlocks = segmentLength / (blockSize / 2) + 1;
+
+    // Prepare calculation arrays
     float *inDataBlock = new float[blockSize];
+    auto complexBins = new kfr::complex<double>[numberOfBands];
+
+    // Prepare time borders array
+    float* timeBorders = new float[numBlocks + 1];
+
+    // Prepare output array
     auto outputData = new float[numBlocks * numberOfBands];
     juce::FloatVectorOperations::fill(outputData, 0.0f, (size_t)numBlocks * numberOfBands);
-    for (auto i = 0; i < segmentLength - blockSize; i = i + blockSize / 2)
+
+    for (int i = -blockSize / 2; i < segmentLength; i = i + blockSize / 2)
     {
-      juce::FloatVectorOperations::copy(inDataBlock, &inData[i], blockSize);
+      if (i < 0)
+      {
+        juce::FloatVectorOperations::fill(inDataBlock, 0.0, blockSize);
+        juce::FloatVectorOperations::copy(&inDataBlock[-i], &inData[0], blockSize + i);
+      }
+      else if (i + blockSize > segmentLength)
+      {
+        juce::FloatVectorOperations::fill(inDataBlock, 0.0, blockSize);
+        juce::FloatVectorOperations::copy(inDataBlock, &inData[i], (size_t)segmentLength - i);
+      }
+      else
+      {
+        juce::FloatVectorOperations::copy(inDataBlock, &inData[i], blockSize);
+      }
       window.multiplyWithWindowingTable(inDataBlock, blockSize);
       for (auto j = 0; j < numberOfBands; j++)
       {
         complexBins[j] = 0.0;
       }
       dft.execute(dftOutData, kfr::make_univector(inDataBlock, blockSize), temp);
-      int blockIndex = i / (blockSize / 2);
+      int blockIndex = (i + (blockSize / 2)) / (blockSize / 2);
       for (auto j = 0; j < fftBins; j++)
       {
         complexBins[bandIndex[j]] = complexBins[bandIndex[j]] + freqScale[j] * dftOutData[j + 1] / blockSize;
@@ -111,14 +147,17 @@ void EnergyBands::calcButtonClicked()
       {
         outputData[blockIndex * numberOfBands + j] = kfr::cabs(complexBins[j]);
       }
+      timeBorders[blockIndex] = (double)i / fileInput->getSampleRate();
     }
-    energyTable.replaceData(outputData, numBlocks, false, true);
+    timeBorders[numBlocks] = (double)(numBlocks * blockSize / 2) / fileInput->getSampleRate();
+    energyTable.replaceData(outputData, numBlocks, false, false, timeBorders, criticalBandCuts.data());
     delete bandIndex;
-    delete complexBins;
     delete &dftOutData;
+    delete complexBins;
     delete &temp;
     delete inDataBlock;
     delete outputData;
+    delete timeBorders;
     calcButton.setEnabled(true);
     calculating.set(false);
   }
@@ -137,73 +176,6 @@ void EnergyBands::changeListenerCallback(juce::ChangeBroadcaster *source)
     }
     audioAvailable.set(true);
   }
-}
-
-void EnergyBands::paintOverChildren(juce::Graphics &g)
-{
-  int width = getWidth() - 4;
-  int height = getHeight();
-  g.setColour(juce::Colours::grey);
-  int bandTableHeight = height - 46;
-  int bandLabelHeight = bandTableHeight / numberOfBands;
-  int rest = bandTableHeight % numberOfBands;
-  auto h = height - bandLabelHeight;
-  if (rest > 0)
-  {
-    rest--;
-    h--;
-  }
-  for (auto i = 0; i < numberOfBands; ++i)
-  {
-    g.drawText(std::to_string((int)criticalBandCuts[i]) + " Hz", 22, h - 10, 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, h, width, 1);
-    h = h - bandLabelHeight;
-    if (rest > 0)
-    {
-      rest--;
-      h--;
-    }
-  }
-  /*  // 100 Hz line
-  if (rest >= 2)
-  {
-    g.drawText("100 Hz", 22, height - (2 * bandLabelHeight + 2 + 2 + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (2 * bandLabelHeight + 2 + 2), width, 1);
-  }
-  else
-  {
-    g.drawText("100 Hz", 22, height - (2 * bandLabelHeight + rest + 2 + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (2 * bandLabelHeight + rest + 2), width, 1);
-  }
-  // 1000 Hz line
-  int shift = (1000.0 - 920.0) / (1080.0 - 920.0) * bandLabelHeight;
-  if (rest >= 9)
-  {
-    g.drawText("1000 Hz", 22, height - (9 * bandLabelHeight + 9 + 2 + shift + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (9 * bandLabelHeight + 9 + 2 + shift), width, 1);
-  }
-  else
-  {
-    g.drawText("1000 Hz", 22, height - (9 * bandLabelHeight + rest + 2 + shift + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (9 * bandLabelHeight + rest + 2 + shift), width, 1);
-  }
-  // 10000 Hz line
-  shift = (10000.0 - 9500.0) / (12000.0 - 9500.0) * bandLabelHeight;
-  if (rest >= 23)
-  {
-    g.drawText("10000 Hz", 22, height - (23 * bandLabelHeight + 23 + 2 + shift + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (23 * bandLabelHeight + 23 + 2 + shift), width, 1);
-  }
-  else
-  {
-    g.drawText("10000 Hz", 22, height - (23 * bandLabelHeight + rest + 2 + shift + 10), 100, 10, juce::Justification::bottom, true);
-    g.fillRect(2, height - (23 * bandLabelHeight + rest + 2 + shift), width, 1);
-  }*/
-  float fraction = (fileInput->getCurrentTime() - fileInput->getStartTime()) / (fileInput->getEndTime() - fileInput->getStartTime());
-  fraction = std::max(0.0f, fraction);
-  g.setColour(juce::Colours::white);
-  int pos = fraction * (width);
-  g.fillRect(pos - 1, 46, 2, height - 46);
 }
 
 void EnergyBands::paint(juce::Graphics &g)
