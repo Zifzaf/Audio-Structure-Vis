@@ -298,8 +298,8 @@ void Histogram::recalculateImage()
 {
   if (dataReady.get())
   {
-    int pixelPerLevel = (heightAvailable - 40) / dataLevels;
-    int pixelLeftOver = (heightAvailable - 40) % dataLevels;
+    int pixelPerLevel = (heightAvailable - xAxisSize) / dataLevels;
+    int pixelLeftOver = (heightAvailable - xAxisSize) % dataLevels;
     heightBinBorders[0] = 0;
     for (auto i = 1; i < dataLevels - pixelLeftOver; i++)
     {
@@ -309,7 +309,7 @@ void Histogram::recalculateImage()
     {
       heightBinBorders[i] = (dataLevels - pixelLeftOver) * pixelPerLevel + (i - (dataLevels - pixelLeftOver)) * (pixelPerLevel + 1);
     }
-    heightBinBorders[dataLevels] = (heightAvailable - 40);
+    heightBinBorders[dataLevels] = (heightAvailable - xAxisSize);
     levelWidth = zoom * pixelPerLevel;
     widthBins = std::max(widthAvailable / levelWidth + 1, dataLength);
     delete widthBinBorders;
@@ -328,7 +328,7 @@ void Histogram::redrawImage()
   int spaceAvailable = std::min(dataLength, widthBins);
   juce::Graphics g(histogramImage);
   g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
-  g.fillRect(widthBinBorders[0], heightAvailable - 40, widthBinBorders[widthBins] - widthBinBorders[0], 40);
+  g.fillRect(widthBinBorders[0], heightAvailable - xAxisSize, widthBinBorders[widthBins] - widthBinBorders[0], 40);
   for (auto i = 0; i < spaceAvailable; ++i)
   {
     int lowerBorderW = widthBinBorders[i];
@@ -401,13 +401,13 @@ void Histogram::redrawImage()
       if (verticalLines)
       {
         g.setColour(juce::Colours::whitesmoke);
-        g.fillRect((int)i, 0, 1, heightAvailable - 35);
+        g.fillRect((int)i, 0, 1, heightAvailable - xAxisSize + 5);
       }
       if (verticalLables)
       {
         int k = (i - (float)widthBinBorders[0]) / pixelBetweenMarkers;
         g.setColour(juce::Colours::white);
-        g.drawText(std::to_string(stepInUnit * k) + " " + unit, (int)i - 40, heightAvailable - 35, 80, 35, juce::Justification::centredTop, false);
+        g.drawText(std::to_string(stepInUnit * k) + " " + unit, (int)i - 40, heightAvailable - xAxisSize + 5, 80, 35, juce::Justification::centredTop, false);
       }
     }
   }

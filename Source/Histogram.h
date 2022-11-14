@@ -41,6 +41,7 @@ public:
   void setVerticalLables(bool in);
   void setHorizontalLables(bool in);
   void paintOverChildren(juce::Graphics &g);
+  int xAxisSize = 28;
 
 private:
   juce::Image histogramImage;
@@ -69,6 +70,7 @@ private:
   bool horizontalLines = true;
   bool verticalLables = true;
   bool horizontalLables = true;
+  
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Histogram)
 };

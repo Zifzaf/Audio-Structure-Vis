@@ -33,10 +33,9 @@ public:
   int getExtractedFreqs();
   int getOverTones();
   float getSmoothFactor();
-  void paintOverChildren(juce::Graphics &g);
   inline std::string floatToString(float a);
 
-  static const size_t numberOfNotes = 72;
+  static const size_t numberOfNotes = 60;
   std::array<float, numberOfNotes> noteFreqencies;
   float baseTuneing = 440.0;
   juce::TextButton calcButton;

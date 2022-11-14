@@ -47,7 +47,7 @@ NoteShower::NoteShower() : noteTable(numberOfNotes), audioData(*new juce::AudioB
   overTones.setMultiLine(false);
 
   addAndMakeVisible(&smoothFactor);
-  smoothFactor.setText("0.2");
+  smoothFactor.setText("0.0");
   smoothFactor.setInputRestrictions(6, "0123456789.");
   smoothFactor.setMultiLine(false);
 
@@ -122,41 +122,71 @@ void NoteShower::calcButtonClicked()
 {
   if (audioAvailable.get() && calculating.compareAndSetBool(true, false))
   {
+    // Start Calculation
     calcButton.setEnabled(false);
+
+    // Get Audio Data
     fileInput->getAudioBlock(&audioData);
+    const float *inData = audioData.getReadPointer(0);
+    int startSample = 0;
+    int endSample = fileInput->getSegmentLength();
+
+    // Get Settings
     int extractedFreqs = getExtractedFreqs();
     int overTones = getOverTones();
     float smoothFactor = getSmoothFactor();
     const size_t blockSize = getBlockSize();
-    int startSample = 0;
-    int endSample = fileInput->getSegmentLength();
+
+    // Calculate frequency mapping
     auto fftBins = blockSize / 2 - 2;
     auto freqList = new float[fftBins];
-    auto ampSpectrum = new float[fftBins];
-    auto ampSpectrumTwo = new float[fftBins];
     auto freqStep = (sampleRate / 2.0) / (blockSize / 2);
-    juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::hamming);
     for (auto i = 0; i < fftBins; i++)
     {
       freqList[i] = (i + 1) * freqStep;
     }
+
+    // Prepare FFT
     kfr::univector<kfr::complex<float>> &dftOutData = *new kfr::univector<kfr::complex<float>>(blockSize);
     kfr::dft_plan_real<float> dft(blockSize);
     kfr::univector<kfr::u8> &temp = *new kfr::univector<kfr::u8>(dft.temp_size);
-    const float *inData = audioData.getReadPointer(0);
-    float *inDataChunck = new float[blockSize];
+    juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::hamming);
+
+    // Prepare Calculation arrays
+    auto ampSpectrum = new float[fftBins];
+    auto ampSpectrumTwo = new float[fftBins];
+    float *inDataBlock = new float[blockSize];
     float *noteLevel = new float[numberOfNotes];
     float *prevNoteLevel = new float[numberOfNotes];
-    auto complexBins = new kfr::complex<double>[numberOfNotes];
     juce::FloatVectorOperations::fill(prevNoteLevel, 0, numberOfNotes);
-    int chunks = (endSample - blockSize - startSample) / (blockSize / 2) + 1;
-    ;
-    auto outputData = new float[chunks * numberOfNotes];
-    for (auto i = startSample; i < endSample - blockSize; i = i + blockSize / 2)
+
+    // Calculate number of blocks
+    int numBlocks = std::ceil((double)endSample / (double)(blockSize / 2)) + 1;
+
+    // Prepare time borders array
+    float *timeBorders = new float[numBlocks + 1];
+
+    // Prepare Output Array
+    auto outputData = new float[numBlocks * numberOfNotes];
+
+    for (int i = startSample - blockSize / 2; i < endSample; i = i + blockSize / 2)
     {
-      juce::FloatVectorOperations::copy(inDataChunck, &inData[i], blockSize);
-      window.multiplyWithWindowingTable(inDataChunck, blockSize);
-      dft.execute(dftOutData, kfr::make_univector(inDataChunck, blockSize), temp);
+      if (i < 0)
+      {
+        juce::FloatVectorOperations::fill(inDataBlock, 0.0, blockSize);
+        juce::FloatVectorOperations::copy(&inDataBlock[-i], &inData[0], blockSize + i);
+      }
+      else if (i + blockSize > endSample)
+      {
+        juce::FloatVectorOperations::fill(inDataBlock, 0.0, blockSize);
+        juce::FloatVectorOperations::copy(inDataBlock, &inData[i], (size_t)endSample - i);
+      }
+      else
+      {
+        juce::FloatVectorOperations::copy(inDataBlock, &inData[i], blockSize);
+      }
+      window.multiplyWithWindowingTable(inDataBlock, blockSize);
+      dft.execute(dftOutData, kfr::make_univector(inDataBlock, blockSize), temp);
       for (auto j = 0; j < fftBins; j++)
       {
         ampSpectrum[j] = kfr::cabs(dftOutData[j + 1]);
@@ -223,23 +253,23 @@ void NoteShower::calcButtonClicked()
         index++;
       }
       juce::FloatVectorOperations::addWithMultiply(noteLevel, prevNoteLevel, smoothFactor, numberOfNotes);
-      int chunkIndex = (i - startSample) / (blockSize / 2);
-      // noteTable.addDataLine(noteLevel, false);
-      juce::FloatVectorOperations::copy(&outputData[chunkIndex * numberOfNotes], noteLevel, numberOfNotes);
+      int blockIndex = (i + (blockSize / 2) - startSample) / (blockSize / 2);
+      juce::FloatVectorOperations::copy(&outputData[blockIndex * numberOfNotes], noteLevel, numberOfNotes);
+      timeBorders[blockIndex] = (double)i / fileInput->getSampleRate();
       float *temp = prevNoteLevel;
       prevNoteLevel = noteLevel;
       noteLevel = temp;
     }
-    noteTable.replaceData(outputData, chunks, false, false);
+    timeBorders[numBlocks] = (double)(numBlocks * blockSize / 2) / fileInput->getSampleRate();
+    noteTable.replaceData(outputData, numBlocks, false, false, timeBorders, NULL);
     delete outputData;
     delete noteLevel;
-    delete inDataChunck;
+    delete inDataBlock;
     delete freqList;
     delete ampSpectrum;
     delete ampSpectrumTwo;
     delete &dftOutData;
     delete &temp;
-    delete complexBins;
     calcButton.setEnabled(true);
     calculating.set(false);
   }
@@ -259,12 +289,11 @@ void NoteShower::setAudio(const juce::AudioBuffer<float> in, float sampleRate, i
 void NoteShower::calcNoteFrequencies()
 {
   float factor = std::pow(2.0, 1.0 / 12.0);
-  noteFreqencies[0] = 0.125 * baseTuneing;
-  noteFreqencies[12] = 0.25 * baseTuneing;
-  noteFreqencies[24] = 0.5 * baseTuneing;
-  noteFreqencies[36] = baseTuneing;
-  noteFreqencies[48] = 2 * baseTuneing;
-  noteFreqencies[60] = 4 * baseTuneing;
+  noteFreqencies[0] = 0.25 * baseTuneing;
+  noteFreqencies[12] = 0.5 * baseTuneing;
+  noteFreqencies[24] = baseTuneing;
+  noteFreqencies[36] = 2 * baseTuneing;
+  noteFreqencies[48] = 4 * baseTuneing;
   for (auto i = 0; i < numberOfNotes; i = i + 12)
   {
     float baseValue = noteFreqencies[i];
@@ -286,37 +315,6 @@ void NoteShower::paint(juce::Graphics &g)
   g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 }
 
-void NoteShower::paintOverChildren(juce::Graphics &g)
-{
-  g.setColour(juce::Colours::grey);
-  int width = getWidth();
-  int height = getHeight();
-  int noteTableHeight = height - 46;
-  int noteLabelHeight = noteTableHeight / numberOfNotes;
-  int rest = noteTableHeight % numberOfNotes;
-  auto h = height - noteLabelHeight;
-  if (rest > 0)
-  {
-    rest--;
-    h--;
-  }
-  for (auto i = 0; i < numberOfNotes; ++i)
-  {
-    g.fillRect(40, h, width - 120, 1);
-    h = h - noteLabelHeight;
-    if (rest > 0)
-    {
-      rest--;
-      h--;
-    }
-  }
-  float fraction = (fileInput->getCurrentTime() - fileInput->getStartTime()) / (fileInput->getEndTime() - fileInput->getStartTime());
-  fraction = std::max(0.0f, fraction);
-  g.setColour(juce::Colours::white);
-  int pos = fraction * (width - 120) + 40;
-  g.fillRect(pos - 1, 46, 2, noteTableHeight);
-}
-
 void NoteShower::resized()
 {
   int width = getWidth();
@@ -332,10 +330,10 @@ void NoteShower::resized()
   smoothFactor.setBounds(2 + 7 * size, 2, size, 20);
   calcButton.setBounds(0, 24, width, 20);
   noteTable.setBounds(40, 46, width - 120, height - 46);
-  int noteTableHeight = height - 46;
+  int noteTableHeight = height - 46 - noteTable.xAxisSize;
   int noteLabelHeight = noteTableHeight / numberOfNotes;
   int rest = noteTableHeight % numberOfNotes;
-  auto h = height - noteLabelHeight;
+  auto h = height - noteLabelHeight - noteTable.xAxisSize;
   if (rest > 0)
   {
     rest--;
