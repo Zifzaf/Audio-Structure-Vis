@@ -177,17 +177,27 @@ void EventSelector::calcButtonClicked()
 {
   if (audioAvailable.get() && calculating.compareAndSetBool(true, false))
   {
-
+    // Start Calcualtion
     calcButton.setEnabled(false);
+
+    // Get audio data to process
     fileInput->getAudioBlock(&audioData);
+
+    // Calculate FFT frequencies
     size_t blockSize = getBlockSize();
     auto fftBins = blockSize / 2 - 2;
+
+    // Calcuate Binning Index for Frequencies
     auto bandIndex = new int[fftBins];
-    auto freqScale = new double[fftBins];
-    auto freqStep = (fileInput->getSampleRate() / 2.0) / (blockSize / 2);
-    int k = 0;
+
+    // Calculate loudness correction for frequencies
     bool loudnessCorrection = getLoudnessCorrection();
     double phon = getPhon();
+    auto freqScale = new double[fftBins];
+    auto freqStep = (fileInput->getSampleRate() / 2.0) / (blockSize / 2);
+
+    // Calculation Loop for loudness and binning
+    int k = 0;
     for (auto i = 0; i < fftBins; i++)
     {
       if (k < numberOfBands - 1 && (i + 1) * freqStep > bandCuts[k + 1])
@@ -204,33 +214,54 @@ void EventSelector::calcButtonClicked()
         freqScale[i] = 1.0;
       }
     }
-    auto segmentLength = fileInput->getSegmentLength();
-    if (segmentLength % blockSize != 0)
-    {
-      segmentLength -= segmentLength % blockSize;
-    }
+    // Prepare FFT
     kfr::univector<kfr::complex<float>> &dftOutData = *new kfr::univector<kfr::complex<float>>(blockSize);
     kfr::dft_plan_real<float> dft(blockSize);
     kfr::univector<kfr::u8> &temp = *new kfr::univector<kfr::u8>(dft.temp_size);
+    juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::kaiser, true, 3.0);
+
+    // Calculate blocking for input segment
+    auto segmentLength = fileInput->getSegmentLength();
+    int numBlocks = std::ceil((double)segmentLength / (double)(blockSize / 2)) + 1;
+
+    // Get Pointer to data
     const float *inData = audioData.getReadPointer(0);
-    auto numBlocks = 2 * (segmentLength / blockSize) - 1;
+
+    // Prepare calculation arrays
     float *inDataBlock = new float[blockSize];
     auto complexBins = new kfr::complex<double>[numberOfBands];
-    auto outputData = new float[numBlocks * numberOfBands];
+
+    // Prepare time borders array
     delete timeBorders;
     timeBorders = new float[numBlocks + 1];
+
+    // Prepare output array
+    auto outputData = new float[numBlocks * numberOfBands];
     juce::FloatVectorOperations::fill(outputData, 0.0f, (size_t)numBlocks * numberOfBands);
-    juce::dsp::WindowingFunction<float> window(blockSize, juce::dsp::WindowingFunction<float>::kaiser, true, 3.0);
-    for (auto i = 0; i < segmentLength - blockSize + 1; i = i + blockSize / 2)
+
+    for (int i = -blockSize / 2; i < segmentLength; i = i + blockSize / 2)
     {
-      juce::FloatVectorOperations::copy(inDataBlock, &inData[i], blockSize);
+      if (i < 0)
+      {
+        juce::FloatVectorOperations::fill(inDataBlock, 0.0, blockSize);
+        juce::FloatVectorOperations::copy(&inDataBlock[-i], &inData[0], blockSize + i);
+      }
+      else if (i + blockSize > segmentLength)
+      {
+        juce::FloatVectorOperations::fill(inDataBlock, 0.0, blockSize);
+        juce::FloatVectorOperations::copy(inDataBlock, &inData[i], (size_t)segmentLength - i);
+      }
+      else
+      {
+        juce::FloatVectorOperations::copy(inDataBlock, &inData[i], blockSize);
+      }
       window.multiplyWithWindowingTable(inDataBlock, blockSize);
       for (auto j = 0; j < numberOfBands; j++)
       {
         complexBins[j] = 0.0;
       }
       dft.execute(dftOutData, kfr::make_univector(inDataBlock, blockSize), temp);
-      int blockIndex = i / (blockSize / 2);
+      int blockIndex = (i + (blockSize / 2)) / (blockSize / 2);
       for (auto j = 0; j < fftBins; j++)
       {
         complexBins[bandIndex[j]] = complexBins[bandIndex[j]] + freqScale[j] * dftOutData[j + 1] / blockSize;
@@ -241,7 +272,7 @@ void EventSelector::calcButtonClicked()
       }
       timeBorders[blockIndex] = (double)i / fileInput->getSampleRate();
     }
-    timeBorders[numBlocks] = (double)segmentLength / fileInput->getSampleRate();
+    timeBorders[numBlocks] = (double)(numBlocks * blockSize / 2) / fileInput->getSampleRate();
     thirdOctaveSpectrogarm.replaceData(outputData, numBlocks, false, false, timeBorders, bandCuts.data());
     delete bandIndex;
     delete &dftOutData;
