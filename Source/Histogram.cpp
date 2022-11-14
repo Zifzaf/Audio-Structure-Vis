@@ -129,7 +129,7 @@ void Histogram::getSelection(float *selectionOut, bool borderValuesSet)
       indexEndX = i + 1;
     }
   }
-  if (borderValuesSet && widthBorderValues != NULL && heightBorderValues != NULL)
+  if (borderValuesSet && widthBorderValuesSet && heightBorderValuesSet)
   {
     selectionOut[0] = widthBorderValues[indexStartX];
     selectionOut[1] = widthBorderValues[indexEndX];
@@ -194,7 +194,7 @@ void Histogram ::paint(juce::Graphics &g)
 
 void Histogram ::paintOverChildren(juce::Graphics &g)
 {
-  if (horizontalLables && heightBorderValues != NULL)
+  if (horizontalLables && heightBorderValuesSet)
   {
     g.setColour(juce::Colours::grey);
     for (auto i = 1; i < dataLevels; i++)
@@ -273,12 +273,20 @@ std:
   dataReady.set(false);
   data = newData;
   dataLength = inDataLength;
-  delete this->widthBorderValues;
-  this->widthBorderValues = new float[dataLength + 1];
-  juce::FloatVectorOperations::copy(this->widthBorderValues, widthBorderValues, dataLength + 1);
-  for (auto i = 0; i < dataLevels + 1; i++)
+  if (widthBorderValues != NULL)
   {
-    this->heightBorderValues[i] = heightBorderValues[dataLevels - i];
+    widthBorderValuesSet = true;
+    delete this->widthBorderValues;
+    this->widthBorderValues = new float[dataLength + 1];
+    juce::FloatVectorOperations::copy(this->widthBorderValues, widthBorderValues, dataLength + 1);
+  }
+  if (heightBorderValues != NULL)
+  {
+    heightBorderValuesSet = true;
+    for (auto i = 0; i < dataLevels + 1; i++)
+    {
+      this->heightBorderValues[i] = heightBorderValues[dataLevels - i];
+    }
   }
   dataReady.set(true);
   delete temp;
@@ -354,7 +362,7 @@ void Histogram::redrawImage()
       g.fillRect(widthBinBorders[0], heightBinBorders[i], widthBinBorders[dataLength] - widthBinBorders[0], 1);
     }
   }
-  if ((verticalLables || verticalLines) && widthBorderValues != NULL)
+  if ((verticalLables || verticalLines) && widthBorderValuesSet)
   {
     float range = widthBorderValues[dataLength] - widthBorderValues[0];
     double step = 0.000000001;

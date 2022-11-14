@@ -53,12 +53,14 @@ private:
   int widthAvailable = 0;
   int heightAvailable = 0;
   int levelWidth = 50;
-  int dataLength = 1;
+  int dataLength = 0;
   float *data;
   int *heightBinBorders = NULL;
   int *widthBinBorders = NULL;
   float *widthBorderValues = NULL;
+  bool widthBorderValuesSet = false;
   float *heightBorderValues = NULL;
+  bool heightBorderValuesSet = false;
   int widthBins = 1;
   juce::Atomic<bool> dataReady = false;
   std::array<int, 4> selction = {0, 0, 0, 0};
