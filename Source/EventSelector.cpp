@@ -161,8 +161,8 @@ void EventSelector::analyseButtonClicked()
   int startIndex = selection[0] * sampleRate;
   float *analysisSection = new float[segmentLength];
   juce::FloatVectorOperations::copy(analysisSection, &inData[startIndex], segmentLength);
-  auto highPassFilter = kfr::to_filter(kfr::biquad<kfr::f32>(kfr::biquad_highpass<kfr::f32>(selection[2] / sampleRate, 1.0), kfr::placeholder<kfr::f32>()));
-  auto lowPassFilter = kfr::to_filter(kfr::biquad<kfr::f32>(kfr::biquad_lowpass<kfr::f32>(selection[3] / sampleRate, 1.0), kfr::placeholder<kfr::f32>()));
+  auto highPassFilter = kfr::to_filter(kfr::biquad<kfr::f32>(kfr::biquad_highpass<kfr::f32>(selection[3] / sampleRate, 1.0), kfr::placeholder<kfr::f32>()));
+  auto lowPassFilter = kfr::to_filter(kfr::biquad<kfr::f32>(kfr::biquad_lowpass<kfr::f32>(selection[2] / sampleRate, 1.0), kfr::placeholder<kfr::f32>()));
   highPassFilter.apply(analysisSection, segmentLength);
   lowPassFilter.apply(analysisSection, segmentLength);
   popUp = new AnalyseWindow(analysisSection, segmentLength, sampleRate);

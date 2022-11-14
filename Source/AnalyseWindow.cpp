@@ -21,7 +21,7 @@ AnalyseWindow::AnalyseWindow(const float *inData, size_t numSamples, double samp
   juce::FloatVectorOperations::copy(data, inData, numSamples);
   dataLength = numSamples;
   waveFrom.replaceData(data, numSamples, false);
-  waveFrom.showRMS(true);
+  waveFrom.showRMS(false);
   addAndMakeVisible(&waveFrom);
 }
 
