@@ -72,6 +72,12 @@ void MainComponent::loadVis(std::string visName)
         spectro.addFileHandler(&openFile);
         openFile.addChangeListener(&spectro);
     }
+    else if (visName == "Waveform Display")
+    {
+        activeVis = VisWaveformDisplay;
+        addAndMakeVisible(&waveForm);
+        waveForm.addFileHandler(&openFile);
+    }
     else
     {
         activeVis = None;
@@ -139,6 +145,16 @@ void MainComponent::resized()
             visSelect[i].setBounds(0, 0, 0, 0);
         }
         spectro.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
+        break;
+    }
+
+    case VisWaveformDisplay:
+    {
+        for (auto i = 0; i < numVis; i++)
+        {
+            visSelect[i].setBounds(0, 0, 0, 0);
+        }
+        waveForm.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
         break;
     }
     }

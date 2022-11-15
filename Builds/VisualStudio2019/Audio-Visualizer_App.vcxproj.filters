@@ -646,6 +646,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\WaveformDisplayWraper.cpp">
+      <Filter>Audio-Visualizer\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Loudness.cpp">
       <Filter>Audio-Visualizer\Source</Filter>
     </ClCompile>
@@ -3096,6 +3099,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\WaveformDisplayWraper.h">
+      <Filter>Audio-Visualizer\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\Loudness.h">
       <Filter>Audio-Visualizer\Source</Filter>
     </ClInclude>

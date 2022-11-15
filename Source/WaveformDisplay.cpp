@@ -33,16 +33,10 @@ WaveformDisplay ::~WaveformDisplay()
 {
 }
 
-void WaveformDisplay::update()
-{
-  repaint();
-}
-
 void WaveformDisplay ::paint(juce::Graphics &g)
 {
   // (Our component is opaque, so we must completely fill the background with a solid colour)
   g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
-  g.drawImage(WaveformDisplayImage, 0, 0, widthAvailable, heightAvailable, 0, 0, widthAvailable, heightAvailable);
 }
 
 void WaveformDisplay::processDataArray(float *data, size_t len, double clipSTDBottom, double clipSTDTop)
@@ -136,7 +130,6 @@ void WaveformDisplay::recalculateImage()
     {
       for (auto j = i * samplesPerPixel; j < (i + 1) * samplesPerPixel; j++)
       {
-        std::cout << data[j] << std::endl;
         mean += part * std::abs(data[j]);
         rms += part * data[j] * data[j];
       }
@@ -172,20 +165,18 @@ void WaveformDisplay::recalculateImage()
     meanArray[i] = 3.32 * std::log10(1.0 + meanArray[i]);
     rmsArray[i] = 3.32 * std::log10(1.0 + rmsArray[i]);
   }
-
   redrawImage();
 }
 
 void WaveformDisplay::updateImage()
 {
   juce::ImageComponent *image = new juce::ImageComponent();
-  image->setBounds(0, 0, numBins, heightAvailable);
+  image->setBounds(0, 0, widthImage, heightAvailable);
   image->setImage(WaveformDisplayImage);
   image->addMouseListener(this, true);
   auto current = viewer.getViewPosition();
   viewer.setViewedComponent(image, true);
   viewer.setViewPosition(current);
-  repaint();
 }
 
 void WaveformDisplay::redrawImage()
@@ -245,7 +236,7 @@ void WaveformDisplay::redrawImage()
   {
     g.setColour(juce::Colours::whitesmoke);
     g.fillRect((int)i, 0, 1, heightAvailable - xAxisSize + 5);
-    int k = i  / pixelBetweenMarkers;
+    int k = i / pixelBetweenMarkers;
     g.setColour(juce::Colours::white);
     g.drawText(std::to_string(stepInUnit * k) + " " + unit, (int)i - 40, heightAvailable - xAxisSize + 5, 80, 35, juce::Justification::centredTop, false);
   }
@@ -292,8 +283,8 @@ void WaveformDisplay::resized()
       widthAvailable = getWidth();
     }
     viewer.setBounds(0, 0, widthAvailable, heightAvailable);
-    // viewer.setScrollBarsShown(false, true, false, true);
-    // viewer.setScrollOnDragMode(juce::Viewport::ScrollOnDragMode::never);
+    viewer.setScrollBarsShown(false, true, false, true);
+    viewer.setScrollOnDragMode(juce::Viewport::ScrollOnDragMode::never);
     zoomIn.setBounds(widthAvailable - 44, 2, 20, 20);
     zoomOut.setBounds(widthAvailable - 22, 2, 20, 20);
     updateImage();

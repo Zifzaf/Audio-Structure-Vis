@@ -12,7 +12,7 @@
 
 #include <JuceHeader.h>
 
-class WaveformDisplay : public juce::AnimatedAppComponent
+class WaveformDisplay : public juce::Component
 {
 public:
   //==============================================================================
@@ -22,8 +22,7 @@ public:
   //==============================================================================
   void paint(juce::Graphics &g) override;
   void resized() override;
-  void update() override;
-  void replaceData(const float *inData, size_t inDataLength, bool normalized,  double newSampleRate);
+  void replaceData(const float *inData, size_t inDataLength, bool normalized, double newSampleRate);
   void processDataArray(float *data, size_t len, double clipSTDBottom, double clipSTDTop);
   void showRMS(bool val);
   void recalculateImage();
@@ -49,7 +48,6 @@ private:
   int heightAvailable = 0;
   int widthImage = 0;
   double zoom = 1.0;
-  int numBins = 0;
   double sampleRate = 0.0;
   float *meanArray = NULL;
   float *rmsArray = NULL;

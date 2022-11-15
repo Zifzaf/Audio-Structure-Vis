@@ -72,6 +72,7 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS_APP := \
+  $(JUCE_OBJDIR)/WaveformDisplayWraper_a3cf42fd.o \
   $(JUCE_OBJDIR)/Loudness_333b16b2.o \
   $(JUCE_OBJDIR)/EnergyBands_85be0297.o \
   $(JUCE_OBJDIR)/NoteShower_2d713285.o \
@@ -117,6 +118,11 @@ $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) : $(OBJECTS_APP) $(RESOURCES)
 	-$(V_AT)mkdir -p $(JUCE_LIBDIR)
 	-$(V_AT)mkdir -p $(JUCE_OUTDIR)
 	$(V_AT)$(CXX) -o $(JUCE_OUTDIR)/$(JUCE_TARGET_APP) $(OBJECTS_APP) $(JUCE_LDFLAGS) $(JUCE_LDFLAGS_APP) $(RESOURCES) $(TARGET_ARCH)
+
+$(JUCE_OBJDIR)/WaveformDisplayWraper_a3cf42fd.o: ../../Source/WaveformDisplayWraper.cpp
+	-$(V_AT)mkdir -p $(JUCE_OBJDIR)
+	@echo "Compiling WaveformDisplayWraper.cpp"
+	$(V_AT)$(CXX) $(JUCE_CXXFLAGS) $(JUCE_CPPFLAGS_APP) $(JUCE_CFLAGS_APP) -o "$@" -c "$<"
 
 $(JUCE_OBJDIR)/Loudness_333b16b2.o: ../../Source/Loudness.cpp
 	-$(V_AT)mkdir -p $(JUCE_OBJDIR)

@@ -141,6 +141,7 @@
     <Lib/>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\WaveformDisplayWraper.cpp"/>
     <ClCompile Include="..\..\Source\Loudness.cpp"/>
     <ClCompile Include="..\..\Source\EnergyBands.cpp"/>
     <ClCompile Include="..\..\Source\NoteShower.cpp"/>
@@ -2405,6 +2406,7 @@
     <ClCompile Include="..\..\JuceLibraryCode\include_juce_gui_extra.cpp"/>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\WaveformDisplayWraper.h"/>
     <ClInclude Include="..\..\Source\Loudness.h"/>
     <ClInclude Include="..\..\Source\EnergyBands.h"/>
     <ClInclude Include="..\..\Source\NoteShower.h"/>
