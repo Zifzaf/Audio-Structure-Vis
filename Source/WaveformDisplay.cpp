@@ -177,6 +177,7 @@ void WaveformDisplay::updateImage()
   auto current = viewer.getViewPosition();
   viewer.setViewedComponent(image, true);
   viewer.setViewPosition(current);
+  repaint();
 }
 
 void WaveformDisplay::redrawImage()

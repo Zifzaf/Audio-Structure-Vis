@@ -45,8 +45,6 @@ private:
   FileHandler *fileInput = nullptr;
   juce::TextButton calcButton;
   juce::TextButton analyseButton;
-  juce::TextButton zoomIn;
-  juce::TextButton zoomOut;
   juce::ComboBox blockSize;
   juce::TextEditor phon;
   juce::ToggleButton corrected;

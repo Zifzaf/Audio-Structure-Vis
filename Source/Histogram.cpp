@@ -50,7 +50,6 @@ void Histogram::mouseUp(const juce::MouseEvent &event)
   selction[2] = relEvent.getMouseDownY() + viewer.getViewPositionY();
   selction[1] = relEvent.x + viewer.getViewPositionX();
   selction[3] = relEvent.y + viewer.getViewPositionY();
-
   redrawImage();
   updateImage();
 }
@@ -145,13 +144,140 @@ void Histogram::getSelection(float *selectionOut, bool borderValuesSet)
   }
 }
 
+juce::Colour Histogram::blueRed(float level, bool selection)
+{
+  if (level < 0.5)
+  {
+    return juce::Colour::fromHSV((240.0 - (level / 0.5 * 50.0)) / 360.0, 0.9, 1.0, level * 0.8 + 0.2);
+  }
+  return juce::Colour::fromHSV((50.0 - ((level - 0.5) / 0.5 * 50.0)) / 360.0, 0.9, 1.0, level * 0.8 + 0.2);
+}
+
+juce::Colour Histogram::oneColor(float level, bool selection)
+{
+  return juce::Colour::fromHSV(0.66, 0.9, level, 1.0);
+}
+
+juce::Colour Histogram::warmColor(float level, bool selection)
+{
+  return juce::Colour::fromHSV((60.0 * level) / 360.0, 0.9, 1.0, level * 0.7 + 0.3);
+}
+
+juce::Colour Histogram::coldColor(float level, bool selection)
+{
+  return juce::Colour::fromHSV((240.0 - 60.0 * level) / 360.0, 0.9, level * 0.6 + 0.4, 1.0);
+}
+
+juce::Colour Histogram::fullHue(float level, bool selection)
+{
+  return juce::Colour::fromHSV((240.0 - 240.0 * level) / 360.0, 0.9, 1.0, level * 0.6 + 0.4);
+}
+
+juce::Colour Histogram::blueOrange(float level, bool selection)
+{
+  return juce::Colour::fromRGB(level * 255, 143, 255 - level * 255);
+}
+
+juce::Colour Histogram::violet(float level, bool selection)
+{
+  float hue = level * 120.0;
+  if (hue > 60.0)
+  {
+    return juce::Colour::fromHSV((hue - 60.0) / 360.0, 0.9, level * 0.6 + 0.4, 1.0);
+  }
+  return juce::Colour::fromHSV((280.0 + hue) / 360.0, 0.9, level * 0.6 + 0.4, 1.0);
+}
+
+juce::Colour Histogram::kelvin(float level, bool selection)
+{
+
+  // Temperature divided by 100 for calculations
+  float KtoRGB_Temperature = (9000 - level * 9000 + 1000) / 100;
+
+  // RGB components
+  float KtoRGB_Red;
+  float KtoRGB_Green;
+  float KtoRGB_Blue;
+
+  // RED
+  if (KtoRGB_Temperature <= 66)
+  {
+    KtoRGB_Red = 255;
+  }
+
+  else
+  {
+    KtoRGB_Red = 329.698727446 * pow(KtoRGB_Temperature - 60, -0.1332047592);
+  }
+
+  if (KtoRGB_Red < 0)
+  {
+    KtoRGB_Red = 0;
+  }
+
+  if (KtoRGB_Red > 255)
+  {
+    KtoRGB_Red = 255;
+  }
+
+  // GREEN
+  if (KtoRGB_Temperature <= 66)
+  {
+    KtoRGB_Green = 99.4708025861 * log(KtoRGB_Temperature) - 161.1195681661;
+  }
+
+  else
+  {
+    KtoRGB_Green = 288.1221695283 * pow(KtoRGB_Temperature - 60, -0.0755148492);
+  }
+
+  if (KtoRGB_Green < 0)
+  {
+    KtoRGB_Green = 0;
+  }
+  if (KtoRGB_Green > 255)
+  {
+    KtoRGB_Green = 255;
+  }
+
+  // BLUE
+  if (KtoRGB_Temperature >= 66)
+  {
+    KtoRGB_Blue = 255;
+  }
+
+  else
+  {
+    if (KtoRGB_Temperature <= 19)
+    {
+      KtoRGB_Blue = 0;
+    }
+
+    else
+    {
+      KtoRGB_Blue = 138.5177312231 * log(KtoRGB_Temperature - 10) - 305.0447927307;
+    }
+  }
+
+  if (KtoRGB_Blue < 0)
+  {
+    KtoRGB_Blue = 0;
+  }
+  if (KtoRGB_Blue > 255)
+  {
+    KtoRGB_Blue = 255;
+  }
+
+  return juce::Colour::fromRGBA(KtoRGB_Red, KtoRGB_Green, KtoRGB_Blue, 255 - 32 + level * 32);
+}
+
 juce::Colour Histogram::levelToColour(float level, bool selection)
 {
   if (selection)
   {
-    return juce::Colour::fromHSV((1.0 - level) / 9.0 + 0.33, 0.9, level, 1.0);
+    return juce::Colour::fromRGB(127, 143 + level * 112, 127);
   }
-  return juce::Colour::fromHSV((1.0 - level) / 9.0 + 0.66, 0.9, level, 1.0);
+  return juce::Colour::fromRGB(level * 255, 143, 255 - level * 255);
 }
 
 void Histogram::addDataLine(const float dataLineIN[], bool nomalized)
@@ -327,6 +453,7 @@ void Histogram::redrawImage()
 {
   int spaceAvailable = std::min(dataLength, widthBins);
   juce::Graphics g(histogramImage);
+  g.fillAll(juce::Colour::fromRGB(10, 10, 10));
   g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
   g.fillRect(widthBinBorders[0], heightAvailable - xAxisSize, widthBinBorders[widthBins] - widthBinBorders[0], 40);
   for (auto i = 0; i < spaceAvailable; ++i)
@@ -346,7 +473,16 @@ void Histogram::redrawImage()
       {
         g.setColour(levelToColour(level));
       }
-      g.fillRect(lowerBorderW, lowerBorderH, upperBorderW - lowerBorderW, upperBorderH - lowerBorderH);
+      // g.fillRect(lowerBorderW, lowerBorderH, upperBorderW - lowerBorderW, upperBorderH - lowerBorderH);
+      float spaceW = (upperBorderW - lowerBorderW);
+      float spaceH = (upperBorderH - lowerBorderH);
+      float sizeW = spaceW - 2;
+      float sizeH = spaceH * level * 0.8;
+      g.fillEllipse(lowerBorderW + (spaceW - sizeW) / 2.0, lowerBorderH + (spaceH - sizeH) / 2.0, sizeW, sizeH + 1);
+      // g.fillRect(lowerBorderW + (spaceW - sizeW) / 2.0, lowerBorderH + (spaceH - sizeH), sizeW, sizeH);
+      float VsizeW = spaceW * level * 0.8;
+      float VsizeH = spaceH;
+      // g.fillEllipse(lowerBorderW + (spaceW - VsizeW) / 2.0, lowerBorderH + (spaceH - VsizeH) / 2.0, VsizeW + 1, VsizeH);
     }
   }
   if (widthBins > dataLength)

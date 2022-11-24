@@ -52,18 +52,6 @@ EventSelector::EventSelector() : thirdOctaveSpectrogarm(numberOfBands), audioDat
   phon.setInputRestrictions(2, "0123456789");
   phon.setMultiLine(false);
 
-  addAndMakeVisible(&zoomIn);
-  zoomIn.setButtonText("+");
-  zoomIn.onClick = [this]
-  { zoomInClicked(); };
-  zoomIn.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
-
-  addAndMakeVisible(&zoomOut);
-  zoomOut.setButtonText("-");
-  zoomOut.onClick = [this]
-  { zoomOutClicked(); };
-  zoomOut.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
-
   addAndMakeVisible(&corrected);
   corrected.setState(juce::Button::buttonNormal);
   corrected.setButtonText("Loudness Correction");
@@ -111,18 +99,6 @@ EventSelector::EventSelector(FileHandler *in) : thirdOctaveSpectrogarm(numberOfB
   phon.setText("80");
   phon.setInputRestrictions(2, "0123456789");
   phon.setMultiLine(false);
-
-  addAndMakeVisible(&zoomIn);
-  zoomIn.setButtonText("+");
-  zoomIn.onClick = [this]
-  { zoomInClicked(); };
-  zoomIn.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
-
-  addAndMakeVisible(&zoomOut);
-  zoomOut.setButtonText("-");
-  zoomOut.onClick = [this]
-  { zoomOutClicked(); };
-  zoomOut.setColour(juce::TextButton::buttonColourId, juce::Colours::black);
 
   addAndMakeVisible(&corrected);
   corrected.setState(juce::Button::buttonNormal);
@@ -358,9 +334,7 @@ void EventSelector::resized()
   int width = getWidth() - 4;
   int height = getHeight();
   blockSize.setBounds(0, 2, width / 4, 20);
-  phon.setBounds(width / 4, 2, width / 8, 20);
-  zoomIn.setBounds(3 * width / 8, 2, width / 16, 20);
-  zoomOut.setBounds(7 * width / 16, 2, width / 16, 20);
+  phon.setBounds(width / 4, 2, width / 4, 20);
   corrected.setBounds(2 * width / 4, 2, width / 4, 20);
   analyseButton.setBounds(3 * width / 4, 2, width / 4, 20);
   calcButton.setBounds(2, 24, width, 20);

@@ -42,6 +42,14 @@ public:
   void setHorizontalLables(bool in);
   void paintOverChildren(juce::Graphics &g);
   int xAxisSize = 28;
+  juce::Colour blueRed(float level, bool selection);
+  juce::Colour oneColor(float level, bool selection);
+  juce::Colour warmColor(float level, bool selection);
+  juce::Colour coldColor(float level, bool selection);
+  juce::Colour fullHue(float level, bool selection);
+  juce::Colour blueOrange(float level, bool selection);
+  juce::Colour violet(float level, bool selection);
+  juce::Colour kelvin(float level, bool selection);
 
 private:
   juce::Image histogramImage;
@@ -65,12 +73,11 @@ private:
   int widthBins = 1;
   juce::Atomic<bool> dataReady = false;
   std::array<int, 4> selction = {0, 0, 0, 0};
-  double zoom = 1.0;
+  double zoom = 0.25;
   bool verticalLines = true;
   bool horizontalLines = true;
   bool verticalLables = true;
   bool horizontalLables = true;
-  
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Histogram)
 };
