@@ -42,14 +42,6 @@ public:
   void setHorizontalLables(bool in);
   void paintOverChildren(juce::Graphics &g);
   int xAxisSize = 28;
-  juce::Colour blueRed(float level, bool selection);
-  juce::Colour oneColor(float level, bool selection);
-  juce::Colour warmColor(float level, bool selection);
-  juce::Colour coldColor(float level, bool selection);
-  juce::Colour fullHue(float level, bool selection);
-  juce::Colour blueOrange(float level, bool selection);
-  juce::Colour violet(float level, bool selection);
-  juce::Colour kelvin(float level, bool selection);
 
 private:
   juce::Image histogramImage;
