@@ -646,6 +646,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\WaveogramUI.cpp">
+      <Filter>Audio-Visualizer\Source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Waveogram.cpp">
+      <Filter>Audio-Visualizer\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\WaveformDisplayWraper.cpp">
       <Filter>Audio-Visualizer\Source</Filter>
     </ClCompile>
@@ -3099,6 +3105,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Source\WaveogramUI.h">
+      <Filter>Audio-Visualizer\Source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Waveogram.h">
+      <Filter>Audio-Visualizer\Source</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\Source\WaveformDisplayWraper.h">
       <Filter>Audio-Visualizer\Source</Filter>
     </ClInclude>

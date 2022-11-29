@@ -1,7 +1,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : notes(), energy()
+MainComponent::MainComponent() : notes(), energy(), waveData(&openFile)
 
 {
     std::cout << kfr::library_version() << std::endl;
@@ -77,6 +77,13 @@ void MainComponent::loadVis(std::string visName)
         activeVis = VisWaveformDisplay;
         addAndMakeVisible(&waveForm);
         waveForm.addFileHandler(&openFile);
+    }
+    else if (visName == "Waveogram")
+    {
+        activeVis = VisWaveogram;
+        addAndMakeVisible(&waveData);
+        waveData.addFileHandler(&openFile);
+        openFile.addChangeListener(&waveData);
     }
     else
     {
@@ -155,6 +162,16 @@ void MainComponent::resized()
             visSelect[i].setBounds(0, 0, 0, 0);
         }
         waveForm.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
+        break;
+    }
+
+    case VisWaveogram:
+    {
+        for (auto i = 0; i < numVis; i++)
+        {
+            visSelect[i].setBounds(0, 0, 0, 0);
+        }
+        waveData.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
         break;
     }
     }

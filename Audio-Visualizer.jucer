@@ -5,6 +5,10 @@
               cppLanguageStandard="17">
   <MAINGROUP id="yXN5XM" name="Audio-Visualizer">
     <GROUP id="{17762DD9-C1F7-722D-84D1-26C81A7C0B67}" name="Source">
+      <FILE id="DLdW9T" name="WaveogramUI.cpp" compile="1" resource="0" file="Source/WaveogramUI.cpp"/>
+      <FILE id="YXe0uC" name="WaveogramUI.h" compile="0" resource="0" file="Source/WaveogramUI.h"/>
+      <FILE id="WftmCg" name="Waveogram.cpp" compile="1" resource="0" file="Source/Waveogram.cpp"/>
+      <FILE id="vACDXd" name="Waveogram.h" compile="0" resource="0" file="Source/Waveogram.h"/>
       <FILE id="chLxKO" name="WaveformDisplayWraper.cpp" compile="1" resource="0"
             file="Source/WaveformDisplayWraper.cpp"/>
       <FILE id="m3opkW" name="WaveformDisplayWraper.h" compile="0" resource="0"

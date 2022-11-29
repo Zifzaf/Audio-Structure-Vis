@@ -6,6 +6,7 @@
 #include "NoteShower.h"
 #include "EnergyBands.h"
 #include "EventSelector.h"
+#include "WaveogramUI.h"
 #include "WaveformDisplayWraper.h"
 #include <kfr/all.hpp>
 #include <chrono>
@@ -17,6 +18,7 @@ enum VisType
     VisEnergyBand,
     VisEventSelector,
     VisWaveformDisplay,
+    VisWaveogram,
 };
 
 //==============================================================================
@@ -40,10 +42,11 @@ public:
     EnergyBands energy;
     EventSelector spectro;
     WaveformDisplayWraper waveForm;
+    WaveogramUI waveData; 
     VisType activeVis = None;
-    static const size_t numVis = 4;
+    static const size_t numVis = 5;
     std::array<juce::TextButton, numVis> visSelect;
-    std::array<std::string, numVis> visNames = {"Note Shower", "Energy Bands", "Event Selector", "Waveform Display"};
+    std::array<std::string, numVis> visNames = {"Note Shower", "Energy Bands", "Event Selector", "Waveform Display", "Waveogram"};
     void loadVis(std::string visName);
 
     //==============================================================================

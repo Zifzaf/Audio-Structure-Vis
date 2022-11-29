@@ -36,6 +36,8 @@ double Loudness::getScaleFactor(double phon, double freq)
   }
   double levels[29];
   getLevelArray(&levels[0], phon);
+
+  /*
   juce::FloatVectorOperations::multiply(levels, 0.1, 29);
   for (auto i = 0; i < 29; i++)
   {
@@ -46,14 +48,23 @@ double Loudness::getScaleFactor(double phon, double freq)
   {
     levels[i] = base / levels[i];
   }
+  */
 
   int i = 0;
   while (f[i + 1] < freq)
   {
     i++;
   }
+  double base = levels[17];
+
+  for (auto i = 0; i < 29; i++)
+  {
+    levels[i] = 2 * base - levels[i];
+  }
+  double max = juce::FloatVectorOperations::findMaximum(levels, 29);
+  double min = juce::FloatVectorOperations::findMinimum(levels, 29);
   // std::cout << levels[i] + (freq - f[i]) * (levels[i + 1] - levels[i]) / (f[i + 1] - f[i]) << std::endl;
-  return levels[i] + (freq - f[i]) * (levels[i + 1] - levels[i]) / (f[i + 1] - f[i]);
+  return (levels[i] + (freq - f[i]) * (levels[i + 1] - levels[i]) / (f[i + 1] - f[i])) / max;
 }
 
 double Loudness::getLevel(double phon, double freq)
