@@ -350,8 +350,6 @@ void Waveogram::mouseUp(const juce::MouseEvent &event)
 void Waveogram::setZoom(double newZoom)
 {
   zoom = newZoom;
-  recalculateImage();
-  updateImage();
 }
 
 double Waveogram::getZoom()
@@ -376,99 +374,121 @@ void Waveogram::zoomOutClicked()
 void Waveogram::setHorizontalLines(bool in)
 {
   horizontalLines = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setHorizontalLables(bool in)
 {
   horizontalLables = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setVerticalLables(bool in)
 {
   verticalLables = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setDrawEllipse(bool in)
 {
   drawEllipse = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setNormalizeFrequencyDim(bool in)
 {
   normalizeFrequencyDim = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setNormalizeTimeDim(bool in)
 {
   normalizeTimeDim = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setScaleVertical(bool in)
 {
   scaleVertical = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setScaleHorizontal(bool in)
 {
   scaleHorizontal = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setThreshhold(float in)
 {
   threshhold = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setClip(float in)
 {
   clip = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setLevelBinNum(int in)
 {
   levelBinNum = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setLevelBinLogScale(bool in)
 {
   levelBinLogScale = in;
-  redrawImage();
-  updateImage();
 }
 
 void Waveogram::setLoudnessCorrection(bool in)
 {
   loudnessCorrection = in;
-  calculateValueArray();
-  recalculateImage();
-  updateImage();
 }
 
 void Waveogram::setCentered(bool in)
 {
   centered = in;
+}
+
+void Waveogram::redrawImageCall()
+{
   redrawImage();
+  updateImage();
+}
+
+void Waveogram::recalculateImageCall()
+{
+  recalculateImage();
+  updateImage();
+}
+
+void Waveogram::calculateValueArrayCall()
+{
+  auto start = std::chrono::high_resolution_clock::now();
+
+  calculateValueArray();
+
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "ValueArray: " << duration.count() << std::endl;
+
+  recalculateImage();
+  updateImage();
+}
+
+void Waveogram::calculateFTTCall()
+{
+  auto start = std::chrono::high_resolution_clock::now();
+
+  calculateFFT();
+
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "FFT: " << duration.count() << std::endl;
+
+  start = std::chrono::high_resolution_clock::now();
+
+  calculateValueArray();
+
+  stop = std::chrono::high_resolution_clock::now();
+  duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "ValueArray: " << duration.count() << std::endl;
+
+  start = std::chrono::high_resolution_clock::now();
+
+  recalculateImage();
+
   updateImage();
 }
 
@@ -527,6 +547,22 @@ void Waveogram::getSelection(float *selectionOut, int *selectionOutPixel)
 
 juce::Colour Waveogram::levelToColour(float level, bool selection)
 {
+  if (level == 1.0)
+  {
+    if (selection)
+    {
+      return juce::Colour::fromRGB(48, 255, 48);
+    }
+    return juce::Colour::fromRGB(255, 85, 0);
+  }
+  if (level == 0.0)
+  {
+    if (selection)
+    {
+      return juce::Colour::fromRGB(48, 48, 48);
+    }
+    return juce::Colour::fromRGB(0, 64, 143);
+  }
   if (selection)
   {
     return juce::Colour::fromRGB(96, 96 + level * (255 - 96), 96);
@@ -669,7 +705,7 @@ void Waveogram::redrawImage()
     getSelection(&currentSelection[0], &currentSelectionPixel[0]);
     g.setColour(juce::Colours::white);
     g.drawRect(currentSelectionPixel[0], currentSelectionPixel[2], currentSelectionPixel[1] - currentSelectionPixel[0], currentSelectionPixel[3] - currentSelectionPixel[2]);
-    
+
     float *levelBinBorderValues = NULL;
     if (levelBinNum > 0)
     {
@@ -813,17 +849,17 @@ void Waveogram::redrawImage()
         float sizeH = spaceH - 2;
         if (scaleVertical && scaleHorizontal)
         {
-          sizeW = spaceW * sqrt(levelTimesFrequencyNormalizationValue) * 0.8;
-          sizeH = spaceH * sqrt(levelTimesTimeNomalizationValue) * 0.8;
+          sizeW = (spaceW - 2) * sqrt(levelTimesFrequencyNormalizationValue);
+          sizeH = (spaceH - 2) * sqrt(levelTimesTimeNomalizationValue);
         }
         else if (scaleVertical)
         {
           sizeW = spaceW - 2;
-          sizeH = spaceH * levelTimesTimeNomalizationValue * 0.8;
+          sizeH = (spaceH - 2) * levelTimesTimeNomalizationValue;
         }
         else if (scaleHorizontal)
         {
-          sizeW = spaceW * level * 0.8;
+          sizeW = (spaceW - 2) * level;
           sizeH = spaceH - 2;
         }
         if (centered)
@@ -834,7 +870,7 @@ void Waveogram::redrawImage()
           }
           else
           {
-            g.fillRoundedRectangle(lowerBorderW + (spaceW - sizeW) / 2.0, lowerBorderH + (spaceH - sizeH) / 2.0, sizeW + 1, sizeH + 1, 1);
+            g.fillRect(lowerBorderW + (spaceW - sizeW) / 2.0, lowerBorderH + (spaceH - sizeH) / 2.0, sizeW + 1, sizeH + 1);
           }
         }
         else
@@ -845,7 +881,7 @@ void Waveogram::redrawImage()
           }
           else
           {
-            g.fillRoundedRectangle(lowerBorderW, lowerBorderH + (spaceH - sizeH), sizeW + 1, sizeH + 1, 1);
+            g.fillRect((float)lowerBorderW, lowerBorderH + (spaceH - sizeH), sizeW + 1, sizeH + 1);
           }
         }
       }

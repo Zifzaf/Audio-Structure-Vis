@@ -26,11 +26,7 @@ public:
   void paint(juce::Graphics &g) override;
   void resized() override;
   void setRawAudio(const float *audioData, size_t audioDataLength, double audioDataSampleRate);
-  void calculateFFT();
-  void calculateFFTBlockSize();
-  void calculateValueArray();
-  void calculateFrequencyBorders();
-  void calculateVerticalPixelMap();
+  
   void setFrequencyBins(int newFrequencyBins);
   void setTimeBinSize(int newTimeBinSize);
   void setHorizontalLines(bool in);
@@ -48,15 +44,18 @@ public:
   void setLoudnessCorrection(bool in);
   void setCentered(bool in);
 
+  void redrawImageCall();
+  void recalculateImageCall();
+  void calculateValueArrayCall();
+  void calculateFTTCall();
+
   //==============================================================================
   void replaceData(const float *inData, size_t inDataLength, bool normalized, bool logScale, float *widthBorderValues = NULL, float *heightBorderValues = NULL);
   juce::Colour levelToColour(float level, bool selection = false);
   void processDataArray(float *data, size_t len, double clipSTDBottom, double clipSTDTop);
   void mouseUp(const juce::MouseEvent &event);
   inline bool overlap(int startA, int endA, int startB, int endB);
-  void recalculateImage();
-  void updateImage();
-  void redrawImage();
+
   void getSelection(float *selectionOut, int *selectionOutPixel);
   void setZoom(double newZoom);
   double getZoom();
@@ -66,6 +65,15 @@ public:
   inline std::string floatToString(float a);
 
 private:
+  void recalculateImage();
+  void updateImage();
+  void redrawImage();
+  void calculateFFT();
+  void calculateFFTBlockSize();
+  void calculateValueArray();
+  void calculateFrequencyBorders();
+  void calculateVerticalPixelMap();
+
   juce::Image WaveogramImage;
   juce::Viewport viewer;
   juce::Component container;
