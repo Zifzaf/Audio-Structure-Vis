@@ -655,5 +655,5 @@ void WaveogramUI::resized()
   setWavegram.setBounds(2 + 9 * width / 10, 29, width / 10, 8);
   setWaveform.setBounds(2 + 9 * width / 10, 39, width / 10, 8);
 
-  waveData.setBounds(2, 46, width, height - 46);
+  waveData.setBounds(32, 46, width - 30, height - 46);
 }
