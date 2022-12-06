@@ -43,6 +43,7 @@ public:
   void setLevelBinLogScale(bool in);
   void setLoudnessCorrection(bool in);
   void setCentered(bool in);
+  void setFrequencyLabels(bool in);
 
   void redrawImageCall();
   void recalculateImageCall();
@@ -118,9 +119,9 @@ private:
 
   int selectionCoordinates[4];
 
-  bool horizontalLines;
+  bool horizontalLinesIn;
   bool verticalLables;
-  bool horizontalLables;
+  bool horizontalLablesIn;
 
   juce::Atomic<bool> dataAvailable;
   juce::Atomic<bool> fftAvailable;
@@ -146,6 +147,10 @@ private:
   bool loudnessCorrection;
 
   bool centered;
+
+  bool frequencyLabels;
+
+  int yAxisSize;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Waveogram)
 };

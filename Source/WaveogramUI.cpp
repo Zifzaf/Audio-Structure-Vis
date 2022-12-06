@@ -161,6 +161,12 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in), audioData(*new juce::
   setWaveform.setColour(juce::TextButton::buttonColourId, juce::Colours::azure);
   setWaveform.setColour(juce::TextButton::textColourOnId, juce::Colours::black);
   setWaveform.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
+
+  addAndMakeVisible(&frequencyLabels);
+  frequencyLabels.setState(juce::Button::buttonNormal);
+  frequencyLabels.setButtonText("frequencyLabels");
+  frequencyLabels.onClick = [this]
+  { frequencyLabelsClicked(); };
 }
 
 WaveogramUI::~WaveogramUI()
@@ -252,6 +258,12 @@ void WaveogramUI::centeredClicked()
   waveData.redrawImageCall();
 }
 
+void WaveogramUI::frequencyLabelsClicked()
+{
+  waveData.setFrequencyLabels(frequencyLabels.getToggleState());
+  waveData.redrawImageCall();
+}
+
 void WaveogramUI::setSpectrogramCall()
 {
   waveData.setFrequencyBins(114);
@@ -309,6 +321,9 @@ void WaveogramUI::setSpectrogramCall()
 
   waveData.setCentered(true);
   centered.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setFrequencyLabels(true);
+  frequencyLabels.setToggleState(true, juce::NotificationType::dontSendNotification);
 
   waveData.setZoom(2.0);
 
@@ -373,6 +388,9 @@ void WaveogramUI::setHistgramCall()
   waveData.setCentered(false);
   centered.setToggleState(false, juce::NotificationType::dontSendNotification);
 
+  waveData.setFrequencyLabels(false);
+  frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+
   waveData.setZoom(2.0);
 
   waveData.calculateFTTCall();
@@ -435,6 +453,9 @@ void WaveogramUI::setWavegramCall()
 
   waveData.setCentered(true);
   centered.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setFrequencyLabels(true);
+  frequencyLabels.setToggleState(true, juce::NotificationType::dontSendNotification);
 
   waveData.setZoom(2.0);
 
@@ -499,6 +520,9 @@ void WaveogramUI::setWaveformCall()
   waveData.setCentered(true);
   centered.setToggleState(true, juce::NotificationType::dontSendNotification);
 
+  waveData.setFrequencyLabels(false);
+  frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+
   waveData.setZoom(0.5);
 
   waveData.calculateFTTCall();
@@ -561,6 +585,9 @@ void WaveogramUI::setFrequencygramCall()
 
   waveData.setCentered(false);
   centered.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  waveData.setFrequencyLabels(false);
+  frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
   waveData.setZoom(0.125);
 
@@ -638,6 +665,7 @@ void WaveogramUI::resized()
   clip.setBounds(2 + 5 * width / 10, 2, width / 10, 20);
   levelBinNum.setBounds(2 + 6 * width / 10, 2, width / 10, 20);
   levelBinLogScale.setBounds(2 + 7 * width / 10, 2, width / 10, 20);
+  frequencyLabels.setBounds(2 + 8 * width / 10, 2, width / 10, 20);
 
   horizontalLines.setBounds(2 + 0 * width / 10, 24, width / 10, 20);
   verticalLables.setBounds(2 + 1 * width / 10, 24, width / 10, 20);
@@ -655,5 +683,5 @@ void WaveogramUI::resized()
   setWavegram.setBounds(2 + 9 * width / 10, 29, width / 10, 8);
   setWaveform.setBounds(2 + 9 * width / 10, 39, width / 10, 8);
 
-  waveData.setBounds(32, 46, width - 30, height - 46);
+  waveData.setBounds(2, 46, width, height - 46);
 }

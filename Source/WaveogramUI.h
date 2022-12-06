@@ -40,13 +40,14 @@ public:
   void levelBinLogScaleClicked();
   void loudnessCorrectionClicked();
   void centeredClicked();
+  void frequencyLabelsClicked();
 
   void setSpectrogramCall();
   void setWavegramCall();
   void setFrequencygramCall();
   void setHistgramCall();
   void setWaveformCall();
-
+  
   //==============================================================================
   void paint(juce::Graphics &g) override;
   void resized() override;
@@ -71,6 +72,7 @@ private:
   juce::ToggleButton levelBinLogScale;
   juce::ToggleButton loudnessCorrection;
   juce::ToggleButton centered;
+  juce::ToggleButton frequencyLabels;
   juce::TextButton setSpectrogram;
   juce::TextButton setWavegram;
   juce::TextButton setFrequencygram;

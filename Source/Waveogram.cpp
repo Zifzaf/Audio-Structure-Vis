@@ -63,8 +63,8 @@ Waveogram ::Waveogram()
   selectionCoordinates[2] = 0;
   selectionCoordinates[3] = 0;
 
-  horizontalLines = false;
-  horizontalLables = false;
+  horizontalLinesIn = false;
+  horizontalLablesIn = false;
   verticalLables = false;
 
   dataAvailable = false;
@@ -91,6 +91,10 @@ Waveogram ::Waveogram()
   loudnessCorrection = false;
 
   centered = true;
+
+  frequencyLabels = false;
+
+  yAxisSize = 40;
 }
 
 Waveogram ::~Waveogram()
@@ -338,9 +342,9 @@ inline bool Waveogram::overlap(int startA, int endA, int startB, int endB)
 void Waveogram::mouseUp(const juce::MouseEvent &event)
 {
   auto relEvent = event.getEventRelativeTo(this);
-  selectionCoordinates[0] = relEvent.getMouseDownX() + viewer.getViewPositionX();
+  selectionCoordinates[0] = relEvent.getMouseDownX() + viewer.getViewPositionX() - yAxisSize;
   selectionCoordinates[2] = relEvent.getMouseDownY() + viewer.getViewPositionY();
-  selectionCoordinates[1] = relEvent.x + viewer.getViewPositionX();
+  selectionCoordinates[1] = relEvent.x + viewer.getViewPositionX() - yAxisSize;
   selectionCoordinates[3] = relEvent.y + viewer.getViewPositionY();
   redrawImage();
   updateImage();
@@ -373,12 +377,12 @@ void Waveogram::zoomOutClicked()
 
 void Waveogram::setHorizontalLines(bool in)
 {
-  horizontalLines = in;
+  horizontalLinesIn = in;
 }
 
 void Waveogram::setHorizontalLables(bool in)
 {
-  horizontalLables = in;
+  horizontalLablesIn = in;
 }
 
 void Waveogram::setVerticalLables(bool in)
@@ -439,6 +443,11 @@ void Waveogram::setLoudnessCorrection(bool in)
 void Waveogram::setCentered(bool in)
 {
   centered = in;
+}
+
+void Waveogram::setFrequencyLabels(bool in)
+{
+  frequencyLabels = in;
 }
 
 void Waveogram::redrawImageCall()
@@ -578,12 +587,27 @@ void Waveogram ::paint(juce::Graphics &g)
 
 void Waveogram ::paintOverChildren(juce::Graphics &g)
 {
-  if (horizontalLables && valueArrayAvailable.get())
+  if (frequencyLabels && imageCalculated.get())
+  {
+    float labelFrequencies[8] = {50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
+    g.setColour(juce::Colours::whitesmoke);
+    int labelIndex = 0;
+    for (auto i = 0; i < heightData; i++)
+    {
+      if (labelIndex < 8 && verticalPixelMap[i] > labelFrequencies[labelIndex])
+      {
+        g.drawText(std::to_string((int)labelFrequencies[labelIndex]), 0, (heightData - i) - 5, yAxisSize - 4, 10, juce::Justification::centredRight, false);
+        g.fillRect(yAxisSize - 2, (heightData - i), std::min(widthAvailable - yAxisSize, widthBinBorders[fftBlockNum] - widthBinBorders[0]) + 2, 1);
+        labelIndex++;
+      }
+    }
+  }
+  if (horizontalLablesIn && imageCalculated.get())
   {
     g.setColour(juce::Colours::whitesmoke);
     for (auto i = 1; i < frequencyBinNum; i++)
     {
-      g.drawText(std::to_string((int)frequencyBorderValues[i]), 12, heightData - (heightBinBorders[i] + 10), 100, 10, juce::Justification::bottom, false);
+      g.drawText(std::to_string((int)frequencyBorderValues[i]), 0, heightData - heightBinBorders[i] - 5, yAxisSize - 4, 10, juce::Justification::centredRight, false);
     }
   }
   if (selectionInfo)
@@ -695,6 +719,7 @@ void Waveogram::redrawImage()
 {
   if (imageCalculated.get())
   {
+
     juce::Graphics g(WaveogramImage);
     g.fillAll(juce::Colour::fromRGB(10, 10, 10));
     g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
@@ -886,7 +911,7 @@ void Waveogram::redrawImage()
         }
       }
     }
-    if (horizontalLines)
+    if (horizontalLinesIn)
     {
       g.setColour(juce::Colours::grey);
       for (auto i = 1; i < frequencyBinNum; i++)
@@ -954,6 +979,7 @@ void Waveogram::updateImage()
     auto current = viewer.getViewPosition();
     viewer.setViewedComponent(image, true);
     viewer.setViewPosition(current);
+    repaint();
   }
 }
 
@@ -971,7 +997,7 @@ void Waveogram::resized()
   {
     widthAvailable = getWidth();
   }
-  viewer.setBounds(0, 0, widthAvailable, heightAvailable);
+  viewer.setBounds(yAxisSize, 0, widthAvailable - yAxisSize, heightAvailable);
   viewer.setScrollBarsShown(false, true, false, true);
   viewer.setScrollOnDragMode(juce::Viewport::ScrollOnDragMode::never);
   zoomIn.setBounds(widthAvailable - 44, 2, 20, 20);
