@@ -1,25 +1,9 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Histogram.h"
-#include "FileHandler.h"
-#include "NoteShower.h"
-#include "EnergyBands.h"
-#include "EventSelector.h"
 #include "WaveogramUI.h"
-#include "WaveformDisplayWraper.h"
 #include <kfr/all.hpp>
 #include <chrono>
-
-enum VisType
-{
-    None,
-    VisNoteShower,
-    VisEnergyBand,
-    VisEventSelector,
-    VisWaveformDisplay,
-    VisWaveogram,
-};
 
 //==============================================================================
 /*
@@ -38,16 +22,8 @@ public:
     void getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill) override;
     void releaseResources() override;
     void visualize(const float *buffer, int startSample, int numSamples);
-    NoteShower notes;
-    EnergyBands energy;
-    EventSelector spectro;
-    WaveformDisplayWraper waveForm;
-    WaveogramUI waveData; 
-    VisType activeVis = None;
-    static const size_t numVis = 5;
-    std::array<juce::TextButton, numVis> visSelect;
-    std::array<std::string, numVis> visNames = {"Note Shower", "Energy Bands", "Event Selector", "Waveform Display", "Waveogram"};
-    void loadVis(std::string visName);
+   
+    WaveogramUI waveData;
 
     //==============================================================================
     void paint(juce::Graphics &g) override;

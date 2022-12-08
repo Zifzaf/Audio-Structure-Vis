@@ -11,6 +11,17 @@
 #pragma once
 
 #include <JuceHeader.h>
+class TimeField : public juce::AnimatedAppComponent
+{
+public:
+  TimeField();
+  ~TimeField();
+  void paint(juce::Graphics &g) override;
+  void resized() override;
+  void update();
+  float time = 0.0;
+};
+
 enum TransportState
 {
   Stopped,
@@ -51,6 +62,7 @@ public:
   double getCurrentTime();
   void changeState(TransportState newState);
   void changeListenerCallback(juce::ChangeBroadcaster *source);
+  juce::String getPath();
 
 private:
   TransportState state;
@@ -71,6 +83,10 @@ private:
   juce::Atomic<bool> fileLoaded = false;
   float startTimeVal = 0.0;
   float endTimeVal = 0.0;
+  
+  juce::String fullPath;
+
+  TimeField audioTime;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FileHandler)
 };

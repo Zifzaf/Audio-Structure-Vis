@@ -143,17 +143,31 @@
   <ItemGroup>
     <ClCompile Include="..\..\Source\WaveogramUI.cpp"/>
     <ClCompile Include="..\..\Source\Waveogram.cpp"/>
-    <ClCompile Include="..\..\Source\WaveformDisplayWraper.cpp"/>
+    <ClCompile Include="..\..\Source\WaveformDisplayWraper.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Loudness.cpp"/>
-    <ClCompile Include="..\..\Source\EnergyBands.cpp"/>
-    <ClCompile Include="..\..\Source\NoteShower.cpp"/>
+    <ClCompile Include="..\..\Source\EnergyBands.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\NoteShower.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\Source\FileHandler.cpp"/>
-    <ClCompile Include="..\..\Source\Histogram.cpp"/>
+    <ClCompile Include="..\..\Source\Histogram.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\Source\Main.cpp"/>
     <ClCompile Include="..\..\Source\MainComponent.cpp"/>
-    <ClCompile Include="..\..\Source\EventSelector.cpp"/>
-    <ClCompile Include="..\..\Source\AnalyseWindow.cpp"/>
-    <ClCompile Include="..\..\Source\WaveformDisplay.cpp"/>
+    <ClCompile Include="..\..\Source\EventSelector.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\AnalyseWindow.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\WaveformDisplay.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\kfr\include\kfr\dft\impl\convolution-impl.cpp"/>
     <ClCompile Include="..\..\kfr\include\kfr\dft\impl\dft-impl-f32.cpp"/>
     <ClCompile Include="..\..\kfr\include\kfr\dft\impl\dft-impl-f64.cpp"/>

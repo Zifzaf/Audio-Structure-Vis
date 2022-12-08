@@ -1,21 +1,16 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() : notes(), energy(), waveData(&openFile)
+MainComponent::MainComponent() :  waveData(&openFile)
 
 {
     std::cout << kfr::library_version() << std::endl;
 
     addAndMakeVisible(&openFile);
 
-    for (auto i = 0; i < numVis; i++)
-    {
-        addAndMakeVisible(&visSelect[i]);
-        visSelect[i].setButtonText(visNames[i]);
-        visSelect[i].setColour(juce::TextButton::buttonColourId, juce::Colours::darkgrey);
-        visSelect[i].onClick = [this, i]
-        { loadVis(visNames[i]); };
-    }
+    addAndMakeVisible(&waveData);
+    waveData.addFileHandler(&openFile);
+    openFile.addChangeListener(&waveData);
 
     setSize(1600, 1000);
 
@@ -49,48 +44,6 @@ void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo &buffer
     openFile.getNextAudioBlock(bufferToFill);
 }
 
-void MainComponent::loadVis(std::string visName)
-{
-    if (visName == "Note Shower")
-    {
-        activeVis = VisNoteShower;
-        addAndMakeVisible(&notes);
-        notes.addFileHandler(&openFile);
-        openFile.addChangeListener(&notes);
-    }
-    else if (visName == "Energy Bands")
-    {
-        activeVis = VisEnergyBand;
-        addAndMakeVisible(&energy);
-        energy.addFileHandler(&openFile);
-        openFile.addChangeListener(&energy);
-    }
-    else if (visName == "Event Selector")
-    {
-        activeVis = VisEventSelector;
-        addAndMakeVisible(&spectro);
-        spectro.addFileHandler(&openFile);
-        openFile.addChangeListener(&spectro);
-    }
-    else if (visName == "Waveform Display")
-    {
-        activeVis = VisWaveformDisplay;
-        addAndMakeVisible(&waveForm);
-        waveForm.addFileHandler(&openFile);
-    }
-    else if (visName == "Waveogram")
-    {
-        activeVis = VisWaveogram;
-        addAndMakeVisible(&waveData);
-        waveData.addFileHandler(&openFile);
-        openFile.addChangeListener(&waveData);
-    }
-    else
-    {
-        activeVis = None;
-    }
-    resized();
-}
 
 void MainComponent::releaseResources()
 {
@@ -113,66 +66,5 @@ void MainComponent::resized()
     int visHeight = getHeight() - 50;
     int visStartWidth = 0;
     int visStartHeight = 50;
-    switch (activeVis)
-    {
-    case None:
-    {
-        int buttonHeight = (visHeight - (numVis + 1) * 2) / numVis;
-        for (auto i = 0; i < numVis; i++)
-        {
-            visSelect[i].setBounds(visStartWidth + 2, visStartHeight + i * buttonHeight + (i + 1) * 2, visWidth - 4, buttonHeight);
-        }
-        break;
-    }
-
-    case VisNoteShower:
-    {
-        for (auto i = 0; i < numVis; i++)
-        {
-            visSelect[i].setBounds(0, 0, 0, 0);
-        }
-        notes.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
-        break;
-    }
-
-    case VisEnergyBand:
-    {
-        for (auto i = 0; i < numVis; i++)
-        {
-            visSelect[i].setBounds(0, 0, 0, 0);
-        }
-        energy.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
-        break;
-    }
-
-    case VisEventSelector:
-    {
-        for (auto i = 0; i < numVis; i++)
-        {
-            visSelect[i].setBounds(0, 0, 0, 0);
-        }
-        spectro.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
-        break;
-    }
-
-    case VisWaveformDisplay:
-    {
-        for (auto i = 0; i < numVis; i++)
-        {
-            visSelect[i].setBounds(0, 0, 0, 0);
-        }
-        waveForm.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
-        break;
-    }
-
-    case VisWaveogram:
-    {
-        for (auto i = 0; i < numVis; i++)
-        {
-            visSelect[i].setBounds(0, 0, 0, 0);
-        }
-        waveData.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
-        break;
-    }
-    }
+    waveData.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
 }

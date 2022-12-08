@@ -176,6 +176,8 @@
     <Unit filename="../../Source/WaveformDisplayWraper.cpp">
       <Option target="App | Debug"/>
       <Option target="App | Release"/>
+      <Option compile="0"/>
+      <Option link="0"/>
     </Unit>
     <Unit filename="../../Source/WaveformDisplayWraper.h">
       <Option target="App | Debug"/>
@@ -202,6 +204,8 @@
     <Unit filename="../../Source/EnergyBands.cpp">
       <Option target="App | Debug"/>
       <Option target="App | Release"/>
+      <Option compile="0"/>
+      <Option link="0"/>
     </Unit>
     <Unit filename="../../Source/NoteShower.h">
       <Option target="App | Debug"/>
@@ -212,6 +216,8 @@
     <Unit filename="../../Source/NoteShower.cpp">
       <Option target="App | Debug"/>
       <Option target="App | Release"/>
+      <Option compile="0"/>
+      <Option link="0"/>
     </Unit>
     <Unit filename="../../Source/FileHandler.h">
       <Option target="App | Debug"/>
@@ -226,6 +232,8 @@
     <Unit filename="../../Source/Histogram.cpp">
       <Option target="App | Debug"/>
       <Option target="App | Release"/>
+      <Option compile="0"/>
+      <Option link="0"/>
     </Unit>
     <Unit filename="../../Source/Histogram.h">
       <Option target="App | Debug"/>
@@ -250,6 +258,8 @@
     <Unit filename="../../Source/EventSelector.cpp">
       <Option target="App | Debug"/>
       <Option target="App | Release"/>
+      <Option compile="0"/>
+      <Option link="0"/>
     </Unit>
     <Unit filename="../../Source/EventSelector.h">
       <Option target="App | Debug"/>
@@ -260,6 +270,8 @@
     <Unit filename="../../Source/AnalyseWindow.cpp">
       <Option target="App | Debug"/>
       <Option target="App | Release"/>
+      <Option compile="0"/>
+      <Option link="0"/>
     </Unit>
     <Unit filename="../../Source/AnalyseWindow.h">
       <Option target="App | Debug"/>
@@ -270,6 +282,8 @@
     <Unit filename="../../Source/WaveformDisplay.cpp">
       <Option target="App | Debug"/>
       <Option target="App | Release"/>
+      <Option compile="0"/>
+      <Option link="0"/>
     </Unit>
     <Unit filename="../../Source/WaveformDisplay.h">
       <Option target="App | Debug"/>

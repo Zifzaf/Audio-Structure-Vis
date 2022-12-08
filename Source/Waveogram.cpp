@@ -171,7 +171,7 @@ void Waveogram ::calculateFFT()
     // prepare FFT
     kfr::dft_plan_real<float> dft(fftBlockSize);
     kfr::u8 *temp = new kfr::u8[dft.temp_size];
-    juce::dsp::WindowingFunction<float> window(timeBinSize, juce::dsp::WindowingFunction<float>::kaiser, true, 1.0);
+    juce::dsp::WindowingFunction<float> window(timeBinSize, juce::dsp::WindowingFunction<float>::hann, true);
     float *audioDataBlock = new float[fftBlockSize];
 
     // calculate FFT
@@ -197,16 +197,20 @@ void Waveogram ::calculateFFT()
 
 void Waveogram ::calculateFFTBlockSize()
 {
-  // We use 9.5 Octaves, so calculate FFT size such that when breaking up
+  // We use (std::log2(highFreqCut) - std::log2(lowFreqCut)) Octaves, so calculate FFT size such that when breaking up
   // freq bins in factors based on log2 the lowest bin includes at least
   // one value
-  double stepFactor = std::pow(2.0, 9.5 / (double)frequencyBinNum);
-  double minBlockSize = sampleRate / (lowFreqCut * stepFactor - lowFreqCut);
+  // lowFreqCut = sampleRate / timeBinSize;
+  // calculateVerticalPixelMap();
+  double minRelevantFreq = std::max(sampleRate / timeBinSize, lowFreqCut);
+  double stepFactor = std::pow(2.0, (std::log2(highFreqCut) - std::log2(lowFreqCut)) / (double)frequencyBinNum);
+  double minBlockSize = sampleRate / (minRelevantFreq * stepFactor - minRelevantFreq);
   minBlockSize = std::pow(2.0, std::ceil(std::log2(minBlockSize)));
   // also at least use the size of the time bining as the FFT size
   double timeBinSizePower2 = timeBinSize;
   timeBinSizePower2 = std::pow(2.0, std::ceil(std::log2(timeBinSizePower2)));
-  fftBlockSize = std::max((int)minBlockSize, (int)timeBinSizePower2);
+  // fftBlockSize = (int)timeBinSizePower2*4.0;
+  fftBlockSize = std::max((int)(minBlockSize), (int)timeBinSizePower2);
 }
 
 void Waveogram ::calculateValueArray()
@@ -228,13 +232,18 @@ void Waveogram ::calculateValueArray()
     double freqStep = sampleRate / fftBlockSize;
     // Calculation for binning
     auto index = 0;
-    while (index * freqStep < frequencyBorderValues[0])
+    while (index * freqStep < frequencyBorderValues[0] || (frequencyBinNum > 1 && index * freqStep < 2.0 * sampleRate / (timeBinSize)))
     {
       fftBinMap[index] = -1;
       loudnessCorrectionParameters[index] = 0.0;
       index++;
     }
     auto binNumber = 0;
+    while (index * freqStep > frequencyBorderValues[binNumber])
+    {
+      binNumber++;
+    }
+    binNumber--;
     while (index * freqStep < frequencyBorderValues[frequencyBinNum])
     {
       if (index * freqStep < frequencyBorderValues[binNumber + 1])
@@ -300,11 +309,11 @@ void Waveogram ::calculateFrequencyBorders()
   // set given top and bottom fequencies
   frequencyBorderValues[0] = lowFreqCut;
   frequencyBorderValues[frequencyBinNum] = highFreqCut;
-  // calcualte step for 9.5 octaves and intialise the rest
-  double stepFactor = std::pow(2.0, 9.5 / (double)frequencyBinNum);
+  // calcualte step for (std::log2(highFreqCut) - std::log2(lowFreqCut)) octaves and intialise the rest
+  double stepFactor = std::pow(2.0, (std::log2(highFreqCut) - std::log2(lowFreqCut)) / (double)frequencyBinNum);
   for (auto i = 1; i < frequencyBinNum; i++)
   {
-    frequencyBorderValues[i] = stepFactor * frequencyBorderValues[i - 1];
+    frequencyBorderValues[i] = std::pow(stepFactor, (double)i) * lowFreqCut;
     // std::cout << frequencyBorderValues[i] << " : " << Loudness::getScaleFactor(80.0, frequencyBorderValues[i]) << std::endl;
   }
 }
@@ -317,7 +326,7 @@ void Waveogram ::calculateVerticalPixelMap()
   verticalPixelMap[heightData - 1] = highFreqCut;
   double range = (highFreqCut - lowFreqCut);
 
-  double stepFactor = std::pow(2.0, 9.5 / (double)heightData);
+  double stepFactor = std::pow(2.0, (std::log2(highFreqCut) - std::log2(lowFreqCut)) / (double)heightData);
   for (auto i = 1; i < heightData; i++)
   {
     verticalPixelMap[i] = std::pow(stepFactor, (double)i) * lowFreqCut;
@@ -622,6 +631,20 @@ void Waveogram ::paintOverChildren(juce::Graphics &g)
     g.drawText("Low: " + std::to_string((int)currentSelection[3]) + " Hz", widthAvailable - 102, 86, 100, 20, juce::Justification::centredLeft, false);
     g.drawText("Heigh: " + std::to_string((int)currentSelection[2]) + " Hz", widthAvailable - 102, 106, 100, 20, juce::Justification::centredLeft, false);
   }
+  if (imageCalculated.get() && frequencyBinNum > 1)
+  {
+    double lowerLimit = 2.0 * sampleRate / timeBinSize;
+    g.setColour(juce::Colours::red);
+    for (auto i = 0; i < heightData; i++)
+    {
+      if (verticalPixelMap[i] > lowerLimit)
+      {
+        g.drawText(std::to_string((int)lowerLimit), 0, (heightData - i) - 5, yAxisSize - 4, 10, juce::Justification::centredRight, false);
+        g.fillRect(yAxisSize - 2, (heightData - i), std::min(widthAvailable - yAxisSize, widthBinBorders[fftBlockNum] - widthBinBorders[0]) + 2, 1);
+        break;
+      }
+    }
+  }
 }
 
 inline std::string Waveogram::floatToString(float a)
@@ -636,7 +659,10 @@ void Waveogram::processDataArray(float *data, size_t len, double clipSTDBottom, 
   {
     auto minMax = juce::FloatVectorOperations::findMinAndMax(data, len);
     juce::FloatVectorOperations::add(data, -minMax.getStart(), len);
-    juce::FloatVectorOperations::multiply(data, 1.0 / (minMax.getEnd() - minMax.getStart()), len);
+    if (std::isfinite(1.0 / (minMax.getEnd() - minMax.getStart())))
+    {
+      juce::FloatVectorOperations::multiply(data, 1.0 / (minMax.getEnd() - minMax.getStart()), len);
+    }
     return;
   }
   double part = 1.0 / (double)len;

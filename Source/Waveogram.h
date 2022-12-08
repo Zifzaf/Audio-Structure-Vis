@@ -26,7 +26,7 @@ public:
   void paint(juce::Graphics &g) override;
   void resized() override;
   void setRawAudio(const float *audioData, size_t audioDataLength, double audioDataSampleRate);
-  
+
   void setFrequencyBins(int newFrequencyBins);
   void setTimeBinSize(int newTimeBinSize);
   void setHorizontalLines(bool in);

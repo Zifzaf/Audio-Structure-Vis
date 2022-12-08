@@ -9,31 +9,31 @@
       <FILE id="YXe0uC" name="WaveogramUI.h" compile="0" resource="0" file="Source/WaveogramUI.h"/>
       <FILE id="WftmCg" name="Waveogram.cpp" compile="1" resource="0" file="Source/Waveogram.cpp"/>
       <FILE id="vACDXd" name="Waveogram.h" compile="0" resource="0" file="Source/Waveogram.h"/>
-      <FILE id="chLxKO" name="WaveformDisplayWraper.cpp" compile="1" resource="0"
+      <FILE id="chLxKO" name="WaveformDisplayWraper.cpp" compile="0" resource="0"
             file="Source/WaveformDisplayWraper.cpp"/>
       <FILE id="m3opkW" name="WaveformDisplayWraper.h" compile="0" resource="0"
             file="Source/WaveformDisplayWraper.h"/>
       <FILE id="yep61C" name="Loudness.cpp" compile="1" resource="0" file="Source/Loudness.cpp"/>
       <FILE id="aBEEkW" name="Loudness.h" compile="0" resource="0" file="Source/Loudness.h"/>
       <FILE id="EHAQNi" name="EnergyBands.h" compile="0" resource="0" file="Source/EnergyBands.h"/>
-      <FILE id="cyVeZh" name="EnergyBands.cpp" compile="1" resource="0" file="Source/EnergyBands.cpp"/>
+      <FILE id="cyVeZh" name="EnergyBands.cpp" compile="0" resource="0" file="Source/EnergyBands.cpp"/>
       <FILE id="G5DhG0" name="NoteShower.h" compile="0" resource="0" file="Source/NoteShower.h"/>
-      <FILE id="padWyy" name="NoteShower.cpp" compile="1" resource="0" file="Source/NoteShower.cpp"/>
+      <FILE id="padWyy" name="NoteShower.cpp" compile="0" resource="0" file="Source/NoteShower.cpp"/>
       <FILE id="T0jCuT" name="FileHandler.h" compile="0" resource="0" file="Source/FileHandler.h"/>
       <FILE id="TRBYAQ" name="FileHandler.cpp" compile="1" resource="0" file="Source/FileHandler.cpp"/>
-      <FILE id="e2FZ4M" name="Histogram.cpp" compile="1" resource="0" file="Source/Histogram.cpp"/>
+      <FILE id="e2FZ4M" name="Histogram.cpp" compile="0" resource="0" file="Source/Histogram.cpp"/>
       <FILE id="mcLQ26" name="Histogram.h" compile="0" resource="0" file="Source/Histogram.h"/>
       <FILE id="r6ZuXe" name="Main.cpp" compile="1" resource="0" file="Source/Main.cpp"/>
       <FILE id="Ui4oeu" name="MainComponent.h" compile="0" resource="0" file="Source/MainComponent.h"/>
       <FILE id="FtE4mk" name="MainComponent.cpp" compile="1" resource="0"
             file="Source/MainComponent.cpp"/>
-      <FILE id="uO5J9E" name="EventSelector.cpp" compile="1" resource="0"
+      <FILE id="uO5J9E" name="EventSelector.cpp" compile="0" resource="0"
             file="Source/EventSelector.cpp"/>
       <FILE id="tVFHOR" name="EventSelector.h" compile="0" resource="0" file="Source/EventSelector.h"/>
-      <FILE id="WscSPR" name="AnalyseWindow.cpp" compile="1" resource="0"
+      <FILE id="WscSPR" name="AnalyseWindow.cpp" compile="0" resource="0"
             file="Source/AnalyseWindow.cpp"/>
       <FILE id="XZfv2w" name="AnalyseWindow.h" compile="0" resource="0" file="Source/AnalyseWindow.h"/>
-      <FILE id="TqyZPb" name="WaveformDisplay.cpp" compile="1" resource="0"
+      <FILE id="TqyZPb" name="WaveformDisplay.cpp" compile="0" resource="0"
             file="Source/WaveformDisplay.cpp"/>
       <FILE id="ZZ0Bg4" name="WaveformDisplay.h" compile="0" resource="0"
             file="Source/WaveformDisplay.h"/>
@@ -264,7 +264,8 @@
   <EXPORTFORMATS>
     <LINUX_MAKE targetFolder="Builds/LinuxMakefile">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Audio-Visualizer" headerPath="/home/share/kfr/include/"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="Audio-Visualizer" headerPath="/home/share/kfr/include/"
+                       optimisation="3"/>
         <CONFIGURATION isDebug="0" name="Release" targetName="Audio-Visualizer" headerPath="/home/share/kfr/include/"/>
       </CONFIGURATIONS>
       <MODULEPATHS>

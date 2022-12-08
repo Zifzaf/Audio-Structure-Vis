@@ -10,7 +10,7 @@
 
 #include "FileHandler.h"
 
-FileHandler::FileHandler()
+FileHandler::FileHandler() : audioTime()
 {
   addAndMakeVisible(&openButton);
   openButton.setButtonText("Open");
@@ -61,6 +61,8 @@ FileHandler::FileHandler()
 
   transportSource.addChangeListener(this);
   formatManager.registerBasicFormats();
+
+  addAndMakeVisible(&audioTime);
 }
 
 FileHandler::~FileHandler()
@@ -147,16 +149,22 @@ void FileHandler::openButtonClicked()
  
                 if (reader != nullptr)
                 {
+                    fullPath = file.getFullPathName();
                     auto newSource = std::make_unique<juce::AudioFormatReaderSource> (reader, true);   
                     transportSource.setSource (newSource.get(), 0, nullptr, reader->sampleRate);       
                     playButton.setEnabled (true);
-                    fileName.setText(file.getFileName(), juce::dontSendNotification);                                                    
+                    fileName.setText(file.getFileName(), juce::dontSendNotification);                                                     
                     readerSource.reset (newSource.release());
                     fileLoaded.set(true);
                     sendChangeMessage();
-                    endTime.setText(juce::String(((float)transportSource.getTotalLength() / reader->sampleRate)));                                        
+                    endTime.setText(juce::String(((float)transportSource.getTotalLength() / reader->sampleRate)));                                      
                 }
             } });
+}
+
+juce::String FileHandler::getPath()
+{
+  return fullPath;
 }
 
 void FileHandler::stopButtonClicked()
@@ -187,7 +195,9 @@ void FileHandler::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferTo
     return;
   }
   transportSource.getNextAudioBlock(bufferToFill);
-  if (transportSource.getCurrentPosition() > getEndTime())
+  float currentTime = transportSource.getCurrentPosition();
+  audioTime.time = currentTime;
+  if (currentTime > getEndTime())
   {
     transportSource.setPosition(getStartTime());
   }
@@ -316,7 +326,9 @@ void FileHandler::resized()
   openButton.setBounds(2, heigth / 2 + 4, width * 0.75 - 2, heigth / 2);
   playButton.setBounds(width * 0.75 + 2, 2, width * 0.125 - 2, heigth + 2);
   stopButton.setBounds(width * 0.875 + 1, 2, width * 0.125 - 1, heigth + 2);
-  fileName.setBounds(width / 2 + 2, 2, width / 4, heigth / 2);
+  fileName.setBounds(width / 2 + 2, 2, width / 8, heigth / 2);
+  audioTime.setBounds(5 * width / 8 + 2, 2, width / 8, heigth / 2);
+
   int size = (width / 2) / 3.25;
   time.setBounds(2, 2, 0.5 * size, heigth / 2);
   startTime.setBounds(2 + 0.5 * size, 2, size, heigth / 2);
@@ -324,4 +336,31 @@ void FileHandler::resized()
   to.setBounds(2 + 1.75 * size, 2, 0.25 * size, heigth / 2);
   endTime.setBounds(2 + 2.0 * size, 2, size, heigth / 2);
   seconds2.setBounds(2 + 3.0 * size, 2, 0.25 * size, heigth / 2);
+}
+
+TimeField::TimeField()
+{
+  setFramesPerSecond(10);
+}
+
+TimeField::~TimeField()
+{
+}
+
+void TimeField::paint(juce::Graphics &g)
+{
+  int width = getWidth();
+  int heigth = getHeight();
+  g.fillAll(juce::Colours::darkgrey);
+  g.setColour(juce::Colours::white);
+  g.drawText("T: " + std::to_string(time) + " s", 0, 0, width, heigth, juce::Justification::centred, false);
+}
+
+void TimeField::resized()
+{
+}
+
+void TimeField::update()
+{
+  repaint();
 }
