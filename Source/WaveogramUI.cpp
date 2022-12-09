@@ -22,20 +22,20 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in), audioData(*new juce::
 
   addAndMakeVisible(&frequencyBinInput);
   frequencyBinInput.setText("19");
-  frequencyBinInput.setInputRestrictions(2, "0123456789");
+  frequencyBinInput.setInputRestrictions(3, "0123456789");
   frequencyBinInput.setMultiLine(false);
 
   addAndMakeVisible(&timeBinInput);
-  timeBinInput.addItem("100th of s", 1);
-  timeBinInput.addItem("50th of s", 2);
-  timeBinInput.addItem("20th of s", 3);
-  timeBinInput.addItem("10th of s", 4);
-  timeBinInput.addItem("5th of s", 5);
-  timeBinInput.addItem("Half of s", 6);
-  timeBinInput.addItem("1 s", 7);
-  timeBinInput.addItem("2 s", 8);
-  timeBinInput.addItem("5 s", 9);
-  timeBinInput.addItem("10 s", 10);
+  timeBinInput.addItem("1/100", 1);
+  timeBinInput.addItem("1/50", 2);
+  timeBinInput.addItem("1/20", 3);
+  timeBinInput.addItem("1/10", 4);
+  timeBinInput.addItem("1/5", 5);
+  timeBinInput.addItem("1/2", 6);
+  timeBinInput.addItem("1", 7);
+  timeBinInput.addItem("2", 8);
+  timeBinInput.addItem("5", 9);
+  timeBinInput.addItem("10", 10);
   timeBinInput.setSelectedId(4, juce::NotificationType::dontSendNotification);
 
   addAndMakeVisible(&threshhold);
@@ -54,64 +54,64 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in), audioData(*new juce::
 
   addAndMakeVisible(&horizontalLines);
   horizontalLines.setState(juce::Button::buttonNormal);
-  horizontalLines.setButtonText("horizontalLines");
+  horizontalLines.setButtonText("Show Frequency Bin Borders");
   horizontalLines.onClick = [this]
   { horizontalLinesClicked(); };
 
   addAndMakeVisible(&verticalLables);
   verticalLables.setState(juce::Button::buttonNormal);
-  verticalLables.setButtonText("verticalLables");
+  verticalLables.setButtonText("Show Time Labels");
   verticalLables.onClick = [this]
   { verticalLablesClicked(); };
 
   addAndMakeVisible(&horizontalLables);
   horizontalLables.setState(juce::Button::buttonNormal);
-  horizontalLables.setButtonText("horizontalLables");
+  horizontalLables.setButtonText("Show Frequency Border Values");
   horizontalLables.onClick = [this]
   { horizontalLablesClicked(); };
   horizontalLables.triggerClick();
 
   addAndMakeVisible(&drawEllipse);
   drawEllipse.setState(juce::Button::buttonNormal);
-  drawEllipse.setButtonText("drawEllipse");
+  drawEllipse.setButtonText("Use Ellipse/Rectangle");
   drawEllipse.onClick = [this]
   { drawEllipseClicked(); };
   drawEllipse.triggerClick();
 
   addAndMakeVisible(&normalizeFrequencyDim);
   normalizeFrequencyDim.setState(juce::Button::buttonNormal);
-  normalizeFrequencyDim.setButtonText("normalizeFrequencyDim");
+  normalizeFrequencyDim.setButtonText("Normalize Color over Frequnency");
   normalizeFrequencyDim.onClick = [this]
   { normalizeFrequencyDimClicked(); };
 
   addAndMakeVisible(&normalizeTimeDim);
   normalizeTimeDim.setState(juce::Button::buttonNormal);
-  normalizeTimeDim.setButtonText("normalizeTimeDim");
+  normalizeTimeDim.setButtonText("Normalize Size over Time");
   normalizeTimeDim.onClick = [this]
   { normalizeTimeDimClicked(); };
 
   addAndMakeVisible(&scaleVertical);
   scaleVertical.setState(juce::Button::buttonNormal);
-  scaleVertical.setButtonText("scaleVertical");
+  scaleVertical.setButtonText("Show Level on Verical Scaling");
   scaleVertical.onClick = [this]
   { scaleVerticalClicked(); };
   scaleVertical.triggerClick();
 
   addAndMakeVisible(&scaleHorizontal);
   scaleHorizontal.setState(juce::Button::buttonNormal);
-  scaleHorizontal.setButtonText("scaleHorizontal");
+  scaleHorizontal.setButtonText("Show Level on Horizontal Scaling");
   scaleHorizontal.onClick = [this]
   { scaleHorizontalClicked(); };
 
   addAndMakeVisible(&loudnessCorrection);
   loudnessCorrection.setState(juce::Button::buttonNormal);
-  loudnessCorrection.setButtonText("loudnessCorrection");
+  loudnessCorrection.setButtonText("Enable Loudness Crorrection");
   loudnessCorrection.onClick = [this]
   { loudnessCorrectionClicked(); };
 
   addAndMakeVisible(&centered);
   centered.setState(juce::Button::buttonNormal);
-  centered.setButtonText("centered");
+  centered.setButtonText("Center Glyth");
   centered.onClick = [this]
   { centeredClicked(); };
   centered.triggerClick();
@@ -158,7 +158,7 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in), audioData(*new juce::
 
   addAndMakeVisible(&frequencyLabels);
   frequencyLabels.setState(juce::Button::buttonNormal);
-  frequencyLabels.setButtonText("frequencyLabels");
+  frequencyLabels.setButtonText("Show Frequency Labels");
   frequencyLabels.onClick = [this]
   { frequencyLabelsClicked(); };
 }
@@ -326,7 +326,7 @@ void WaveogramUI::setSpectrogramCall()
   waveData.setFrequencyBins(114);
   frequencyBinInput.setText("114", false);
 
-  timeBinInput.setSelectedId(1);
+  timeBinInput.setSelectedId(2);
   waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(true);
@@ -338,8 +338,8 @@ void WaveogramUI::setSpectrogramCall()
   clip.setText("-2.5", false);
   waveData.setClip(getClip());
 
-  waveData.setHorizontalLines(true);
-  horizontalLines.setToggleState(true, juce::NotificationType::dontSendNotification);
+  waveData.setHorizontalLines(false);
+  horizontalLines.setToggleState(false, juce::NotificationType::dontSendNotification);
 
   waveData.setHorizontalLables(false);
   horizontalLables.setToggleState(false, juce::NotificationType::dontSendNotification);
@@ -350,8 +350,8 @@ void WaveogramUI::setSpectrogramCall()
   waveData.setDrawEllipse(false);
   drawEllipse.setToggleState(false, juce::NotificationType::dontSendNotification);
 
-  waveData.setNormalizeFrequencyDim(false);
-  normalizeFrequencyDim.setToggleState(false, juce::NotificationType::dontSendNotification);
+  waveData.setNormalizeFrequencyDim(true);
+  normalizeFrequencyDim.setToggleState(true, juce::NotificationType::dontSendNotification);
 
   waveData.setNormalizeTimeDim(false);
   normalizeTimeDim.setToggleState(false, juce::NotificationType::dontSendNotification);
@@ -368,7 +368,7 @@ void WaveogramUI::setSpectrogramCall()
   waveData.setFrequencyLabels(true);
   frequencyLabels.setToggleState(true, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(2.0);
+  waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
 }
@@ -378,7 +378,7 @@ void WaveogramUI::setHistgramCall()
   waveData.setFrequencyBins(19);
   frequencyBinInput.setText("19", false);
 
-  timeBinInput.setSelectedId(1);
+  timeBinInput.setSelectedId(3);
   waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(true);
@@ -420,7 +420,7 @@ void WaveogramUI::setHistgramCall()
   waveData.setFrequencyLabels(false);
   frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(2.0);
+  waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
 }
@@ -430,7 +430,7 @@ void WaveogramUI::setWavegramCall()
   waveData.setFrequencyBins(38);
   frequencyBinInput.setText("38", false);
 
-  timeBinInput.setSelectedId(1);
+  timeBinInput.setSelectedId(2);
   waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(true);
@@ -445,8 +445,8 @@ void WaveogramUI::setWavegramCall()
   waveData.setHorizontalLines(false);
   horizontalLines.setToggleState(false, juce::NotificationType::dontSendNotification);
 
-  waveData.setHorizontalLables(true);
-  horizontalLables.setToggleState(true, juce::NotificationType::dontSendNotification);
+  waveData.setHorizontalLables(false);
+  horizontalLables.setToggleState(false, juce::NotificationType::dontSendNotification);
 
   waveData.setVerticalLables(true);
   verticalLables.setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -472,7 +472,7 @@ void WaveogramUI::setWavegramCall()
   waveData.setFrequencyLabels(true);
   frequencyLabels.setToggleState(true, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(2.0);
+  waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
 }
@@ -482,7 +482,7 @@ void WaveogramUI::setWaveformCall()
   waveData.setFrequencyBins(1);
   frequencyBinInput.setText("1", false);
 
-  timeBinInput.setSelectedId(1);
+  timeBinInput.setSelectedId(4);
   waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(false);
@@ -524,7 +524,7 @@ void WaveogramUI::setWaveformCall()
   waveData.setFrequencyLabels(false);
   frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(0.5);
+  waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
 }
@@ -534,7 +534,7 @@ void WaveogramUI::setFrequencygramCall()
   waveData.setFrequencyBins(57);
   frequencyBinInput.setText("57", false);
 
-  timeBinInput.setSelectedId(4);
+  timeBinInput.setSelectedId(7);
   waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(true);
@@ -570,13 +570,13 @@ void WaveogramUI::setFrequencygramCall()
   waveData.setScaleHorizontal(true);
   scaleHorizontal.setToggleState(true, juce::NotificationType::dontSendNotification);
 
-  waveData.setCentered(false);
-  centered.setToggleState(false, juce::NotificationType::dontSendNotification);
+  waveData.setCentered(true);
+  centered.setToggleState(true, juce::NotificationType::dontSendNotification);
 
   waveData.setFrequencyLabels(false);
   frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(0.125);
+  waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
 }
@@ -631,7 +631,14 @@ int WaveogramUI::getFrequencyBins()
 
 void WaveogramUI::paint(juce::Graphics &g)
 {
+  int width = getWidth() - 4;
+  int height = getHeight();
   g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+  g.setColour(juce::Colours::white);
+  g.drawText("Number of Frquency Bins: ", 2 + 0 * width / 10, 2, width / 10, 20, juce::Justification::centredRight, false);
+  g.drawText("Time Bin length [s]: ", 2 + 2 * width / 10, 2, width / 10, 20, juce::Justification::centredRight, false);
+  g.drawText("Cut Threshhold [dB]: ", 2 + 4 * width / 10, 2, width / 10, 20, juce::Justification::centredRight, false);
+  g.drawText("Clip Limit [dB]: ", 2 + 6 * width / 10, 2, width / 10, 20, juce::Justification::centredRight, false);
 }
 
 void WaveogramUI::resized()
@@ -639,29 +646,29 @@ void WaveogramUI::resized()
   int width = getWidth() - 4;
   int height = getHeight();
 
-  frequencyBinInput.setBounds(2, 2, width / 10, 20);
-  timeBinInput.setBounds(2 + width / 10, 2, width / 10, 20);
-  calcButton.setBounds(2 + 2 * width / 10, 2, width / 10, 20);
-  loudnessCorrection.setBounds(2 + 3 * width / 10, 2, width / 10, 20);
-  threshhold.setBounds(2 + 4 * width / 10, 2, width / 10, 20);
-  clip.setBounds(2 + 5 * width / 10, 2, width / 10, 20);
-  frequencyLabels.setBounds(2 + 8 * width / 10, 2, width / 10, 20);
+  frequencyBinInput.setBounds(2 + 1 * width / 10, 2, width / 10, 20);
+  timeBinInput.setBounds(2 + 3 * width / 10, 2, width / 10, 20);
+  threshhold.setBounds(2 + 5 * width / 10, 2, width / 10, 20);
+  clip.setBounds(2 + 7 * width / 10, 2, width / 10, 20);
+  loudnessCorrection.setBounds(2 + 9 * width / 10, 2, width / 10, 20);
 
-  horizontalLines.setBounds(2 + 0 * width / 10, 24, width / 10, 20);
-  verticalLables.setBounds(2 + 1 * width / 10, 24, width / 10, 20);
-  horizontalLables.setBounds(2 + 2 * width / 10, 24, width / 10, 20);
+  scaleVertical.setBounds(2 + 0 * width / 10, 24, width / 10, 20);
+  scaleHorizontal.setBounds(2 + 1 * width / 10, 24, width / 10, 20);
+  centered.setBounds(2 + 2 * width / 10, 24, width / 10, 20);
   drawEllipse.setBounds(2 + 3 * width / 10, 24, width / 10, 20);
   normalizeFrequencyDim.setBounds(2 + 4 * width / 10, 24, width / 10, 20);
   normalizeTimeDim.setBounds(2 + 5 * width / 10, 24, width / 10, 20);
-  scaleVertical.setBounds(2 + 6 * width / 10, 24, width / 10, 20);
-  scaleHorizontal.setBounds(2 + 7 * width / 10, 24, width / 10, 20);
-  centered.setBounds(2 + 8 * width / 10, 24, width / 10, 20);
+  verticalLables.setBounds(2 + 6 * width / 10, 24, width / 10, 20);
+  frequencyLabels.setBounds(2 + 7 * width / 10, 24, width / 10, 20);
+  horizontalLines.setBounds(2 + 8 * width / 10, 24, width / 10, 20);
+  horizontalLables.setBounds(2 + 9 * width / 10, 24, width / 10, 20);
 
-  setSpectrogram.setBounds(2 + 9 * width / 10, 2, width / 10, 8);
-  setFrequencygram.setBounds(2 + 9 * width / 10, 11, width / 10, 8);
-  setHistgram.setBounds(2 + 9 * width / 10, 20, width / 10, 8);
-  setWavegram.setBounds(2 + 9 * width / 10, 29, width / 10, 8);
-  setWaveform.setBounds(2 + 9 * width / 10, 39, width / 10, 8);
+  setSpectrogram.setBounds(2 + 0 * width / 10, 46, width / 10, 20);
+  setFrequencygram.setBounds(2 + 1 * width / 10, 46, width / 10, 20);
+  setHistgram.setBounds(2 + 2 * width / 10, 46, width / 10, 20);
+  setWavegram.setBounds(2 + 3 * width / 10, 46, width / 10, 20);
+  setWaveform.setBounds(2 + 4 * width / 10, 46, width / 10, 20);
+  calcButton.setBounds(2 + 9 * width / 10, 46, width / 10, 20);
 
-  waveData.setBounds(2, 46, width, height - 46);
+  waveData.setBounds(2, 68, width, height - 68);
 }

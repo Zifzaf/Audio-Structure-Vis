@@ -382,14 +382,15 @@ double Waveogram::getZoom()
 
 void Waveogram::zoomInClicked()
 {
-  zoom = zoom * 2.0;
+
+  zoom = std::max(zoom * 0.5, 1.0 / 32.0);
   recalculateImage();
   updateImage();
 }
 
 void Waveogram::zoomOutClicked()
 {
-  zoom = std::max(zoom * 0.5, 1.0 / 32.0);
+  zoom = zoom * 2.0;
   recalculateImage();
   updateImage();
 }
@@ -599,13 +600,14 @@ void Waveogram ::paintOverChildren(juce::Graphics &g)
   if (frequencyLabels && imageCalculated.get())
   {
     float labelFrequencies[8] = {50.0, 100.0, 200.0, 500.0, 1000.0, 2000.0, 5000.0, 10000.0};
-    g.setColour(juce::Colours::whitesmoke);
     int labelIndex = 0;
     for (auto i = 0; i < heightData; i++)
     {
       if (labelIndex < 8 && verticalPixelMap[i] > labelFrequencies[labelIndex])
       {
+        g.setColour(juce::Colours::whitesmoke);
         g.drawText(std::to_string((int)labelFrequencies[labelIndex]), 0, (heightData - i) - 5, yAxisSize - 4, 10, juce::Justification::centredRight, false);
+        g.setColour(juce::Colours::lightgrey);
         g.fillRect(yAxisSize - 2, (heightData - i), std::min(widthAvailable - yAxisSize, widthBinBorders[fftBlockNum] - widthBinBorders[0]) + 2, 1);
         labelIndex++;
       }
@@ -936,10 +938,12 @@ void Waveogram::redrawImage()
       double rangePerPixel = range / (double)(widthBinBorders[fftBlockNum] - widthBinBorders[0]);
       for (float i = 0.0; i < widthBinBorders[fftBlockNum]; i = i + pixelBetweenMarkers)
       {
-        g.setColour(juce::Colours::whitesmoke);
-        g.fillRect((int)i, 0, 1, heightAvailable - xAxisSize + 5);
+        g.setColour(juce::Colours::lightgrey);
+        const float dashes[4] = {10.0, 2.0, 5.0, 2.0};
+        g.drawDashedLine(juce::Line<float>(i, 0, i, heightAvailable - xAxisSize + 5), dashes, 4, 0.5);
+        // g.fillRect((int)i, 0, 1, heightAvailable - xAxisSize + 5);
         int k = (i - (float)widthBinBorders[0]) / pixelBetweenMarkers;
-        g.setColour(juce::Colours::white);
+        g.setColour(juce::Colours::whitesmoke);
         g.drawText(std::to_string(stepInUnit * k) + " " + unit, (int)i - 40, heightAvailable - xAxisSize + 5, 80, 35, juce::Justification::centredTop, false);
       }
     }
