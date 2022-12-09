@@ -139,9 +139,6 @@ private:
   float threshhold;
   float clip;
 
-  int levelBinNum;
-  bool levelBinLogScale;
-
   bool selectionInfo;
 
   bool loudnessCorrection;

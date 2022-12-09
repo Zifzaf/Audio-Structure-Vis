@@ -60,7 +60,6 @@ private:
   juce::TextEditor timeBinInput;
   juce::TextEditor threshhold;
   juce::TextEditor clip;
-  juce::TextEditor levelBinNum;
   juce::ToggleButton horizontalLines;
   juce::ToggleButton verticalLables;
   juce::ToggleButton horizontalLables;
@@ -69,7 +68,6 @@ private:
   juce::ToggleButton normalizeTimeDim;
   juce::ToggleButton scaleVertical;
   juce::ToggleButton scaleHorizontal;
-  juce::ToggleButton levelBinLogScale;
   juce::ToggleButton loudnessCorrection;
   juce::ToggleButton centered;
   juce::ToggleButton frequencyLabels;

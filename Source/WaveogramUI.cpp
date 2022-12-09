@@ -44,14 +44,6 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in), audioData(*new juce::
   clip.onReturnKey = [this]
   { clipClicked(); };
 
-  addAndMakeVisible(&levelBinNum);
-  levelBinNum.setText("-1");
-  levelBinNum.setInputRestrictions(5, "0123456789-");
-  levelBinNum.setMultiLine(false);
-  levelBinNum.setTitle("levelBinNum");
-  levelBinNum.onReturnKey = [this]
-  { levelBinNumClicked(); };
-
   addAndMakeVisible(&horizontalLines);
   horizontalLines.setState(juce::Button::buttonNormal);
   horizontalLines.setButtonText("horizontalLines");
@@ -102,12 +94,6 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in), audioData(*new juce::
   scaleHorizontal.setButtonText("scaleHorizontal");
   scaleHorizontal.onClick = [this]
   { scaleHorizontalClicked(); };
-
-  addAndMakeVisible(&levelBinLogScale);
-  levelBinLogScale.setState(juce::Button::buttonNormal);
-  levelBinLogScale.setButtonText("levelBinLogScale");
-  levelBinLogScale.onClick = [this]
-  { levelBinLogScaleClicked(); };
 
   addAndMakeVisible(&loudnessCorrection);
   loudnessCorrection.setState(juce::Button::buttonNormal);
@@ -186,12 +172,6 @@ void WaveogramUI::clipClicked()
   waveData.redrawImageCall();
 }
 
-void WaveogramUI::levelBinNumClicked()
-{
-  waveData.setLevelBinNum(levelBinNum.getText().getIntValue());
-  waveData.redrawImageCall();
-}
-
 void WaveogramUI::horizontalLinesClicked()
 {
   waveData.setHorizontalLines(horizontalLines.getToggleState());
@@ -240,12 +220,6 @@ void WaveogramUI::scaleHorizontalClicked()
   waveData.redrawImageCall();
 }
 
-void WaveogramUI::levelBinLogScaleClicked()
-{
-  waveData.setLevelBinLogScale(levelBinLogScale.getToggleState());
-  waveData.redrawImageCall();
-}
-
 void WaveogramUI::loudnessCorrectionClicked()
 {
   waveData.setLoudnessCorrection(loudnessCorrection.getToggleState());
@@ -288,12 +262,6 @@ void WaveogramUI::setSpectrogramCall()
 
   waveData.setClip(0.75);
   clip.setText("0.75", false);
-
-  waveData.setLevelBinNum(0);
-  levelBinNum.setText("0", false);
-
-  waveData.setLevelBinLogScale(false);
-  levelBinLogScale.setToggleState(false, juce::NotificationType::dontSendNotification);
 
   waveData.setHorizontalLines(true);
   horizontalLines.setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -355,12 +323,6 @@ void WaveogramUI::setHistgramCall()
   waveData.setClip(1.0);
   clip.setText("1.0", false);
 
-  waveData.setLevelBinNum(0);
-  levelBinNum.setText("0", false);
-
-  waveData.setLevelBinLogScale(false);
-  levelBinLogScale.setToggleState(false, juce::NotificationType::dontSendNotification);
-
   waveData.setHorizontalLines(true);
   horizontalLines.setToggleState(true, juce::NotificationType::dontSendNotification);
 
@@ -420,12 +382,6 @@ void WaveogramUI::setWavegramCall()
 
   waveData.setClip(1.0);
   clip.setText("1.0", false);
-
-  waveData.setLevelBinNum(0);
-  levelBinNum.setText("0", false);
-
-  waveData.setLevelBinLogScale(false);
-  levelBinLogScale.setToggleState(false, juce::NotificationType::dontSendNotification);
 
   waveData.setHorizontalLines(false);
   horizontalLines.setToggleState(false, juce::NotificationType::dontSendNotification);
@@ -487,12 +443,6 @@ void WaveogramUI::setWaveformCall()
   waveData.setClip(1.0);
   clip.setText("1.0", false);
 
-  waveData.setLevelBinNum(0);
-  levelBinNum.setText("0", false);
-
-  waveData.setLevelBinLogScale(false);
-  levelBinLogScale.setToggleState(false, juce::NotificationType::dontSendNotification);
-
   waveData.setHorizontalLines(false);
   horizontalLines.setToggleState(false, juce::NotificationType::dontSendNotification);
 
@@ -552,12 +502,6 @@ void WaveogramUI::setFrequencygramCall()
 
   waveData.setClip(0.5);
   clip.setText("0.5", false);
-
-  waveData.setLevelBinNum(0);
-  levelBinNum.setText("0", false);
-
-  waveData.setLevelBinLogScale(false);
-  levelBinLogScale.setToggleState(false, juce::NotificationType::dontSendNotification);
 
   waveData.setHorizontalLines(true);
   horizontalLines.setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -663,8 +607,6 @@ void WaveogramUI::resized()
   loudnessCorrection.setBounds(2 + 3 * width / 10, 2, width / 10, 20);
   threshhold.setBounds(2 + 4 * width / 10, 2, width / 10, 20);
   clip.setBounds(2 + 5 * width / 10, 2, width / 10, 20);
-  levelBinNum.setBounds(2 + 6 * width / 10, 2, width / 10, 20);
-  levelBinLogScale.setBounds(2 + 7 * width / 10, 2, width / 10, 20);
   frequencyLabels.setBounds(2 + 8 * width / 10, 2, width / 10, 20);
 
   horizontalLines.setBounds(2 + 0 * width / 10, 24, width / 10, 20);

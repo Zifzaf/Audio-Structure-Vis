@@ -83,9 +83,6 @@ Waveogram ::Waveogram()
   threshhold = 0.0;
   clip = 1.0;
 
-  levelBinNum = -1;
-  levelBinLogScale = false;
-
   selectionInfo = true;
 
   loudnessCorrection = false;
@@ -434,16 +431,6 @@ void Waveogram::setClip(float in)
   clip = in;
 }
 
-void Waveogram::setLevelBinNum(int in)
-{
-  levelBinNum = in;
-}
-
-void Waveogram::setLevelBinLogScale(bool in)
-{
-  levelBinLogScale = in;
-}
-
 void Waveogram::setLoudnessCorrection(bool in)
 {
   loudnessCorrection = in;
@@ -758,32 +745,6 @@ void Waveogram::redrawImage()
     g.drawRect(currentSelectionPixel[0], currentSelectionPixel[2], currentSelectionPixel[1] - currentSelectionPixel[0], currentSelectionPixel[3] - currentSelectionPixel[2]);
 
     float *levelBinBorderValues = NULL;
-    if (levelBinNum > 0)
-    {
-      levelBinBorderValues = new float[levelBinNum + 1];
-      levelBinBorderValues[0] = 0.0;
-      if (levelBinLogScale)
-      {
-        double part = 1.0 / (std::exp2(levelBinNum + 1) - 1.0);
-        for (auto i = 0; i < levelBinNum; i++)
-        {
-          double exponent = levelBinNum - i;
-          levelBinBorderValues[i + 1] = part * std::exp2(exponent);
-        }
-        for (auto i = 1; i < levelBinNum + 1; i++)
-        {
-          levelBinBorderValues[i] += levelBinBorderValues[i - 1];
-        }
-      }
-      else
-      {
-        double part = 1.0 / (double)levelBinNum;
-        for (auto i = 0; i < levelBinNum; i++)
-        {
-          levelBinBorderValues[i + 1] = (i + 1) * part;
-        }
-      }
-    }
 
     float *maxFrequencyBinValue = new float[frequencyBinNum];
     juce::FloatVectorOperations::fill(maxFrequencyBinValue, 0.0f, frequencyBinNum);
@@ -865,25 +826,6 @@ void Waveogram::redrawImage()
         level = level / (clip - threshhold);
         double levelTimesFrequencyNormalizationValue = level * frequencyNormalizationValue;
         double levelTimesTimeNomalizationValue = level * timeNomalizationValue;
-        if (levelBinNum > 0 && level > 0.0)
-        {
-          double part = 1.0 / (double)levelBinNum;
-          for (auto i = 1; i < levelBinNum + 1; i++)
-          {
-            if (levelBinBorderValues[i - 1] < level && level <= levelBinBorderValues[i])
-            {
-              level = i * part;
-            }
-            if (levelBinBorderValues[i - 1] < levelTimesFrequencyNormalizationValue && levelTimesFrequencyNormalizationValue <= levelBinBorderValues[i])
-            {
-              levelTimesFrequencyNormalizationValue = i * part;
-            }
-            if (levelBinBorderValues[i - 1] < levelTimesTimeNomalizationValue && levelTimesTimeNomalizationValue <= levelBinBorderValues[i])
-            {
-              levelTimesTimeNomalizationValue = i * part;
-            }
-          }
-        }
 
         if (overlap(selectionCoordinates[0], selectionCoordinates[1], lowerBorderW, upperBorderW) && overlap(selectionCoordinates[2], selectionCoordinates[3], lowerBorderH, upperBorderH))
         {
