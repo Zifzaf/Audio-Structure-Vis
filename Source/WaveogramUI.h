@@ -26,6 +26,8 @@ public:
   void addFileHandler(FileHandler *in);
   int getFrequencyBins();
   int getTimeBinSize();
+  float getThreshhold();
+  float getClip();
   void threshholdClicked();
   void clipClicked();
   void levelBinNumClicked();
@@ -47,7 +49,7 @@ public:
   void setFrequencygramCall();
   void setHistgramCall();
   void setWaveformCall();
-  
+
   //==============================================================================
   void paint(juce::Graphics &g) override;
   void resized() override;

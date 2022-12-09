@@ -39,15 +39,15 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in), audioData(*new juce::
   timeBinInput.setSelectedId(4, juce::NotificationType::dontSendNotification);
 
   addAndMakeVisible(&threshhold);
-  threshhold.setText("0.0");
-  threshhold.setInputRestrictions(5, "0123456789.");
+  threshhold.setText("-inf");
+  threshhold.setInputRestrictions(5, "0123456789.-inf");
   threshhold.setMultiLine(false);
   threshhold.onReturnKey = [this]
   { threshholdClicked(); };
 
   addAndMakeVisible(&clip);
-  clip.setText("1.0");
-  clip.setInputRestrictions(5, "0123456789.");
+  clip.setText("0.0");
+  clip.setInputRestrictions(5, "0123456789.-inf");
   clip.setMultiLine(false);
   clip.onReturnKey = [this]
   { clipClicked(); };
@@ -168,6 +168,26 @@ WaveogramUI::~WaveogramUI()
   delete &audioData;
 }
 
+float WaveogramUI::getThreshhold()
+{
+  auto val = threshhold.getText().getFloatValue();
+  if (val == -std::numeric_limits<float>::infinity())
+  {
+    return 0.0;
+  }
+  return std::pow(10.0, val / 20.0);
+}
+
+float WaveogramUI::getClip()
+{
+  auto val = clip.getText().getFloatValue();
+  if (val == -std::numeric_limits<float>::infinity())
+  {
+    return 0.0;
+  }
+  return std::pow(10.0, val / 20.0);
+}
+
 int WaveogramUI::getTimeBinSize()
 {
   int out = 48000;
@@ -225,13 +245,13 @@ int WaveogramUI::getTimeBinSize()
 
 void WaveogramUI::threshholdClicked()
 {
-  waveData.setThreshhold(threshhold.getText().getFloatValue());
+  waveData.setThreshhold(getThreshhold());
   waveData.redrawImageCall();
 }
 
 void WaveogramUI::clipClicked()
 {
-  waveData.setClip(clip.getText().getFloatValue());
+  waveData.setClip(getClip());
   waveData.redrawImageCall();
 }
 
@@ -312,11 +332,11 @@ void WaveogramUI::setSpectrogramCall()
   waveData.setLoudnessCorrection(true);
   loudnessCorrection.setToggleState(true, juce::NotificationType::dontSendNotification);
 
-  waveData.setThreshhold(0.01);
-  threshhold.setText("0.01", false);
+  threshhold.setText("-40.0", false);
+  waveData.setThreshhold(getThreshhold());
 
-  waveData.setClip(0.75);
-  clip.setText("0.75", false);
+  clip.setText("-2.5", false);
+  waveData.setClip(getClip());
 
   waveData.setHorizontalLines(true);
   horizontalLines.setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -364,11 +384,11 @@ void WaveogramUI::setHistgramCall()
   waveData.setLoudnessCorrection(true);
   loudnessCorrection.setToggleState(true, juce::NotificationType::dontSendNotification);
 
-  waveData.setThreshhold(0.01);
-  threshhold.setText("0.01", false);
+  threshhold.setText("-40.0", false);
+  waveData.setThreshhold(getThreshhold());
 
-  waveData.setClip(1.0);
-  clip.setText("1.0", false);
+  clip.setText("0.0", false);
+  waveData.setClip(getClip());
 
   waveData.setHorizontalLines(true);
   horizontalLines.setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -416,11 +436,11 @@ void WaveogramUI::setWavegramCall()
   waveData.setLoudnessCorrection(true);
   loudnessCorrection.setToggleState(true, juce::NotificationType::dontSendNotification);
 
-  waveData.setThreshhold(0.01);
-  threshhold.setText("0.01", false);
+  threshhold.setText("-40.0", false);
+  waveData.setThreshhold(getThreshhold());
 
-  waveData.setClip(1.0);
-  clip.setText("1.0", false);
+  clip.setText("0.0", false);
+  waveData.setClip(getClip());
 
   waveData.setHorizontalLines(false);
   horizontalLines.setToggleState(false, juce::NotificationType::dontSendNotification);
@@ -468,11 +488,11 @@ void WaveogramUI::setWaveformCall()
   waveData.setLoudnessCorrection(false);
   loudnessCorrection.setToggleState(false, juce::NotificationType::dontSendNotification);
 
-  waveData.setThreshhold(0.001);
-  threshhold.setText("0.001", false);
+  threshhold.setText("-60.0", false);
+  waveData.setThreshhold(getThreshhold());
 
-  waveData.setClip(1.0);
-  clip.setText("1.0", false);
+  clip.setText("0.0", false);
+  waveData.setClip(getClip());
 
   waveData.setHorizontalLines(false);
   horizontalLines.setToggleState(false, juce::NotificationType::dontSendNotification);
@@ -520,11 +540,11 @@ void WaveogramUI::setFrequencygramCall()
   waveData.setLoudnessCorrection(true);
   loudnessCorrection.setToggleState(true, juce::NotificationType::dontSendNotification);
 
-  waveData.setThreshhold(0.0);
-  threshhold.setText("0.0", false);
+  threshhold.setText("-inf", false);
+  waveData.setThreshhold(getThreshhold());
 
-  waveData.setClip(0.5);
-  clip.setText("0.5", false);
+  clip.setText("-6.0", false);
+  waveData.setClip(getClip());
 
   waveData.setHorizontalLines(true);
   horizontalLines.setToggleState(true, juce::NotificationType::dontSendNotification);
