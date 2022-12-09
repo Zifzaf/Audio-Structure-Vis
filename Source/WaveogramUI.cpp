@@ -26,9 +26,17 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in), audioData(*new juce::
   frequencyBinInput.setMultiLine(false);
 
   addAndMakeVisible(&timeBinInput);
-  timeBinInput.setText("2048");
-  timeBinInput.setInputRestrictions(6, "0123456789");
-  timeBinInput.setMultiLine(false);
+  timeBinInput.addItem("100th of s", 1);
+  timeBinInput.addItem("50th of s", 2);
+  timeBinInput.addItem("20th of s", 3);
+  timeBinInput.addItem("10th of s", 4);
+  timeBinInput.addItem("5th of s", 5);
+  timeBinInput.addItem("Half of s", 6);
+  timeBinInput.addItem("1 s", 7);
+  timeBinInput.addItem("2 s", 8);
+  timeBinInput.addItem("5 s", 9);
+  timeBinInput.addItem("10 s", 10);
+  timeBinInput.setSelectedId(4, juce::NotificationType::dontSendNotification);
 
   addAndMakeVisible(&threshhold);
   threshhold.setText("0.0");
@@ -160,6 +168,61 @@ WaveogramUI::~WaveogramUI()
   delete &audioData;
 }
 
+int WaveogramUI::getTimeBinSize()
+{
+  int out = 48000;
+  if (audioAvailable.get())
+  {
+    int out = fileInput->getSampleRate();
+  }
+  switch (timeBinInput.getSelectedId())
+  {
+  case 1:
+    out = out * 0.01;
+    break;
+
+  case 2:
+    out = out * 0.02;
+    break;
+
+  case 3:
+    out = out * 0.05;
+    break;
+
+  case 4:
+    out = out * 0.1;
+    break;
+
+  case 5:
+    out = out * 0.2;
+    break;
+
+  case 6:
+    out = out * 0.5;
+    break;
+
+  case 7:
+    out = out * 1.0;
+    break;
+
+  case 8:
+    out = out * 2.0;
+    break;
+
+  case 9:
+    out = out * 5.0;
+    break;
+
+  case 10:
+    out = out * 10.0;
+    break;
+
+  default:
+    break;
+  }
+  return out;
+}
+
 void WaveogramUI::threshholdClicked()
 {
   waveData.setThreshhold(threshhold.getText().getFloatValue());
@@ -243,16 +306,8 @@ void WaveogramUI::setSpectrogramCall()
   waveData.setFrequencyBins(114);
   frequencyBinInput.setText("114", false);
 
-  if (audioAvailable.get())
-  {
-    waveData.setTimeBinSize((int)(0.01 * fileInput->getSampleRate()));
-    timeBinInput.setText(std::to_string((int)(0.01 * fileInput->getSampleRate())), false);
-  }
-  else
-  {
-    waveData.setTimeBinSize(512);
-    timeBinInput.setText("512", false);
-  }
+  timeBinInput.setSelectedId(1);
+  waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(true);
   loudnessCorrection.setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -303,16 +358,8 @@ void WaveogramUI::setHistgramCall()
   waveData.setFrequencyBins(19);
   frequencyBinInput.setText("19", false);
 
-  if (audioAvailable.get())
-  {
-    waveData.setTimeBinSize((int)(0.01 * fileInput->getSampleRate()));
-    timeBinInput.setText(std::to_string((int)(0.01 * fileInput->getSampleRate())), false);
-  }
-  else
-  {
-    waveData.setTimeBinSize(512);
-    timeBinInput.setText("512", false);
-  }
+  timeBinInput.setSelectedId(1);
+  waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(true);
   loudnessCorrection.setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -363,16 +410,8 @@ void WaveogramUI::setWavegramCall()
   waveData.setFrequencyBins(38);
   frequencyBinInput.setText("38", false);
 
-  if (audioAvailable.get())
-  {
-    waveData.setTimeBinSize((int)(0.01 * fileInput->getSampleRate()));
-    timeBinInput.setText(std::to_string((int)(0.01 * fileInput->getSampleRate())), false);
-  }
-  else
-  {
-    waveData.setTimeBinSize(512);
-    timeBinInput.setText("512", false);
-  }
+  timeBinInput.setSelectedId(1);
+  waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(true);
   loudnessCorrection.setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -423,16 +462,8 @@ void WaveogramUI::setWaveformCall()
   waveData.setFrequencyBins(1);
   frequencyBinInput.setText("1", false);
 
-  if (audioAvailable.get())
-  {
-    waveData.setTimeBinSize((int)(0.001 * fileInput->getSampleRate()));
-    timeBinInput.setText(std::to_string((int)(0.001 * fileInput->getSampleRate())), false);
-  }
-  else
-  {
-    waveData.setTimeBinSize(64);
-    timeBinInput.setText("64", false);
-  }
+  timeBinInput.setSelectedId(1);
+  waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(false);
   loudnessCorrection.setToggleState(false, juce::NotificationType::dontSendNotification);
@@ -483,16 +514,8 @@ void WaveogramUI::setFrequencygramCall()
   waveData.setFrequencyBins(57);
   frequencyBinInput.setText("57", false);
 
-  if (audioAvailable.get())
-  {
-    waveData.setTimeBinSize((int)(0.1 * fileInput->getSampleRate()));
-    timeBinInput.setText(std::to_string((int)(0.1 * fileInput->getSampleRate())), false);
-  }
-  else
-  {
-    waveData.setTimeBinSize(4096);
-    timeBinInput.setText("4096", false);
-  }
+  timeBinInput.setSelectedId(4);
+  waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(true);
   loudnessCorrection.setToggleState(true, juce::NotificationType::dontSendNotification);
@@ -584,11 +607,6 @@ void WaveogramUI::addFileHandler(FileHandler *in)
 int WaveogramUI::getFrequencyBins()
 {
   return frequencyBinInput.getText().getIntValue();
-}
-
-int WaveogramUI::getTimeBinSize()
-{
-  return timeBinInput.getText().getIntValue();
 }
 
 void WaveogramUI::paint(juce::Graphics &g)

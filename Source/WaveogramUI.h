@@ -57,7 +57,7 @@ private:
   FileHandler *fileInput = nullptr;
   juce::TextButton calcButton;
   juce::TextEditor frequencyBinInput;
-  juce::TextEditor timeBinInput;
+  juce::ComboBox timeBinInput;
   juce::TextEditor threshhold;
   juce::TextEditor clip;
   juce::ToggleButton horizontalLines;
