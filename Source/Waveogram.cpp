@@ -289,7 +289,20 @@ void Waveogram ::calculateValueArray()
       }
     }
 
-    processDataArray(valueArray, frequencyBinNum * fftBlockNum, 0.0, 0.0);
+    auto min = juce::FloatVectorOperations::findMinimum(valueArray, frequencyBinNum * fftBlockNum);
+    if (min > 0.000001)
+    {
+      juce::FloatVectorOperations::add(valueArray, -min + 0.000001, frequencyBinNum * fftBlockNum);
+    }
+    auto max = juce::FloatVectorOperations::findMaximum(valueArray, frequencyBinNum * fftBlockNum);
+    if (max < 0.999999 && std::isfinite(0.999999 / max))
+    {
+      juce::FloatVectorOperations::multiply(valueArray, 0.999999 / max, frequencyBinNum * fftBlockNum);
+    }
+    else if (std::isfinite(1.0 / max))
+    {
+      juce::FloatVectorOperations::multiply(valueArray, 1.0 / max, frequencyBinNum * fftBlockNum);
+    }
 
     delete complexBins;
     delete fftBinMap;
