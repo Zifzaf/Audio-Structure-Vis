@@ -18,12 +18,12 @@ MainComponent::MainComponent() :  waveData(&openFile)
     {
         juce::RuntimePermissions::request(juce::RuntimePermissions::recordAudio,
                                           [&](bool granted)
-                                          { setAudioChannels(granted ? 2 : 0, 2); });
+                                          { setAudioChannels( 0, 2); });
     }
     else
     {
         // Specify the number of input and output channels that we want to open
-        setAudioChannels(2, 2);
+        setAudioChannels(0, 2);
     }
 }
 
