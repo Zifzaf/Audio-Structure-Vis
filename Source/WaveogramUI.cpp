@@ -185,6 +185,15 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in)
   setWaveform.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
   setWaveform.setTooltip("If pressed a normal waveform vislualization is displayed.");
 
+  addAndMakeVisible(&setNotegram);
+  setNotegram.setButtonText("Note Focus");
+  setNotegram.onClick = [this]
+  { setNotegramCall(); };
+  setNotegram.setColour(juce::TextButton::buttonColourId, juce::Colours::azure);
+  setNotegram.setColour(juce::TextButton::textColourOnId, juce::Colours::black);
+  setNotegram.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
+  setNotegram.setTooltip("If pressed a visualization is displayed which levels for each note bin. Normalization of color over frequencies is enabled so color indicates the highest frequency level at a spesific time. It is useful to find melodies from a recording.");
+
   addAndMakeVisible(&frequencyLabels);
   frequencyLabels.setState(juce::Button::buttonNormal);
   frequencyLabels.setButtonText("Show Frequency Labels");
@@ -201,6 +210,25 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in)
   selectionToFocus.setColour(juce::TextButton::textColourOffId, juce::Colours::black);
   selectionToFocus.setTooltip("If pressed the view is switched to only display the selected part of the visulaization.");
 
+  addAndMakeVisible(&lowNote);
+  lowNote.setTooltip("Choose the lowest note/frequency displayed.");
+  lowNote.onChange = [this]
+  { lowNoteChanged(); };
+
+  addAndMakeVisible(&highNote);
+  highNote.setTooltip("Choose the highest note/frequency displayed.");
+  highNote.onChange = [this]
+  { highNoteChanged(); };
+
+  addItemsToNotes();
+
+  addAndMakeVisible(&noteLabels);
+  noteLabels.setState(juce::Button::buttonNormal);
+  noteLabels.setButtonText("Show Note Labels");
+  noteLabels.onClick = [this]
+  { noteLabelsClicked(); };
+  noteLabels.setTooltip("Select if pressed frequency bins are labeled with corresponding not name. Enable 'Show Frequency Bin Borders' to see the corresponding lines.");
+
   audioData = NULL;
   setSpectrogramCall();
 }
@@ -208,6 +236,81 @@ WaveogramUI::WaveogramUI(FileHandler *in) : fileInput(in)
 WaveogramUI::~WaveogramUI()
 {
   delete audioData;
+}
+
+void WaveogramUI::addItemsToNotes()
+{
+  std::string noteNames[] = {"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
+
+  const int numberOfNotesTotal = 132;
+  double noteFreqencies[numberOfNotesTotal];
+  double baseTuneing = 440.0;
+  double factor = std::pow(2.0, 1.0 / 12.0);
+  noteFreqencies[0] = 0.03125 * baseTuneing;
+  noteFreqencies[12] = 0.0625 * baseTuneing;
+  noteFreqencies[24] = 0.125 * baseTuneing;
+  noteFreqencies[36] = 0.25 * baseTuneing;
+  noteFreqencies[48] = 0.5 * baseTuneing;
+  noteFreqencies[60] = baseTuneing;
+  noteFreqencies[72] = 2 * baseTuneing;
+  noteFreqencies[84] = 4 * baseTuneing;
+  noteFreqencies[96] = 8 * baseTuneing;
+  noteFreqencies[108] = 16 * baseTuneing;
+  noteFreqencies[120] = 32 * baseTuneing;
+  for (auto i = 0; i < numberOfNotesTotal; i = i + 12)
+  {
+    float baseValue = noteFreqencies[i];
+    for (auto j = 1; j < 12; j++)
+    {
+      noteFreqencies[i + j] = baseValue * std::pow(factor, (double)j);
+    }
+  }
+  double noteFreqencyBorders[numberOfNotesTotal - 1];
+  for (auto i = 0; i < numberOfNotesTotal - 1; i++)
+  {
+    noteFreqencyBorders[i] = std::sqrt(noteFreqencies[i] * noteFreqencies[i + 1]);
+  }
+  for (auto i = 2; i < numberOfNotesTotal - 2; i++)
+  {
+    lowNote.addItem(noteNames[(i + 1) % 12] + std::to_string((i + -2) / 12) + " / " + std::to_string((int)noteFreqencyBorders[i]) + " Hz", i);
+    highNote.addItem(noteNames[(i + 1) % 12] + std::to_string((i + -2) / 12) + " / " + std::to_string((int)noteFreqencyBorders[i + 1]) + " Hz", i + 1);
+  }
+  lowNote.setSelectedId(6, juce::NotificationType::dontSendNotification);
+  for (auto i = 2; i <= 6; i++)
+  {
+    highNote.setItemEnabled(i, false);
+  }
+  highNote.setSelectedId(126, juce::NotificationType::dontSendNotification);
+  for (auto i = 126; i < numberOfNotesTotal - 2; i++)
+  {
+    lowNote.setItemEnabled(i, false);
+  }
+}
+
+void WaveogramUI::lowNoteChanged()
+{
+  int id = lowNote.getSelectedId();
+  for (auto i = 2; i <= id; i++)
+  {
+    highNote.setItemEnabled(i, false);
+  }
+  for (auto i = id + 1; i < 130; i++)
+  {
+    highNote.setItemEnabled(i, true);
+  }
+}
+
+void WaveogramUI::highNoteChanged()
+{
+  int id = highNote.getSelectedId();
+  for (auto i = 2; i < id; i++)
+  {
+    lowNote.setItemEnabled(i, true);
+  }
+  for (auto i = id; i < 130; i++)
+  {
+    lowNote.setItemEnabled(i, false);
+  }
 }
 
 float WaveogramUI::getThreshhold()
@@ -313,6 +416,10 @@ void WaveogramUI::verticalLablesClicked()
 void WaveogramUI::horizontalLablesClicked()
 {
   waveData.setHorizontalLables(horizontalLables.getToggleState());
+  waveData.setFrequencyLabels(false);
+  frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+  waveData.setNoteLabels(false);
+  noteLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
   waveData.redrawImageCall();
 }
 
@@ -337,6 +444,7 @@ void WaveogramUI::normalizeTimeDimClicked()
 void WaveogramUI::scaleVerticalClicked()
 {
   waveData.setScaleVertical(scaleVertical.getToggleState());
+
   waveData.redrawImageCall();
 }
 
@@ -361,6 +469,10 @@ void WaveogramUI::centeredClicked()
 void WaveogramUI::frequencyLabelsClicked()
 {
   waveData.setFrequencyLabels(frequencyLabels.getToggleState());
+  waveData.setNoteLabels(false);
+  noteLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+  waveData.setHorizontalLables(false);
+  horizontalLables.setToggleState(false, juce::NotificationType::dontSendNotification);
   waveData.redrawImageCall();
 }
 
@@ -372,9 +484,58 @@ void WaveogramUI::selectionToFocusClicked()
   waveData.getSelection(&currentSelection[0], &currentSelectionPixel[0]);
   fileInput->setStartTime(currentSelection[0] + timeZero);
   fileInput->setEndTime(currentSelection[1] + timeZero);
+  const int numberOfNotesTotal = 132;
+  double noteFreqencies[numberOfNotesTotal];
+  double baseTuneing = 440.0;
+  double factor = std::pow(2.0, 1.0 / 12.0);
+  noteFreqencies[0] = 0.03125 * baseTuneing;
+  noteFreqencies[12] = 0.0625 * baseTuneing;
+  noteFreqencies[24] = 0.125 * baseTuneing;
+  noteFreqencies[36] = 0.25 * baseTuneing;
+  noteFreqencies[48] = 0.5 * baseTuneing;
+  noteFreqencies[60] = baseTuneing;
+  noteFreqencies[72] = 2 * baseTuneing;
+  noteFreqencies[84] = 4 * baseTuneing;
+  noteFreqencies[96] = 8 * baseTuneing;
+  noteFreqencies[108] = 16 * baseTuneing;
+  noteFreqencies[120] = 32 * baseTuneing;
+  for (auto i = 0; i < numberOfNotesTotal; i = i + 12)
+  {
+    float baseValue = noteFreqencies[i];
+    for (auto j = 1; j < 12; j++)
+    {
+      noteFreqencies[i + j] = baseValue * std::pow(factor, (double)j);
+    }
+  }
+  double noteFreqencyBorders[numberOfNotesTotal - 1];
+  for (auto i = 0; i < numberOfNotesTotal - 1; i++)
+  {
+    noteFreqencyBorders[i] = std::sqrt(noteFreqencies[i] * noteFreqencies[i + 1]);
+  }
+  for (auto i = 0; i < numberOfNotesTotal - 1; i++)
+  {
+    if (std::abs(noteFreqencyBorders[i] - currentSelection[2]) < 0.1)
+    {
+      highNote.setSelectedId(i, juce::NotificationType::sendNotification);
+    }
+    if (std::abs(noteFreqencyBorders[i] - currentSelection[3]) < 0.1)
+    {
+      lowNote.setSelectedId(i, juce::NotificationType::sendNotification);
+    }
+  }
   waveData.resetSelection();
   waveData.setZoom(waveData.getZoom() * 0.5);
   calcButtonClicked();
+}
+
+void WaveogramUI::noteLabelsClicked()
+{
+  waveData.setNoteLabels(noteLabels.getToggleState());
+  waveData.setFrequencyLabels(false);
+  frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+  waveData.setHorizontalLables(false);
+  horizontalLables.setToggleState(false, juce::NotificationType::dontSendNotification);
+  waveData.redrawImageCall();
 }
 
 void WaveogramUI::setSpectrogramCall()
@@ -423,6 +584,16 @@ void WaveogramUI::setSpectrogramCall()
 
   waveData.setFrequencyLabels(true);
   frequencyLabels.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setNoteLabels(false);
+  noteLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  lowNote.setSelectedId(6, juce::NotificationType::sendNotification);
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
+  highNote.setSelectedId(126, juce::NotificationType::sendNotification);
+  waveData.setHighNoteIndex(highNote.getSelectedId());
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
 
   waveData.setZoom(4.0);
 
@@ -476,6 +647,16 @@ void WaveogramUI::setHistgramCall()
   waveData.setFrequencyLabels(false);
   frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
+  waveData.setNoteLabels(false);
+  noteLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  lowNote.setSelectedId(6, juce::NotificationType::sendNotification);
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
+  highNote.setSelectedId(126, juce::NotificationType::sendNotification);
+  waveData.setHighNoteIndex(highNote.getSelectedId());
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
   waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
@@ -527,6 +708,16 @@ void WaveogramUI::setWavegramCall()
 
   waveData.setFrequencyLabels(true);
   frequencyLabels.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setNoteLabels(false);
+  noteLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  lowNote.setSelectedId(6, juce::NotificationType::sendNotification);
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
+  highNote.setSelectedId(126, juce::NotificationType::sendNotification);
+  waveData.setHighNoteIndex(highNote.getSelectedId());
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
 
   waveData.setZoom(4.0);
 
@@ -580,6 +771,16 @@ void WaveogramUI::setWaveformCall()
   waveData.setFrequencyLabels(false);
   frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
+  waveData.setNoteLabels(false);
+  noteLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  lowNote.setSelectedId(6, juce::NotificationType::sendNotification);
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
+  highNote.setSelectedId(126, juce::NotificationType::sendNotification);
+  waveData.setHighNoteIndex(highNote.getSelectedId());
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
   waveData.setZoom(2.0);
 
   waveData.calculateFTTCall();
@@ -590,7 +791,7 @@ void WaveogramUI::setFrequencygramCall()
   notesPerBinInput.setSelectedId(4);
   waveData.setNotesPerBin(getNotesPerBin());
 
-  timeBinInput.setSelectedId(7);
+  timeBinInput.setSelectedId(9);
   waveData.setTimeBinSize(getTimeBinSize());
 
   waveData.setLoudnessCorrection(true);
@@ -632,6 +833,78 @@ void WaveogramUI::setFrequencygramCall()
   waveData.setFrequencyLabels(false);
   frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
+  waveData.setNoteLabels(false);
+  noteLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  lowNote.setSelectedId(6, juce::NotificationType::sendNotification);
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
+  highNote.setSelectedId(126, juce::NotificationType::sendNotification);
+  waveData.setHighNoteIndex(highNote.getSelectedId());
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
+  waveData.setZoom(4.0);
+
+  waveData.calculateFTTCall();
+}
+
+void WaveogramUI::setNotegramCall()
+{
+  notesPerBinInput.setSelectedId(1);
+  waveData.setNotesPerBin(getNotesPerBin());
+
+  timeBinInput.setSelectedId(4);
+  waveData.setTimeBinSize(getTimeBinSize());
+
+  waveData.setLoudnessCorrection(false);
+  loudnessCorrection.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  threshhold.setText("-20.0", false);
+  waveData.setThreshhold(getThreshhold());
+
+  clip.setText("-6.0", false);
+  waveData.setClip(getClip());
+
+  waveData.setHorizontalLines(true);
+  horizontalLines.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setHorizontalLables(false);
+  horizontalLables.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  waveData.setVerticalLables(true);
+  verticalLables.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setDrawEllipse(false);
+  drawEllipse.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  waveData.setNormalizeFrequencyDim(true);
+  normalizeFrequencyDim.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setNormalizeTimeDim(false);
+  normalizeTimeDim.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  waveData.setScaleVertical(true);
+  scaleVertical.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setScaleHorizontal(true);
+  scaleHorizontal.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setCentered(true);
+  centered.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  waveData.setFrequencyLabels(false);
+  frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
+
+  waveData.setNoteLabels(true);
+  noteLabels.setToggleState(true, juce::NotificationType::dontSendNotification);
+
+  lowNote.setSelectedId(26, juce::NotificationType::sendNotification);
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
+  highNote.setSelectedId(74, juce::NotificationType::sendNotification);
+  waveData.setHighNoteIndex(highNote.getSelectedId());
+  waveData.setLowNoteIndex(lowNote.getSelectedId());
+
   waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
@@ -672,6 +945,9 @@ void WaveogramUI::calcButtonClicked()
     waveData.setTimeBinSize(getTimeBinSize());
     waveData.setNotesPerBin(getNotesPerBin());
     waveData.setStartTime(fileInput->getStartTime());
+    waveData.setLowNoteIndex(lowNote.getSelectedId());
+    waveData.setHighNoteIndex(highNote.getSelectedId());
+    waveData.setLowNoteIndex(lowNote.getSelectedId());
 
     waveData.setRawAudio(inData, segmentLength, sampleRate);
 
@@ -692,45 +968,84 @@ int WaveogramUI::getNotesPerBin()
 
 void WaveogramUI::paint(juce::Graphics &g)
 {
-  int width = getWidth() - 4;
+  int width = getWidth();
   int height = getHeight();
-  g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
   g.setColour(juce::Colours::white);
-  g.drawText("Number of Notes per Bin: ", 2 + 0 * width / 10, 2, width / 10, 20, juce::Justification::centredRight, false);
-  g.drawText("Time Bin length [s]: ", 2 + 2 * width / 10, 2, width / 10, 20, juce::Justification::centredRight, false);
-  g.drawText("Cut Threshhold [dB]: ", 2 + 4 * width / 10, 2, width / 10, 20, juce::Justification::centredRight, false);
-  g.drawText("Clip Limit [dB]: ", 2 + 6 * width / 10, 2, width / 10, 20, juce::Justification::centredRight, false);
+  int ankerPresets = 110;
+  g.drawRect(0, ankerPresets - 1, 147, 7 * 22 + 2);
+  g.drawText("Presets: ", 2, ankerPresets + 1, 144, 19, juce::Justification::centredLeft, false);
+  int ankerLabels = 300;
+  g.drawRect(0, ankerLabels - 1, 147, 6 * 22 + 2);
+  g.drawText("Label Control: ", 2, ankerLabels + 1, 144, 19, juce::Justification::centredLeft, false);
+  int ankerYAxis = height / 2 - 33;
+  g.drawRect(0, ankerYAxis - 1, 147, 3 * 22 + 2);
+  g.drawText("Notes per Bin: ", 2, ankerYAxis + 1, 144, 19, juce::Justification::centredLeft, false);
+  int ankerNorm = height / 2 + 80;
+  g.drawRect(0, ankerNorm - 1, 147, 3 * 22 + 2);
+  g.drawText("Normalization: ", 2, ankerNorm + 1, 144, 19, juce::Justification::centredLeft, false);
+  int ankerGlyth = height / 2 + 220;
+  g.drawRect(0, ankerGlyth - 1, 147, 3 * 22 + 2);
+  g.drawText("Glyth Settings: ", 2, ankerGlyth + 1, 144, 19, juce::Justification::centredLeft, false);
+  int loudnessAnker = height - 60 - 38 - 20 - 40 - 22;
+  g.drawRect(0, loudnessAnker - 1, 147, 2 * 22 + 2);
+  g.drawText("Loudness: ", 2, loudnessAnker + 1, 144, 19, juce::Justification::centredLeft, false);
+
+  g.drawRect(width - 140 - (width - 150) / 10 - 4, 4, (width - 150) / 10 + 8, 46);
+  g.drawText("Threshhold: ", width - 140 - (width - 150) / 10 - 2, 6, (width - 150) / 20, 20, juce::Justification::centredLeft, false);
+  g.drawText("Clip: ", width - 140 - (width - 150) / 20 + 2, 6, (width - 150) / 20, 20, juce::Justification::centredLeft, false);
+
+  g.drawRect(0.61 * width + 2, 4, 2 * (width) / 10 + 8, 46);
+  g.drawText("Time Bin Size[s]: ", 0.61 * width + 4, 6, width / 10, 20, juce::Justification::centredLeft, false);
 }
 
 void WaveogramUI::resized()
 {
-  int width = getWidth() - 4;
+  int width = getWidth();
   int height = getHeight();
 
-  notesPerBinInput.setBounds(2 + 1 * width / 10, 2, width / 10, 20);
-  timeBinInput.setBounds(2 + 3 * width / 10, 2, width / 10, 20);
-  threshhold.setBounds(2 + 5 * width / 10, 2, width / 10, 20);
-  clip.setBounds(2 + 7 * width / 10, 2, width / 10, 20);
-  loudnessCorrection.setBounds(2 + 9 * width / 10, 2, width / 10, 20);
+  calcButton.setBounds(width / 2 + 2, 2, 0.1 * width, 45);
 
-  scaleVertical.setBounds(2 + 0 * width / 10, 24, width / 10, 20);
-  scaleHorizontal.setBounds(2 + 1 * width / 10, 24, width / 10, 20);
-  centered.setBounds(2 + 2 * width / 10, 24, width / 10, 20);
-  drawEllipse.setBounds(2 + 3 * width / 10, 24, width / 10, 20);
-  normalizeFrequencyDim.setBounds(2 + 4 * width / 10, 24, width / 10, 20);
-  normalizeTimeDim.setBounds(2 + 5 * width / 10, 24, width / 10, 20);
-  verticalLables.setBounds(2 + 6 * width / 10, 24, width / 10, 20);
-  frequencyLabels.setBounds(2 + 7 * width / 10, 24, width / 10, 20);
-  horizontalLines.setBounds(2 + 8 * width / 10, 24, width / 10, 20);
-  horizontalLables.setBounds(2 + 9 * width / 10, 24, width / 10, 20);
+  timeBinInput.setBounds(0.61 * width + 4, 28, width / 10, 20);
+  scaleHorizontal.setBounds(0.71 * width + 4, 28, width / 10, 20);
 
-  setSpectrogram.setBounds(2 + 0 * width / 10, 46, width / 10, 20);
-  setFrequencygram.setBounds(2 + 1 * width / 10, 46, width / 10, 20);
-  setHistgram.setBounds(2 + 2 * width / 10, 46, width / 10, 20);
-  setWavegram.setBounds(2 + 3 * width / 10, 46, width / 10, 20);
-  setWaveform.setBounds(2 + 4 * width / 10, 46, width / 10, 20);
-  selectionToFocus.setBounds(2 + 5 * width / 10, 46, width / 10, 20);
-  calcButton.setBounds(2 + 8 * width / 10, 46, width / 5, 20);
+  threshhold.setBounds(width - 140 - (width - 150) / 10 - 2, 28, (width - 150) / 20, 20);
+  clip.setBounds(width - 140 - (width - 150) / 20 + 2, 28, (width - 150) / 20, 20);
 
-  waveData.setBounds(2, 68, width, height - 68);
+  selectionToFocus.setBounds(width - 4 - 120, 28, 118, 20);
+
+  highNote.setBounds(2, 50, 144, 20);
+
+  int ankerPresets = 110;
+  setSpectrogram.setBounds(2, ankerPresets + 1 * 22, 144, 20);
+  setFrequencygram.setBounds(2, ankerPresets + 2 * 22, 144, 20);
+  setHistgram.setBounds(2, ankerPresets + 3 * 22, 144, 20);
+  setWavegram.setBounds(2, ankerPresets + 4 * 22, 144, 20);
+  setNotegram.setBounds(2, ankerPresets + 5 * 22, 144, 20);
+  setWaveform.setBounds(2, ankerPresets + 6 * 22, 144, 20);
+
+  int ankerLabels = 300;
+  frequencyLabels.setBounds(2, ankerLabels + 1 * 22, 144, 20);
+  noteLabels.setBounds(2, ankerLabels + 2 * 22, 144, 20);
+  horizontalLables.setBounds(2, ankerLabels + 3 * 22, 144, 20);
+  horizontalLines.setBounds(2, ankerLabels + 4 * 22, 144, 20);
+  verticalLables.setBounds(2, ankerLabels + 5 * 22, 144, 20);
+
+  int ankerYAxis = height / 2 - 33;
+  notesPerBinInput.setBounds(2, ankerYAxis + 1 * 22, 144, 20);
+  scaleVertical.setBounds(2, ankerYAxis + 2 * 22, 144, 20);
+
+  int ankerNorm = height / 2 + 80;
+  normalizeFrequencyDim.setBounds(2, ankerNorm + 1 * 22, 144, 20);
+  normalizeTimeDim.setBounds(2, ankerNorm + 2 * 22, 144, 20);
+
+  int ankerGlyth = height / 2 + 220;
+  drawEllipse.setBounds(2, ankerGlyth + 1 * 22, 144, 20);
+  centered.setBounds(2, ankerGlyth + 2 * 22, 144, 20);
+
+  int loudnessAnker = height - 60 - 38 - 20 - 40 - 22;
+  loudnessCorrection.setBounds(2, loudnessAnker + 1 * 22, 144, 20);
+
+  lowNote.setBounds(2, height - 28 - 20, 144, 20);
+
+  waveData.setBounds(150, 50, getWidth() - 150, height - 50);
 }

@@ -1,14 +1,13 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() :  waveData(&openFile), toolTips()
+MainComponent::MainComponent() : waveData(&openFile), toolTips()
 
 {
     std::cout << kfr::library_version() << std::endl;
 
-    addAndMakeVisible(&openFile);
-
     addAndMakeVisible(&waveData);
+    addAndMakeVisible(&openFile);
     waveData.addFileHandler(&openFile);
     openFile.addChangeListener(&waveData);
 
@@ -18,7 +17,7 @@ MainComponent::MainComponent() :  waveData(&openFile), toolTips()
     {
         juce::RuntimePermissions::request(juce::RuntimePermissions::recordAudio,
                                           [&](bool granted)
-                                          { setAudioChannels( 0, 2); });
+                                          { setAudioChannels(0, 2); });
     }
     else
     {
@@ -44,7 +43,6 @@ void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo &buffer
     openFile.getNextAudioBlock(bufferToFill);
 }
 
-
 void MainComponent::releaseResources()
 {
     openFile.releaseResources();
@@ -61,10 +59,10 @@ void MainComponent::paint(juce::Graphics &g)
 
 void MainComponent::resized()
 {
-    openFile.setBounds(0, 0, getWidth(), 50);
     int visWidth = getWidth();
-    int visHeight = getHeight() - 50;
+    int visHeight = getHeight();
     int visStartWidth = 0;
     int visStartHeight = 50;
-    waveData.setBounds(visStartWidth, visStartHeight, visWidth, visHeight);
+    waveData.setBounds(0, 0, visWidth, visHeight);
+    openFile.setBounds(0, 0, getWidth() * 0.5, 50);
 }

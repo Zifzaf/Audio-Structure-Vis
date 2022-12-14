@@ -32,7 +32,9 @@ Waveogram ::Waveogram()
 
   timeBinSize = 1024;
   notesPerBin = 12;
-  frequencyBinNum = 120 / notesPerBin;
+  lowNoteIndex = 6;
+  highNoteIndex = 126;
+  frequencyBinNum = (highNoteIndex - lowNoteIndex) / notesPerBin;
 
   fftOutput = NULL;
   fftBlockNum = 0;
@@ -99,6 +101,8 @@ Waveogram ::Waveogram()
   lastCursorPosition = -1;
 
   startTime = 0.0;
+
+  noteLabels = false;
 }
 
 Waveogram ::~Waveogram()
@@ -161,6 +165,8 @@ void Waveogram ::calculateFFT()
 {
   if (dataAvailable.get())
   {
+    calculateFrequencyBorders();
+    calculateVerticalPixelMap();
     calculateFFTBlockSize();
 
     // allocate buffer
@@ -228,8 +234,6 @@ void Waveogram ::calculateValueArray()
       valueArray = new float[frequencyBinNum * fftBlockNum];
       valueArrayBufferSize = frequencyBinNum * fftBlockNum;
     }
-
-    calculateFrequencyBorders();
 
     int *fftBinMap = new int[fftBlockSize];
     float *loudnessCorrectionParameters = new float[fftBlockSize];
@@ -320,8 +324,8 @@ void Waveogram ::calculateValueArray()
 
 void Waveogram ::calculateFrequencyBorders()
 {
-  const int numberOfNotes = 132;
-  double noteFreqencies[numberOfNotes];
+  const int numberOfNotesTotal = 132;
+  double noteFreqencies[numberOfNotesTotal];
   double baseTuneing = 440.0;
   double factor = std::pow(2.0, 1.0 / 12.0);
   noteFreqencies[0] = 0.03125 * baseTuneing;
@@ -335,7 +339,7 @@ void Waveogram ::calculateFrequencyBorders()
   noteFreqencies[96] = 8 * baseTuneing;
   noteFreqencies[108] = 16 * baseTuneing;
   noteFreqencies[120] = 32 * baseTuneing;
-  for (auto i = 0; i < numberOfNotes; i = i + 12)
+  for (auto i = 0; i < numberOfNotesTotal; i = i + 12)
   {
     float baseValue = noteFreqencies[i];
     for (auto j = 1; j < 12; j++)
@@ -343,19 +347,19 @@ void Waveogram ::calculateFrequencyBorders()
       noteFreqencies[i + j] = baseValue * std::pow(factor, (double)j);
     }
   }
-  double noteFreqencyBorders[numberOfNotes - 1];
-  for (auto i = 0; i < numberOfNotes - 1; i++)
+  double noteFreqencyBorders[numberOfNotesTotal - 1];
+  for (auto i = 0; i < numberOfNotesTotal - 1; i++)
   {
     noteFreqencyBorders[i] = std::sqrt(noteFreqencies[i] * noteFreqencies[i + 1]);
   }
-  lowFreqCut = noteFreqencyBorders[6];
-  highFreqCut = noteFreqencyBorders[126];
+  lowFreqCut = noteFreqencyBorders[lowNoteIndex];
+  highFreqCut = noteFreqencyBorders[highNoteIndex];
   // allocate frequencyBorderValues
   delete frequencyBorderValues;
   frequencyBorderValues = new float[frequencyBinNum + 1];
   // set given top and bottom fequencies
 
-  int indexNoteBorders = 6;
+  int indexNoteBorders = lowNoteIndex;
   for (auto i = 0; i < frequencyBinNum; i++)
   {
     frequencyBorderValues[i] = noteFreqencyBorders[indexNoteBorders];
@@ -383,7 +387,7 @@ void Waveogram ::calculateVerticalPixelMap()
 void Waveogram::setNotesPerBin(int newNotesPerBin)
 {
   notesPerBin = newNotesPerBin;
-  frequencyBinNum = 120 / notesPerBin;
+  frequencyBinNum = (highNoteIndex - lowNoteIndex) / notesPerBin;
 }
 
 void Waveogram::setTimeBinSize(int newTimeBinSize)
@@ -420,17 +424,22 @@ double Waveogram::getZoom()
 
 void Waveogram::zoomInClicked()
 {
-
+  double time = (double)((viewer.getViewPositionX()) * samplesPerPixel) / sampleRate;
   zoom = std::max(zoom * 0.5, 1.0 / 32.0);
   recalculateImage();
   updateImage();
+  int pixel = time * sampleRate / samplesPerPixel;
+  viewer.setViewPosition(pixel, 0);
 }
 
 void Waveogram::zoomOutClicked()
 {
+  double time = (double)((viewer.getViewPositionX()) * samplesPerPixel) / sampleRate;
   zoom = zoom * 2.0;
   recalculateImage();
   updateImage();
+  int pixel = time * sampleRate / samplesPerPixel;
+  viewer.setViewPosition(pixel, 0);
 }
 
 void Waveogram::setHorizontalLines(bool in)
@@ -503,6 +512,29 @@ void Waveogram::setStartTime(float newStartTime)
   startTime = newStartTime;
 }
 
+void Waveogram::setNoteLabels(bool in)
+{
+  noteLabels = in;
+}
+
+void Waveogram::setLowNoteIndex(int newLowNoteIndex)
+{
+  if (newLowNoteIndex < highNoteIndex)
+  {
+    lowNoteIndex = newLowNoteIndex;
+    setNotesPerBin(notesPerBin);
+  }
+}
+
+void Waveogram::setHighNoteIndex(int newHighNoteIndex)
+{
+  if (newHighNoteIndex > lowNoteIndex)
+  {
+    highNoteIndex = newHighNoteIndex;
+    setNotesPerBin(notesPerBin);
+  }
+}
+
 void Waveogram::redrawImageCall()
 {
   redrawImage();
@@ -518,7 +550,8 @@ void Waveogram::recalculateImageCall()
 void Waveogram::calculateValueArrayCall()
 {
   auto start = std::chrono::high_resolution_clock::now();
-
+  calculateFrequencyBorders();
+  calculateVerticalPixelMap();
   calculateValueArray();
 
   auto stop = std::chrono::high_resolution_clock::now();
@@ -695,10 +728,35 @@ void Waveogram ::paintOverChildren(juce::Graphics &g)
   if (horizontalLablesIn && imageCalculated.get())
   {
     g.setColour(juce::Colours::whitesmoke);
+    int binHeight = heightBinBorders[1] - heightBinBorders[0];
+    auto currentFont = g.getCurrentFont();
+    auto oldHeight = currentFont.getHeight();
+    float fontHeight = std::max(std::min(oldHeight, (float)binHeight), 1.0f);
+    currentFont.setHeight(fontHeight);
+    g.setFont(currentFont);
     for (auto i = 1; i < frequencyBinNum; i++)
     {
-      g.drawText(std::to_string((int)frequencyBorderValues[i]), 0, heightData - heightBinBorders[i] - 5, yAxisSize - 4, 10, juce::Justification::centredRight, false);
+      g.drawText(std::to_string((int)frequencyBorderValues[i]), 0, heightData - heightBinBorders[i] - fontHeight * 0.5, yAxisSize - 4, fontHeight, juce::Justification::centredRight, false);
     }
+    currentFont.setHeight(oldHeight);
+    g.setFont(currentFont);
+  }
+  if (imageCalculated.get() && noteLabels && notesPerBin == 1)
+  {
+    std::string noteNames[] = {"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
+    g.setColour(juce::Colours::whitesmoke);
+    int binHeight = heightBinBorders[1] - heightBinBorders[0];
+    auto currentFont = g.getCurrentFont();
+    auto oldHeight = currentFont.getHeight();
+    float fontHeight = std::max(std::min(oldHeight, (float)binHeight), 1.0f);
+    currentFont.setHeight(fontHeight);
+    g.setFont(currentFont);
+    for (auto i = 1; i < frequencyBinNum + 1; i++)
+    {
+      g.drawText(noteNames[(i + lowNoteIndex) % 12] + std::to_string((i + lowNoteIndex - 3) / 12), 0, heightData - heightBinBorders[i], yAxisSize - 4, heightBinBorders[i] - heightBinBorders[i - 1], juce::Justification::centredRight, false);
+    }
+    currentFont.setHeight(oldHeight);
+    g.setFont(currentFont);
   }
   if (imageCalculated.get() && selectionInfo)
   {
@@ -706,7 +764,7 @@ void Waveogram ::paintOverChildren(juce::Graphics &g)
     int currentSelectionPixel[4];
     int selectionInfoWidth = 120;
     int selectionInfoHeight = 108;
-    int selectionInfoX = 4 + yAxisSize;
+    int selectionInfoX = widthAvailable - 4 - selectionInfoWidth;
     int selectionInfoY = 4;
     g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
     g.fillRect(selectionInfoX - 1, selectionInfoY - 1, selectionInfoWidth + 2, selectionInfoHeight + 2);
@@ -723,14 +781,17 @@ void Waveogram ::paintOverChildren(juce::Graphics &g)
   if (imageCalculated.get() && frequencyBinNum > 1)
   {
     double lowerLimit = 2.0 * sampleRate / timeBinSize;
-    g.setColour(juce::Colours::red);
-    for (auto i = 0; i < heightData; i++)
+    if (lowerLimit > verticalPixelMap[0])
     {
-      if (verticalPixelMap[i] > lowerLimit)
+      g.setColour(juce::Colours::red);
+      for (auto i = 0; i < heightData; i++)
       {
-        g.drawText(std::to_string((int)lowerLimit), 0, (heightData - i) - 5, yAxisSize - 4, 10, juce::Justification::centredRight, false);
-        g.fillRect(yAxisSize - 2, (heightData - i), std::min(widthAvailable - yAxisSize, widthBinBorders[fftBlockNum] - widthBinBorders[0]) + 2, 1);
-        break;
+        if (verticalPixelMap[i] > lowerLimit)
+        {
+          g.drawText(std::to_string((int)lowerLimit), 0, (heightData - i) - 5, yAxisSize - 4, 10, juce::Justification::centredRight, false);
+          g.fillRect(yAxisSize - 2, (heightData - i), std::min(widthAvailable - yAxisSize, widthBinBorders[fftBlockNum] - widthBinBorders[0]) + 2, 1);
+          break;
+        }
       }
     }
   }
@@ -738,7 +799,7 @@ void Waveogram ::paintOverChildren(juce::Graphics &g)
   {
     int histogramWidth = widthAvailable / 10;
     int histogramHeight = heightAvailable / 10;
-    int histogramX = widthAvailable - 56 - histogramWidth;
+    int histogramX = widthAvailable - 140 - histogramWidth;
     int histogramY = 4;
     g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
     g.fillRect(histogramX - 1, histogramY - 1, histogramWidth + 2, histogramHeight + 2);
@@ -1126,7 +1187,7 @@ void Waveogram::resized()
   viewer.setBounds(yAxisSize, 0, widthAvailable - yAxisSize, heightAvailable);
   viewer.setScrollBarsShown(false, true, false, true);
   viewer.setScrollOnDragMode(juce::Viewport::ScrollOnDragMode::never);
-  zoomIn.setBounds(widthAvailable - 44, 2, 20, 20);
-  zoomOut.setBounds(widthAvailable - 22, 2, 20, 20);
+  zoomIn.setBounds(2 + yAxisSize, 2, 20, 20);
+  zoomOut.setBounds(22 + yAxisSize, 2, 20, 20);
   updateImage();
 }

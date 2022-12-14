@@ -340,13 +340,13 @@ void FileHandler::resized()
 {
   int width = getWidth() - 6;
   int heigth = getHeight() - 6;
-  openButton.setBounds(2, heigth / 2 + 4, width * 0.75 - 2, heigth / 2);
-  playButton.setBounds(width * 0.75 + 2, 2, width * 0.125 - 2, heigth + 2);
-  stopButton.setBounds(width * 0.875 + 1, 2, width * 0.125 - 1, heigth + 2);
-  fileName.setBounds(width / 2 + 2, 2, width / 8, heigth / 2);
-  audioTime.setBounds(5 * width / 8 + 2, 2, width / 8, heigth / 2);
+  openButton.setBounds(2, heigth / 2 + 4, width * 0.6 - 2, heigth / 2);
+  playButton.setBounds(width * 0.6 + 2, 2, width * 0.2 - 2, heigth + 2);
+  stopButton.setBounds(width * 0.8 + 1, 2, width * 0.2 - 1, heigth + 2);
+  fileName.setBounds(width * 0.325 + 2, 2, width * 0.175, heigth / 2);
+  audioTime.setBounds(width / 2 + 2, 2, width * 0.1, heigth / 2);
 
-  int size = (width / 2) / 3.25;
+  int size = (width * 0.325) / 3.25;
   time.setBounds(2, 2, 0.5 * size, heigth / 2);
   startTime.setBounds(2 + 0.5 * size, 2, size, heigth / 2);
   seconds1.setBounds(2 + 1.5 * size, 2, 0.25 * size, heigth / 2);

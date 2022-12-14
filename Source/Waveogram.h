@@ -44,10 +44,13 @@ public:
   void setLoudnessCorrection(bool in);
   void setCentered(bool in);
   void setFrequencyLabels(bool in);
+  void setNoteLabels(bool in);
   void setViewerPosition(float time);
   void setCursorPosition(float time);
   void resetSelection();
   void setStartTime(float newStartTime);
+  void setLowNoteIndex(int newLowNoteIndex);
+  void setHighNoteIndex(int newHighNoteIndex);
 
   void redrawImageCall();
   void recalculateImageCall();
@@ -95,6 +98,8 @@ private:
   int timeBinSize;
   int frequencyBinNum;
   int notesPerBin;
+  int lowNoteIndex;
+  int highNoteIndex;
   kfr::complex<float> *fftOutput;
   size_t fftBlockNum;
   size_t fftBufferSize;
@@ -160,6 +165,8 @@ private:
   int lastCursorPosition;
 
   float startTime;
+
+  bool noteLabels;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Waveogram)
 };

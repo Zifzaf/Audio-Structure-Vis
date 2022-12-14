@@ -44,12 +44,17 @@ public:
   void centeredClicked();
   void frequencyLabelsClicked();
   void selectionToFocusClicked();
+  void noteLabelsClicked();
+  void addItemsToNotes();
+  void lowNoteChanged();
+  void highNoteChanged();
 
   void setSpectrogramCall();
   void setWavegramCall();
   void setFrequencygramCall();
   void setHistgramCall();
   void setWaveformCall();
+  void setNotegramCall();
 
   //==============================================================================
   void paint(juce::Graphics &g) override;
@@ -74,12 +79,17 @@ private:
   juce::ToggleButton loudnessCorrection;
   juce::ToggleButton centered;
   juce::ToggleButton frequencyLabels;
+  juce::ToggleButton noteLabels;
   juce::TextButton setSpectrogram;
   juce::TextButton setWavegram;
   juce::TextButton setFrequencygram;
   juce::TextButton setHistgram;
   juce::TextButton setWaveform;
+  juce::TextButton setNotegram;
   juce::TextButton selectionToFocus;
+
+  juce::ComboBox lowNote;
+  juce::ComboBox highNote;
 
   juce::AudioBuffer<float> *audioData;
   juce::Atomic<bool> audioAvailable = false;
