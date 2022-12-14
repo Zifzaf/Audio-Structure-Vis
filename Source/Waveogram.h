@@ -47,6 +47,7 @@ public:
   void setViewerPosition(float time);
   void setCursorPosition(float time);
   void resetSelection();
+  void setStartTime(float newStartTime);
 
   void redrawImageCall();
   void recalculateImageCall();
@@ -157,6 +158,8 @@ private:
 
   juce::Image cursorBackground;
   int lastCursorPosition;
+
+  float startTime;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Waveogram)
 };

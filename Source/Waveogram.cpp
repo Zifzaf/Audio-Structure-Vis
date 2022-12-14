@@ -97,6 +97,8 @@ Waveogram ::Waveogram()
   levelHistogram = true;
 
   lastCursorPosition = -1;
+
+  startTime = 0.0;
 }
 
 Waveogram ::~Waveogram()
@@ -494,6 +496,11 @@ void Waveogram::setCentered(bool in)
 void Waveogram::setFrequencyLabels(bool in)
 {
   frequencyLabels = in;
+}
+
+void Waveogram::setStartTime(float newStartTime)
+{
+  startTime = newStartTime;
 }
 
 void Waveogram::redrawImageCall()
@@ -1068,7 +1075,9 @@ void Waveogram::redrawImage()
         stepInUnit = step;
       }
       int pixelBetweenMarkers = step * sampleRate / (double)samplesPerPixel;
-      for (int i = 0; i < widthBinBorders[fftBlockNum]; i = i + pixelBetweenMarkers)
+      float roundedStartTime = std::ceil(startTime / step) * step;
+      int pixelStartOffset = (roundedStartTime - startTime) * sampleRate / (double)samplesPerPixel;
+      for (int i = pixelStartOffset; i < widthBinBorders[fftBlockNum]; i = i + pixelBetweenMarkers)
       {
         g.setColour(juce::Colours::lightgrey);
         const float dashes[4] = {10.0, 2.0, 5.0, 2.0};
@@ -1076,7 +1085,7 @@ void Waveogram::redrawImage()
         // g.fillRect((int)i, 0, 1, heightAvailable - xAxisSize + 5);
         int k = (i - (float)widthBinBorders[0]) / pixelBetweenMarkers;
         g.setColour(juce::Colours::whitesmoke);
-        g.drawText(std::to_string(stepInUnit * k) + " " + unit, (int)i - 40, heightAvailable - xAxisSize + 5, 80, 35, juce::Justification::centredTop, false);
+        g.drawText(std::to_string(stepInUnit * k + (int)roundedStartTime) + " " + unit, (int)i - 40, heightAvailable - xAxisSize + 5, 80, 35, juce::Justification::centredTop, false);
       }
     }
 

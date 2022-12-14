@@ -19,7 +19,10 @@ public:
   void paint(juce::Graphics &g) override;
   void resized() override;
   void update();
-  float time = 0.0;
+  juce::Atomic<float> timeBuffer;
+  float getTime();
+  void setTime(float newTime);
+  juce::TextEditor timeField;
 };
 
 enum TransportState
@@ -85,7 +88,7 @@ private:
   juce::Atomic<bool> fileLoaded = false;
   float startTimeVal = 0.0;
   float endTimeVal = 0.0;
-  
+
   juce::String fullPath;
 
   TimeField audioTime;

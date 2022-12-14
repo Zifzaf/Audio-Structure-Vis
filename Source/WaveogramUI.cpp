@@ -671,6 +671,7 @@ void WaveogramUI::calcButtonClicked()
 
     waveData.setTimeBinSize(getTimeBinSize());
     waveData.setNotesPerBin(getNotesPerBin());
+    waveData.setStartTime(fileInput->getStartTime());
 
     waveData.setRawAudio(inData, segmentLength, sampleRate);
 

@@ -91,11 +91,12 @@ void FileHandler::changeState(TransportState newState)
     case Stopped: // [3]
       stopButton.setEnabled(false);
       playButton.setEnabled(true);
-      transportSource.setPosition(getStartTime());
+      transportSource.setPosition(audioTime.getTime());
       break;
 
     case Starting: // [4]
       playButton.setEnabled(false);
+      transportSource.setPosition(audioTime.getTime());
       transportSource.start();
       break;
 
@@ -119,6 +120,7 @@ void FileHandler::textEditorTextChanged(juce::TextEditor &source)
     endTimeVal = newEndTime;
     startTimeVal = newEndTime;
     transportSource.setPosition(newStartTime);
+    audioTime.setTime(newStartTime);
     sendChangeMessage();
   }
 }
@@ -197,13 +199,13 @@ void FileHandler::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferTo
   }
   transportSource.getNextAudioBlock(bufferToFill);
   float currentTime = transportSource.getCurrentPosition();
-  audioTime.time = currentTime;
   if (currentTime > getEndTime())
   {
     transportSource.setPosition(getStartTime());
   }
   if (isAudioPlaying())
   {
+    audioTime.timeBuffer = currentTime;
     sendChangeMessage();
   }
 }
@@ -356,26 +358,41 @@ void FileHandler::resized()
 TimeField::TimeField()
 {
   setFramesPerSecond(10);
+  addAndMakeVisible(&timeField);
+  timeField.setText("0.0");
+  timeBuffer = 0.0;
 }
 
 TimeField::~TimeField()
 {
 }
 
+void TimeField::setTime(float newTime)
+{
+  timeField.setText(juce::String(newTime, 7));
+}
+
+float TimeField::getTime()
+{
+  return timeField.getText().getFloatValue();
+}
+
 void TimeField::paint(juce::Graphics &g)
 {
-  int width = getWidth();
-  int heigth = getHeight();
-  g.fillAll(juce::Colours::darkgrey);
-  g.setColour(juce::Colours::white);
-  g.drawText("T: " + std::to_string(time) + " s", 0, 0, width, heigth, juce::Justification::centred, false);
 }
 
 void TimeField::resized()
 {
+  timeField.setBounds(0, 0, getWidth(), getHeight());
 }
 
 void TimeField::update()
 {
+  float value = timeBuffer.get();
+  if (value >= 0.0)
+  {
+    setTime(value);
+    timeBuffer.set(-1.0);
+  }
   repaint();
 }
