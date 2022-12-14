@@ -56,8 +56,8 @@ Waveogram ::Waveogram()
   heightBinBorders = NULL;
   widthBinBorders = NULL;
 
-  samplesPerPixel = 256;
-  samplesPerPixelDefault = 256;
+  samplesPerPixel = 500;
+  samplesPerPixelDefault = 500;
 
   selectionCoordinates[0] = 0;
   selectionCoordinates[1] = 0;
@@ -95,6 +95,8 @@ Waveogram ::Waveogram()
   yAxisSize = 40;
 
   levelHistogram = true;
+
+  lastCursorPosition = -1;
 }
 
 Waveogram ::~Waveogram()
@@ -530,6 +532,28 @@ void Waveogram::setViewerPosition(float time)
   }
 }
 
+void Waveogram::setCursorPosition(float time)
+{
+  if (imageCalculated.get())
+  {
+    int sample = time * sampleRate;
+    int pixel = sample / samplesPerPixel;
+    juce::Graphics g(WaveogramImage);
+    if (lastCursorPosition > 0)
+    {
+      g.drawImageAt(cursorBackground, lastCursorPosition, 0);
+    }
+    lastCursorPosition = pixel;
+    for (auto i = 0; i < heightAvailable - xAxisSize; i++)
+    {
+      cursorBackground.setPixelAt(0, i, WaveogramImage.getPixelAt(pixel, i));
+    }
+    g.setColour(juce::Colours::white);
+    g.fillRect(pixel, 0, 1, heightAvailable - xAxisSize);
+    repaint();
+  }
+}
+
 void Waveogram::resetSelection()
 {
   selectionCoordinates[0] = 0;
@@ -840,13 +864,14 @@ void Waveogram::recalculateImage()
       zoom = 0.5 * zoom;
       samplesPerPixel = samplesPerPixelDefault * zoom;
     }
-    int widthBinSize = timeBinSize / samplesPerPixel;
+    double widthBinSize = (double)timeBinSize / (double)samplesPerPixel;
 
     for (auto i = 0; i < fftBlockNum + 1; i++)
     {
       widthBinBorders[i] = i * widthBinSize;
     }
     WaveogramImage = juce::Image(juce::Image::RGB, widthBinSize * fftBlockNum, heightAvailable, true);
+    cursorBackground = juce::Image(juce::Image::RGB, 1, heightAvailable - xAxisSize, true);
     imageCalculated = true;
     redrawImage();
   }

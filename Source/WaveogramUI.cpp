@@ -424,7 +424,7 @@ void WaveogramUI::setSpectrogramCall()
   waveData.setFrequencyLabels(true);
   frequencyLabels.setToggleState(true, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(8.0);
+  waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
 }
@@ -476,7 +476,7 @@ void WaveogramUI::setHistgramCall()
   waveData.setFrequencyLabels(false);
   frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(8.0);
+  waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
 }
@@ -528,7 +528,7 @@ void WaveogramUI::setWavegramCall()
   waveData.setFrequencyLabels(true);
   frequencyLabels.setToggleState(true, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(8.0);
+  waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
 }
@@ -580,7 +580,7 @@ void WaveogramUI::setWaveformCall()
   waveData.setFrequencyLabels(false);
   frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(4.0);
+  waveData.setZoom(2.0);
 
   waveData.calculateFTTCall();
 }
@@ -632,7 +632,7 @@ void WaveogramUI::setFrequencygramCall()
   waveData.setFrequencyLabels(false);
   frequencyLabels.setToggleState(false, juce::NotificationType::dontSendNotification);
 
-  waveData.setZoom(8.0);
+  waveData.setZoom(4.0);
 
   waveData.calculateFTTCall();
 }
@@ -651,7 +651,8 @@ void WaveogramUI::changeListenerCallback(juce::ChangeBroadcaster *source)
       delete tempAudioData;
     }
     audioAvailable.set(true);
-    waveData.setViewerPosition(fileInput->getCurrentTime() - fileInput->getStartTime());
+    waveData.setViewerPosition(fileInput->getCurrentTime() - fileInput->getStartTime() - 500.0 * waveData.getZoom() * 0.5 * (getWidth() - 40.0) / fileInput->getSampleRate());
+    waveData.setCursorPosition(fileInput->getCurrentTime() - fileInput->getStartTime());
   }
 }
 

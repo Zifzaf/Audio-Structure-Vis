@@ -45,6 +45,7 @@ public:
   void setCentered(bool in);
   void setFrequencyLabels(bool in);
   void setViewerPosition(float time);
+  void setCursorPosition(float time);
   void resetSelection();
 
   void redrawImageCall();
@@ -153,6 +154,9 @@ private:
   int yAxisSize;
 
   bool levelHistogram;
+
+  juce::Image cursorBackground;
+  int lastCursorPosition;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Waveogram)
 };
