@@ -31,6 +31,7 @@ public:
 
 private:
     FileHandler openFile;
+    juce::TooltipWindow toolTips;
 
 
     //==============================================================================

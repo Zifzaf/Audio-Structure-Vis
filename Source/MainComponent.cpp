@@ -1,7 +1,7 @@
 #include "MainComponent.h"
 
 //==============================================================================
-MainComponent::MainComponent() :  waveData(&openFile)
+MainComponent::MainComponent() :  waveData(&openFile), toolTips()
 
 {
     std::cout << kfr::library_version() << std::endl;

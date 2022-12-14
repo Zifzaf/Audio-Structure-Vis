@@ -27,7 +27,7 @@ public:
   void resized() override;
   void setRawAudio(const float *audioData, size_t audioDataLength, double audioDataSampleRate);
 
-  void setFrequencyBins(int newFrequencyBins);
+  void setNotesPerBin(int newNotesPerBin);
   void setTimeBinSize(int newTimeBinSize);
   void setHorizontalLines(bool in);
   void setVerticalLables(bool in);
@@ -44,6 +44,8 @@ public:
   void setLoudnessCorrection(bool in);
   void setCentered(bool in);
   void setFrequencyLabels(bool in);
+  void setViewerPosition(float time);
+  void resetSelection();
 
   void redrawImageCall();
   void recalculateImageCall();
@@ -90,12 +92,13 @@ private:
   int fftBlockSize;
   int timeBinSize;
   int frequencyBinNum;
+  int notesPerBin;
   kfr::complex<float> *fftOutput;
   size_t fftBlockNum;
   size_t fftBufferSize;
 
-  double lowFreqCut = 26.71890716328;
-  double highFreqCut = 20495.596814418;
+  double lowFreqCut = 20.0152;
+  double highFreqCut = 20495.6;
 
   float *valueArray;
   size_t valueArrayBufferSize;
@@ -148,6 +151,8 @@ private:
   bool frequencyLabels;
 
   int yAxisSize;
+
+  bool levelHistogram;
 
   JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(Waveogram)
 };

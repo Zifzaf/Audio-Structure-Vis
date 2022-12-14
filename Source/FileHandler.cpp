@@ -157,7 +157,8 @@ void FileHandler::openButtonClicked()
                     readerSource.reset (newSource.release());
                     fileLoaded.set(true);
                     sendChangeMessage();
-                    endTime.setText(juce::String(((float)transportSource.getTotalLength() / reader->sampleRate)));                                      
+                    endTime.setText(juce::String(((float)transportSource.getTotalLength() / reader->sampleRate)));
+                    startTime.setText("0.0");                                      
                 }
             } });
 }
@@ -200,6 +201,10 @@ void FileHandler::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferTo
   if (currentTime > getEndTime())
   {
     transportSource.setPosition(getStartTime());
+  }
+  if (isAudioPlaying())
+  {
+    sendChangeMessage();
   }
 }
 
@@ -312,6 +317,16 @@ float FileHandler::getStartTime()
 float FileHandler::getEndTime()
 {
   return endTime.getText().getFloatValue();
+}
+
+void FileHandler::setStartTime(float newStartTime)
+{
+  startTime.setText(std::to_string(newStartTime));
+}
+
+void FileHandler::setEndTime(float newEndTime)
+{
+  endTime.setText(std::to_string(newEndTime));
 }
 
 void FileHandler::paint(juce::Graphics &g)

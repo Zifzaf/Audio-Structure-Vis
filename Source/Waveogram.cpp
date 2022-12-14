@@ -31,7 +31,8 @@ Waveogram ::Waveogram()
   rawAudioDataBufferSize = 0;
 
   timeBinSize = 1024;
-  frequencyBinNum = 32;
+  notesPerBin = 12;
+  frequencyBinNum = 120 / notesPerBin;
 
   fftOutput = NULL;
   fftBlockNum = 0;
@@ -92,6 +93,8 @@ Waveogram ::Waveogram()
   frequencyLabels = false;
 
   yAxisSize = 40;
+
+  levelHistogram = true;
 }
 
 Waveogram ::~Waveogram()
@@ -313,19 +316,49 @@ void Waveogram ::calculateValueArray()
 
 void Waveogram ::calculateFrequencyBorders()
 {
+  const int numberOfNotes = 132;
+  double noteFreqencies[numberOfNotes];
+  double baseTuneing = 440.0;
+  double factor = std::pow(2.0, 1.0 / 12.0);
+  noteFreqencies[0] = 0.03125 * baseTuneing;
+  noteFreqencies[12] = 0.0625 * baseTuneing;
+  noteFreqencies[24] = 0.125 * baseTuneing;
+  noteFreqencies[36] = 0.25 * baseTuneing;
+  noteFreqencies[48] = 0.5 * baseTuneing;
+  noteFreqencies[60] = baseTuneing;
+  noteFreqencies[72] = 2 * baseTuneing;
+  noteFreqencies[84] = 4 * baseTuneing;
+  noteFreqencies[96] = 8 * baseTuneing;
+  noteFreqencies[108] = 16 * baseTuneing;
+  noteFreqencies[120] = 32 * baseTuneing;
+  for (auto i = 0; i < numberOfNotes; i = i + 12)
+  {
+    float baseValue = noteFreqencies[i];
+    for (auto j = 1; j < 12; j++)
+    {
+      noteFreqencies[i + j] = baseValue * std::pow(factor, (double)j);
+    }
+  }
+  double noteFreqencyBorders[numberOfNotes - 1];
+  for (auto i = 0; i < numberOfNotes - 1; i++)
+  {
+    noteFreqencyBorders[i] = std::sqrt(noteFreqencies[i] * noteFreqencies[i + 1]);
+  }
+  lowFreqCut = noteFreqencyBorders[6];
+  highFreqCut = noteFreqencyBorders[126];
   // allocate frequencyBorderValues
   delete frequencyBorderValues;
   frequencyBorderValues = new float[frequencyBinNum + 1];
   // set given top and bottom fequencies
-  frequencyBorderValues[0] = lowFreqCut;
-  frequencyBorderValues[frequencyBinNum] = highFreqCut;
-  // calcualte step for (std::log2(highFreqCut) - std::log2(lowFreqCut)) octaves and intialise the rest
-  double stepFactor = std::pow(2.0, (std::log2(highFreqCut) - std::log2(lowFreqCut)) / (double)frequencyBinNum);
-  for (auto i = 1; i < frequencyBinNum; i++)
+
+  int indexNoteBorders = 6;
+  for (auto i = 0; i < frequencyBinNum; i++)
   {
-    frequencyBorderValues[i] = std::pow(stepFactor, (double)i) * lowFreqCut;
+    frequencyBorderValues[i] = noteFreqencyBorders[indexNoteBorders];
+    indexNoteBorders += notesPerBin;
     // std::cout << frequencyBorderValues[i] << " : " << Loudness::getScaleFactor(80.0, frequencyBorderValues[i]) << std::endl;
   }
+  frequencyBorderValues[frequencyBinNum] = highFreqCut;
 }
 
 void Waveogram ::calculateVerticalPixelMap()
@@ -343,9 +376,10 @@ void Waveogram ::calculateVerticalPixelMap()
   }
 }
 
-void Waveogram::setFrequencyBins(int newFrequencyBins)
+void Waveogram::setNotesPerBin(int newNotesPerBin)
 {
-  frequencyBinNum = newFrequencyBins;
+  notesPerBin = newNotesPerBin;
+  frequencyBinNum = 120 / notesPerBin;
 }
 
 void Waveogram::setTimeBinSize(int newTimeBinSize)
@@ -486,6 +520,24 @@ void Waveogram::calculateValueArrayCall()
   updateImage();
 }
 
+void Waveogram::setViewerPosition(float time)
+{
+  if (imageCalculated.get())
+  {
+    int sample = time * sampleRate;
+    int pixel = sample / samplesPerPixel;
+    viewer.setViewPosition(pixel, 0);
+  }
+}
+
+void Waveogram::resetSelection()
+{
+  selectionCoordinates[0] = 0;
+  selectionCoordinates[1] = 0;
+  selectionCoordinates[2] = 0;
+  selectionCoordinates[3] = 0;
+}
+
 void Waveogram::calculateFTTCall()
 {
   auto start = std::chrono::high_resolution_clock::now();
@@ -576,11 +628,7 @@ juce::Colour Waveogram::levelToColour(float level, bool selection)
   }
   if (level == 0.0)
   {
-    if (selection)
-    {
-      return juce::Colour::fromRGB(48, 48, 48);
-    }
-    return juce::Colour::fromRGB(0, 64, 143);
+    return juce::Colour::fromRGB(32, 32, 32);
   }
   if (selection)
   {
@@ -621,17 +669,25 @@ void Waveogram ::paintOverChildren(juce::Graphics &g)
       g.drawText(std::to_string((int)frequencyBorderValues[i]), 0, heightData - heightBinBorders[i] - 5, yAxisSize - 4, 10, juce::Justification::centredRight, false);
     }
   }
-  if (selectionInfo)
+  if (imageCalculated.get() && selectionInfo)
   {
     float currentSelection[4];
     int currentSelectionPixel[4];
+    int selectionInfoWidth = 120;
+    int selectionInfoHeight = 108;
+    int selectionInfoX = 4 + yAxisSize;
+    int selectionInfoY = 4;
+    g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    g.fillRect(selectionInfoX - 1, selectionInfoY - 1, selectionInfoWidth + 2, selectionInfoHeight + 2);
+    g.setColour(juce::Colours::whitesmoke);
+    g.drawRect(selectionInfoX - 1, selectionInfoY - 1, selectionInfoWidth + 2, selectionInfoHeight + 2);
     getSelection(&currentSelection[0], &currentSelectionPixel[0]);
     g.setColour(juce::Colours::white);
-    g.drawText("From: " + floatToString(currentSelection[0]) + " s", widthAvailable - 102, 26, 100, 20, juce::Justification::centredLeft, false);
-    g.drawText("To: " + floatToString(currentSelection[1]) + " s", widthAvailable - 102, 46, 100, 20, juce::Justification::centredLeft, false);
-    g.drawText("dT: " + floatToString((currentSelection[1] - currentSelection[0]) * 1000.0) + " ms", widthAvailable - 102, 66, 100, 20, juce::Justification::centredLeft, false);
-    g.drawText("Low: " + std::to_string((int)currentSelection[3]) + " Hz", widthAvailable - 102, 86, 100, 20, juce::Justification::centredLeft, false);
-    g.drawText("Heigh: " + std::to_string((int)currentSelection[2]) + " Hz", widthAvailable - 102, 106, 100, 20, juce::Justification::centredLeft, false);
+    g.drawText("From: " + floatToString(currentSelection[0]) + " s", selectionInfoX + 2, selectionInfoY, selectionInfoWidth - 4, 20, juce::Justification::centredLeft, false);
+    g.drawText("To: " + floatToString(currentSelection[1]) + " s", selectionInfoX + 2, selectionInfoY + 22, selectionInfoWidth - 4, 20, juce::Justification::centredLeft, false);
+    g.drawText("dT: " + floatToString((currentSelection[1] - currentSelection[0]) * 1000.0) + " ms", selectionInfoX + 2, selectionInfoY + 44, selectionInfoWidth - 4, 20, juce::Justification::centredLeft, false);
+    g.drawText("Low: " + std::to_string((int)currentSelection[3]) + " Hz", selectionInfoX + 2, selectionInfoY + 66, selectionInfoWidth - 4, 20, juce::Justification::centredLeft, false);
+    g.drawText("Heigh: " + std::to_string((int)currentSelection[2]) + " Hz", selectionInfoX + 2, selectionInfoY + 88, selectionInfoWidth - 4, 20, juce::Justification::centredLeft, false);
   }
   if (imageCalculated.get() && frequencyBinNum > 1)
   {
@@ -645,6 +701,59 @@ void Waveogram ::paintOverChildren(juce::Graphics &g)
         g.fillRect(yAxisSize - 2, (heightData - i), std::min(widthAvailable - yAxisSize, widthBinBorders[fftBlockNum] - widthBinBorders[0]) + 2, 1);
         break;
       }
+    }
+  }
+  if (imageCalculated.get() && levelHistogram)
+  {
+    int histogramWidth = widthAvailable / 10;
+    int histogramHeight = heightAvailable / 10;
+    int histogramX = widthAvailable - 56 - histogramWidth;
+    int histogramY = 4;
+    g.setColour(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    g.fillRect(histogramX - 1, histogramY - 1, histogramWidth + 2, histogramHeight + 2);
+    g.setColour(juce::Colours::whitesmoke);
+    g.drawRect(histogramX - 1, histogramY - 1, histogramWidth + 2, histogramHeight + 2);
+    double binCount[histogramWidth];
+    for (auto j = 0; j < histogramWidth; j++)
+    {
+      binCount[j] = 0.0;
+    }
+    float binWidth = 1.0 / (float)histogramWidth;
+    for (auto i = 0; i < frequencyBinNum * fftBlockNum; i++)
+    {
+      for (auto j = 0; j < histogramWidth; j++)
+      {
+        if (valueArray[i] <= j * binWidth)
+        {
+          binCount[j]++;
+          break;
+        }
+      }
+    }
+    for (auto j = 0; j < histogramWidth; j++)
+    {
+      binCount[j] = std::log10(binCount[j] + 1.0);
+    }
+    double max = juce::FloatVectorOperations::findMaximum(binCount, histogramWidth);
+    juce::FloatVectorOperations::multiply(binCount, 1.0 / max, histogramWidth);
+
+    for (auto j = 0; j < histogramWidth; j++)
+    {
+      if (j * binWidth < threshhold)
+      {
+        g.setColour(levelToColour(0.0));
+      }
+      else if (j * binWidth > clip)
+      {
+        g.setColour(levelToColour(1.0));
+      }
+      else
+      {
+        float level = (j * binWidth - threshhold) / (clip - threshhold);
+        g.setColour(levelToColour(level));
+      }
+      int binHeight = binCount[j] * histogramHeight;
+      g.fillRect(histogramX + j, histogramY + histogramHeight - binHeight, 1, binHeight);
     }
   }
 }
@@ -767,7 +876,7 @@ void Waveogram::redrawImage()
     {
       for (auto j = 0; j < frequencyBinNum; j++)
       {
-        maxFrequencyBinValue[j] = std::max(maxFrequencyBinValue[j], valueArray[i * frequencyBinNum + (frequencyBinNum - (j + 1))]);
+        maxFrequencyBinValue[j] = std::max(maxFrequencyBinValue[j], 1.0f / 0.999999f * valueArray[i * frequencyBinNum + (frequencyBinNum - (j + 1))]);
       }
     }
 
@@ -795,7 +904,7 @@ void Waveogram::redrawImage()
       int lowerBorderW = widthBinBorders[i];
       int upperBorderW = widthBinBorders[i + 1];
 
-      float maxColumn = juce::FloatVectorOperations::findMaximum(&valueArray[i * frequencyBinNum], frequencyBinNum);
+      float maxColumn = 1.0f / 0.999999f * juce::FloatVectorOperations::findMaximum(&valueArray[i * frequencyBinNum], frequencyBinNum);
       float frequencyNormalizationValue = 1.0;
       if (normalizeFrequencyDim)
       {
@@ -933,10 +1042,8 @@ void Waveogram::redrawImage()
         unit = "s";
         stepInUnit = step;
       }
-      float numMarkers = range / step;
-      float pixelBetweenMarkers = (widthBinBorders[fftBlockNum] - widthBinBorders[0]) / numMarkers;
-      double rangePerPixel = range / (double)(widthBinBorders[fftBlockNum] - widthBinBorders[0]);
-      for (float i = 0.0; i < widthBinBorders[fftBlockNum]; i = i + pixelBetweenMarkers)
+      int pixelBetweenMarkers = step * sampleRate / (double)samplesPerPixel;
+      for (int i = 0; i < widthBinBorders[fftBlockNum]; i = i + pixelBetweenMarkers)
       {
         g.setColour(juce::Colours::lightgrey);
         const float dashes[4] = {10.0, 2.0, 5.0, 2.0};

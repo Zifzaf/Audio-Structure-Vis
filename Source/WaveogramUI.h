@@ -24,7 +24,7 @@ public:
   void changeListenerCallback(juce::ChangeBroadcaster *source);
   void calcButtonClicked();
   void addFileHandler(FileHandler *in);
-  int getFrequencyBins();
+  int getNotesPerBin();
   int getTimeBinSize();
   float getThreshhold();
   float getClip();
@@ -43,6 +43,7 @@ public:
   void loudnessCorrectionClicked();
   void centeredClicked();
   void frequencyLabelsClicked();
+  void selectionToFocusClicked();
 
   void setSpectrogramCall();
   void setWavegramCall();
@@ -58,7 +59,7 @@ private:
   Waveogram waveData;
   FileHandler *fileInput = nullptr;
   juce::TextButton calcButton;
-  juce::TextEditor frequencyBinInput;
+  juce::ComboBox notesPerBinInput;
   juce::ComboBox timeBinInput;
   juce::TextEditor threshhold;
   juce::TextEditor clip;
@@ -78,8 +79,9 @@ private:
   juce::TextButton setFrequencygram;
   juce::TextButton setHistgram;
   juce::TextButton setWaveform;
+  juce::TextButton selectionToFocus;
 
-  juce::AudioBuffer<float> &audioData;
+  juce::AudioBuffer<float> *audioData;
   juce::Atomic<bool> audioAvailable = false;
   juce::Atomic<bool> calculating = false;
 

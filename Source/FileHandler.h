@@ -57,6 +57,8 @@ public:
   bool isAudioPlaying();
   float getStartTime();
   float getEndTime();
+  void setStartTime(float newStartTime);
+  void setEndTime(float newEndTime);
   void textEditorTextChanged(juce::TextEditor &source);
   juce::int64 getSegmentLength();
   double getCurrentTime();
