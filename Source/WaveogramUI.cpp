@@ -977,10 +977,13 @@ void WaveogramUI::paint(juce::Graphics &g)
   int ankerLabels = 300;
   g.drawRect(0, ankerLabels - 1, 147, 6 * 22 + 2);
   g.drawText("Label Control: ", 2, ankerLabels + 1, 144, 19, juce::Justification::centredLeft, false);
-  int ankerYAxis = height / 2 - 33;
-  g.drawRect(0, ankerYAxis - 1, 147, 3 * 22 + 2);
-  g.drawText("Notes per Bin: ", 2, ankerYAxis + 1, 144, 19, juce::Justification::centredLeft, false);
-  int ankerNorm = height / 2 + 80;
+  int ankerBin = height / 2 - 22;
+  g.drawRect(0, ankerBin - 1, 147, 2 * 22 + 2);
+  g.drawText("Notes per Bin: ", 2, ankerBin + 1, 144, 19, juce::Justification::centredLeft, false);
+  int ankerYAxis = height / 2 + 45;
+  g.drawRect(0, ankerYAxis - 1, 147, 2 * 22 + 2);
+  g.drawText("y-Axis: ", 2, ankerYAxis + 1, 144, 19, juce::Justification::centredLeft, false);
+  int ankerNorm = height / 2 + 120;
   g.drawRect(0, ankerNorm - 1, 147, 3 * 22 + 2);
   g.drawText("Normalization: ", 2, ankerNorm + 1, 144, 19, juce::Justification::centredLeft, false);
   int ankerGlyth = height / 2 + 220;
@@ -993,9 +996,14 @@ void WaveogramUI::paint(juce::Graphics &g)
   g.drawRect(width - 140 - (width - 150) / 10 - 4, 4, (width - 150) / 10 + 8, 46);
   g.drawText("Threshhold: ", width - 140 - (width - 150) / 10 - 2, 6, (width - 150) / 20, 20, juce::Justification::centredLeft, false);
   g.drawText("Clip: ", width - 140 - (width - 150) / 20 + 2, 6, (width - 150) / 20, 20, juce::Justification::centredLeft, false);
+  g.drawText(" dB", width - 140 - (width - 150) / 10 - 2 + (width - 150) * 2 / 60, 28, (width - 150) / 60, 20, juce::Justification::centredLeft, false);
+  g.drawText(" dB", width - 140 - (width - 150) / 20 + 2 + (width - 150) * 2 / 60, 28, (width - 150) / 60, 20, juce::Justification::centredLeft, false);
 
-  g.drawRect(0.61 * width + 2, 4, 2 * (width) / 10 + 8, 46);
+  g.drawRect(0.61 * width + 2, 4, 1* (width) / 10 + 4, 46);
   g.drawText("Time Bin Size[s]: ", 0.61 * width + 4, 6, width / 10, 20, juce::Justification::centredLeft, false);
+
+  g.drawRect(0.72 * width + 2, 4, 1* (width) / 10 + 4, 46);
+  g.drawText("x-Axis: ", 0.72 * width + 4, 6, width / 10, 20, juce::Justification::centredLeft, false);
 }
 
 void WaveogramUI::resized()
@@ -1006,10 +1014,11 @@ void WaveogramUI::resized()
   calcButton.setBounds(width / 2 + 2, 2, 0.1 * width, 45);
 
   timeBinInput.setBounds(0.61 * width + 4, 28, width / 10, 20);
-  scaleHorizontal.setBounds(0.71 * width + 4, 28, width / 10, 20);
 
-  threshhold.setBounds(width - 140 - (width - 150) / 10 - 2, 28, (width - 150) / 20, 20);
-  clip.setBounds(width - 140 - (width - 150) / 20 + 2, 28, (width - 150) / 20, 20);
+  scaleHorizontal.setBounds(0.72 * width + 4, 28, width / 10, 20);
+
+  threshhold.setBounds(width - 140 - (width - 150) / 10 - 2, 28, (width - 150) * 2 / 60, 20);
+  clip.setBounds(width - 140 - (width - 150) / 20 + 2, 28, (width - 150) * 2 / 60, 20);
 
   selectionToFocus.setBounds(width - 4 - 120, 28, 118, 20);
 
@@ -1030,11 +1039,13 @@ void WaveogramUI::resized()
   horizontalLines.setBounds(2, ankerLabels + 4 * 22, 144, 20);
   verticalLables.setBounds(2, ankerLabels + 5 * 22, 144, 20);
 
-  int ankerYAxis = height / 2 - 33;
-  notesPerBinInput.setBounds(2, ankerYAxis + 1 * 22, 144, 20);
-  scaleVertical.setBounds(2, ankerYAxis + 2 * 22, 144, 20);
+  int ankerBin = height / 2 - 22;
+  notesPerBinInput.setBounds(2, ankerBin + 1 * 22, 144, 20);
 
-  int ankerNorm = height / 2 + 80;
+  int ankerYAxis = height / 2 + 45;
+  scaleVertical.setBounds(2, ankerYAxis + 1 * 22, 144, 20);
+
+  int ankerNorm = height / 2 + 120;
   normalizeFrequencyDim.setBounds(2, ankerNorm + 1 * 22, 144, 20);
   normalizeTimeDim.setBounds(2, ankerNorm + 2 * 22, 144, 20);
 
